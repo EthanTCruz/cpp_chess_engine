@@ -5,62 +5,17 @@
 #include <optional>
 #include <cctype>
 #include <SFML/Graphics/Sprite.hpp>
+#include <vector>
+#include <bitset>
 
-// Parse a FEN string to initialize the board array
-void parseFEN(const std::string& fen, char board[8][8]) {
-    // Fill board with empties initially
-    for (int r = 0; r < 8; ++r) {
-        for (int c = 0; c < 8; ++c)
-            board[r][c] = '.';
-    }
 
-    int row = 0, col = 0;
-    for (char ch : fen) {
-        if (ch == ' ') {
-            break; // stop at end of piece placement section
-        }
-        else if (ch == '/') {
-            // Move down to next rank (next row in our array)
-            row++;
-            col = 0;
-        }
-        else if (std::isdigit(ch)) {
-            // Numeric character: skip that many empty squares
-            int count = ch - '0';
-            for (int i = 0; i < count; ++i) {
-				if (col < 8) { //could remove for small increase in performance
-                    board[row][col++] = '.';
-                }
-            }
-        }
-        else {
-            // Piece character
-            if (row < 8 && col < 8) {
-                board[row][col] = ch;
-            }
-            col++;
-        }
-    }
-}
-
-// Print the board state to console (8x8 grid)
-void printBoard(const char board[8][8]) {
-    std::cout << "Board state:\n";
-    for (int r = 0; r < 8; ++r) {
-        for (int c = 0; c < 8; ++c) {
-            char symbol = board[r][c];
-            std::cout << (symbol == '.' ? '.' : symbol);
-            if (c < 7) std::cout << " ";
-        }
-        std::cout << "\n";
-    }
-}
 
 class ChessBoard {
 private:
     char board[8][8];  // 8x8 character array
     std::string fen;
-
+	//8*8*12=768 bits
+    std::array<uint64_t, 12> bitboards;
 
 
     void parseFEN() {
@@ -105,7 +60,8 @@ public:
         
         initialize();  // Additional setup function
     }
-
+    const uint64_t* data() const { return bitboards.data(); }
+    uint64_t* data() { return bitboards.data(); }
     // Function to perform additional initialization
     void initialize() {
         // Add any custom initialization logic here
@@ -118,11 +74,19 @@ public:
         fen = newFen;
         initialize();
     }
+    void movePiece(const sf::Vector2i &from, const int& newRow, const int& newCol) {
+        
+        char piece = board[from.y][from.x];
+        board[from.y][from.x] = '.';
+        board[newRow][newCol] = piece;
+        //initialize();
+    }
 
     // Getter function to return the board
     const char (*getBoard() const)[8] {
         return board;
     }
+
 
 
     void printBoard() const {
@@ -157,15 +121,12 @@ int main(int argc, char** argv) {
         }
     }
 	//end code for initializing the fen string
+    
     ChessBoard cb(fen);
     cb.printBoard();
-    std::cout << "Standard print board ++++++++++++++" << "\n";
-    // Initialize the board array from the FEN string
-    char board[8][8];
-	parseFEN(fen, board); //parseFen function is void and sets board value accordingly to the fen string
 
-    // Output the initial board state to the console
-    printBoard(board);
+    const char (*board)[8] = cb.getBoard();
+
 
 
     //begin gui stuff
@@ -228,12 +189,11 @@ int main(int argc, char** argv) {
                         else {
                             // Move the previously selected piece to the new square
                             sf::Vector2i from = selectedSquare.value();
-                            char piece = board[from.y][from.x];
-                            board[from.y][from.x] = '.';
-                            board[row][col] = piece;
+							cb.movePiece(from, row, col);
+
                             selectedSquare.reset(); // deselect after moving
 
-                            printBoard(board); // update console output (optional)
+
                         }
                     }
                 }
