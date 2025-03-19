@@ -18,12 +18,7 @@
     <None Include="..\..\..\..\..\..\SFML-3.0.0\bin\sfml-window-d-3.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="include">
-      <UniqueIdentifier>{6a84e073-3943-4ae6-8b1f-37a23a53ca05}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ChessBoard.hpp" />
-    <ClInclude Include="GUIBoard.hpp" />
+    <ClInclude Include="include\ChessBoard.hpp" />
+    <ClInclude Include="include\GUIBoard.hpp" />
   </ItemGroup>
 </Project>

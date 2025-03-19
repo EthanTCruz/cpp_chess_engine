@@ -7,8 +7,8 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <vector>
 #include <bitset>
-#include "ChessBoard.hpp"
-#include "GUIBoard.hpp"
+#include "include/ChessBoard.hpp"
+#include "include/GUIBoard.hpp"
 
 
 
