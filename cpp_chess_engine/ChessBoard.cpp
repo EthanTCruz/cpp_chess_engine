@@ -1,4 +1,5 @@
-#include "include/ChessBoard.hpp"
+#include "ChessBoard.hpp"
+
 
 
 
@@ -15,51 +16,40 @@ int b_bishop_idx = 8;
 int b_rook_idx = 9;
 int b_queen_idx = 10;
 int b_king_idx = 11;
+std::unordered_map<char, int> piece_to_idx = {
+    {'P', w_pawn_idx},
+    {'N', w_knight_idx},
+    {'B', w_bishop_idx},
+    {'R', w_rook_idx},
+    {'Q', w_queen_idx},
+    {'K', w_king_idx},
+    {'p', b_pawn_idx},
+    {'n', b_knight_idx},
+    {'b', b_bishop_idx},
+    {'r', b_rook_idx},
+    {'q', b_queen_idx},
+    {'k', b_king_idx}
+};
+
 
 ChessBoard::ChessBoard(const std::string& str) : fen(str) {
     initialize();
 }
 
+
 const uint64_t* ChessBoard::data() const { return bitboards.data(); }
 uint64_t* ChessBoard::data() { return bitboards.data(); }
 
-uint64_t& ChessBoard::white_pawn() { return bitboards[w_pawn_idx]; }
-const uint64_t& ChessBoard::white_pawn() const { return bitboards[w_pawn_idx]; }
+bool ChessBoard::getTurn() {
+	return whiteToMove;
+}
+void ChessBoard::changeTurn() {
+    whiteToMove = !whiteToMove;
+}
 
-uint64_t& ChessBoard::white_knight() { return bitboards[w_knight_idx]; }
-const uint64_t& ChessBoard::white_knight() const { return bitboards[w_knight_idx]; }
-
-uint64_t& ChessBoard::white_bishop() { return bitboards[w_bishop_idx]; }
-const uint64_t& ChessBoard::white_bishop() const { return bitboards[w_bishop_idx]; }
-
-uint64_t& ChessBoard::white_rook() { return bitboards[w_rook_idx]; }
-const uint64_t& ChessBoard::white_rook() const { return bitboards[w_rook_idx]; }
-
-uint64_t& ChessBoard::white_queen() { return bitboards[w_queen_idx]; }
-const uint64_t& ChessBoard::white_queen() const { return bitboards[w_queen_idx]; }
-
-uint64_t& ChessBoard::white_king() { return bitboards[w_king_idx]; }
-const uint64_t& ChessBoard::white_king() const { return bitboards[w_king_idx]; }
-
-uint64_t& ChessBoard::black_pawn() { return bitboards[b_pawn_idx]; }
-const uint64_t& ChessBoard::black_pawn() const { return bitboards[b_pawn_idx]; }
-
-uint64_t& ChessBoard::black_knight() { return bitboards[b_knight_idx]; }
-const uint64_t& ChessBoard::black_knight() const { return bitboards[b_knight_idx]; }
-
-uint64_t& ChessBoard::black_bishop() { return bitboards[b_bishop_idx]; }
-const uint64_t& ChessBoard::black_bishop() const { return bitboards[b_bishop_idx]; }
-
-uint64_t& ChessBoard::black_rook() { return bitboards[b_rook_idx]; }
-const uint64_t& ChessBoard::black_rook() const { return bitboards[b_rook_idx]; }
-
-uint64_t& ChessBoard::black_queen() { return bitboards[b_queen_idx]; }
-const uint64_t& ChessBoard::black_queen() const { return bitboards[b_queen_idx]; }
-
-uint64_t& ChessBoard::black_king() { return bitboards[b_king_idx]; }
-const uint64_t& ChessBoard::black_king() const { return bitboards[b_king_idx]; }
 
 void ChessBoard::parseFEN() {
+    int piece_idx;
     for (int r = 0; r < 8; ++r) {
         for (int c = 0; c < 8; ++c)
             board[r][c] = '.';
@@ -85,12 +75,20 @@ void ChessBoard::parseFEN() {
         else {
             if (row < 8 && col < 8) {
                 board[row][col] = ch;
+                piece_idx = get_bitindex(row,col);
+
+				bitboards[piece_to_idx[ch]] |= 1ULL << piece_idx;
+
+
             }
             col++;
         }
     }
 }
 
+int ChessBoard::get_bitindex(int row, int col) {
+    return (7 - row) * 8 + col;
+}
 void ChessBoard::initialize() {
     parseFEN();
     std::cout << "Initialization logic executed.\n";
@@ -102,9 +100,46 @@ void ChessBoard::setString(const std::string& newFen) {
 }
 
 void ChessBoard::movePiece(const sf::Vector2i& from, const int& newRow, const int& newCol) {
+
     char piece = board[from.y][from.x];
+
+    int from_idx = get_bitindex(from.y, from.x);
+    int to_idx = get_bitindex(newRow, newCol);
+
+	uint64_t whitePieces = getWhitePieces();
+	uint64_t blackPieces = getBlackPieces();
+    (whitePieces >> from_idx) & 1ULL;
+
+	uint64_t from_bb = 1ULL << from_idx;
+	uint64_t to_bb = 1ULL << to_idx;
+	
+    /*std::cout << "================from bb=================" << "\n" << std::bitset<64>(from_bb) << "\n" << std::bitset<64>(to_bb) << "\n" ;*/
+    from_bb &= (whiteToMove) ? whitePieces : blackPieces;
+    to_bb &= (whiteToMove) ? ~whitePieces : ~blackPieces;
+
     board[from.y][from.x] = '.';
     board[newRow][newCol] = piece;
+
+
+
+    if ((from_bb * to_bb) > 0) {
+
+
+
+        // Clear the bit at the original position
+        bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);
+
+        // Set the bit at the new position
+        bitboards[piece_to_idx[piece]] |= 1ULL << to_idx;
+        std::cout << "preturn chage: " << whiteToMove << "\n";
+        changeTurn();
+        std::cout << "postturn chage: " << whiteToMove << "\n";
+	}
+	else {
+		std::cout << "Invalid move\n";
+        
+	}
+    std::cout << "from & to bb: " << "\n" << std::bitset<64>(from_bb) << "\n"  << std::bitset<64>(to_bb) << "\n" << from_bb <<"\n" << to_bb << "\n" << whiteToMove << "\n" << (!whiteToMove) << "\n" << "=========================" << "\n";
 }
 
 const char (*ChessBoard::getBoard() const)[8] {
@@ -121,4 +156,14 @@ void ChessBoard::printBoard() const {
         }
         std::cout << "\n";
     }
+}
+
+uint64_t ChessBoard::getWhitePieces() const {
+    return bitboards[w_pawn_idx] | bitboards[w_knight_idx] | bitboards[w_bishop_idx] |
+        bitboards[w_rook_idx] | bitboards[w_queen_idx] | bitboards[w_king_idx];
+}
+
+uint64_t ChessBoard::getBlackPieces() const {
+    return bitboards[b_pawn_idx] | bitboards[b_knight_idx] | bitboards[b_bishop_idx] |
+        bitboards[b_rook_idx] | bitboards[b_queen_idx] | bitboards[b_king_idx];
 }

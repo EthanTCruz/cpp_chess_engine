@@ -6,7 +6,7 @@
 #include <string>
 #include <map>
 #include <SFML/Graphics.hpp>
-#include "include/ChessBoard.hpp"
+#include "ChessBoard.hpp"
 
 class GUIBoard {
 private:
