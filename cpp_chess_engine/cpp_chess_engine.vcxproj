@@ -135,6 +135,7 @@
     <ClCompile Include="ChessBoard.cpp" />
     <ClCompile Include="GUIBoard.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Move.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\..\..\SFML-3.0.0\bin\sfml-audio-3.dll" />
@@ -151,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="ChessBoard.hpp" />
     <ClInclude Include="GUIBoard.hpp" />
+    <ClInclude Include="Move.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

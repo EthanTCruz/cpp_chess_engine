@@ -1,5 +1,5 @@
 #include "ChessBoard.hpp"
-
+#include "Move.hpp"
 
 
 
@@ -99,6 +99,90 @@ void ChessBoard::setString(const std::string& newFen) {
     initialize();
 }
 
+int bitScan(uint64_t bb) {
+    unsigned long index;
+    // _BitScanForward64 returns a nonzero value if a set bit was found.
+    if (_BitScanForward64(&index, bb))
+        return static_cast<int>(index);
+    // Handle the case where bb is 0 (if needed)
+    return -1;
+}
+
+
+
+void ChessBoard::init_knight_moves() {
+    for (int sq = 0; sq < 64; sq++) {
+        uint64_t knight = 1ULL << sq;
+        uint64_t moves = 0ULL;
+        // Compute knight moves with proper edge masks:
+        if ((knight >> 17) & ~0x8080808080808080ULL) moves |= (knight >> 17);
+        if ((knight >> 15) & ~0x0101010101010101ULL) moves |= (knight >> 15);
+        if ((knight >> 10) & ~0xC0C0C0C0C0C0C0C0ULL) moves |= (knight >> 10);
+        if ((knight >> 6) & ~0x0303030303030303ULL) moves |= (knight >> 6);
+        if ((knight << 17) & ~0x0101010101010101ULL) moves |= (knight << 17);
+        if ((knight << 15) & ~0x8080808080808080ULL) moves |= (knight << 15);
+        if ((knight << 10) & ~0x0303030303030303ULL) moves |= (knight << 10);
+        if ((knight << 6) & ~0xC0C0C0C0C0C0C0C0ULL) moves |= (knight << 6);
+        KNIGHT_MOVES[sq] = moves;
+    }
+}
+
+
+
+std::vector<Move> ChessBoard::get_knight_moves() {
+
+    std::vector<Move> moves;
+    int knight_idx = (whiteToMove) ? w_knight_idx : b_knight_idx;
+    uint64_t knightPositions = bitboards[knight_idx];
+    // Removed the erroneous local declaration of KNIGHT_MOVES
+    while (knightPositions) {
+        // Isolate the least significant bit (LSB) representing a knight
+        uint64_t lsb = knightPositions & ~knightPositions;
+        int fromSquare = bitScan(lsb);
+        // Use the precomputed knight moves table
+        uint64_t moveMask = KNIGHT_MOVES[fromSquare];
+        // Iterate over all destination squares for this knight
+        while (moveMask) {
+            uint64_t destLSB = moveMask & ~moveMask;
+            int toSquare = bitScan(destLSB);
+            moves.push_back({ fromSquare, toSquare });
+            moveMask &= moveMask - 1;  // Remove the processed bit
+        }
+        knightPositions &= knightPositions - 1;  // Remove the processed knight
+    }
+    return moves;
+}
+
+bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
+
+    
+    uint64_t whitePieces = getWhitePieces();
+    uint64_t blackPieces = getBlackPieces();
+    (whitePieces >> from_idx) & 1ULL;
+
+    uint64_t from_bb = 1ULL << from_idx;
+    uint64_t to_bb = 1ULL << to_idx;
+
+    /*std::cout << "================from bb=================" << "\n" << std::bitset<64>(from_bb) << "\n" << std::bitset<64>(to_bb) << "\n" ;*/
+    from_bb &= (whiteToMove) ? whitePieces : blackPieces;
+    to_bb &= (whiteToMove) ? ~whitePieces : ~blackPieces;
+
+    from_bb &= (whiteToMove) ? whitePieces : blackPieces;
+    to_bb &= (whiteToMove) ? ~whitePieces : ~blackPieces;
+    
+    bool found = false;
+    std::vector<Move> knightMoves = get_knight_moves();
+    for (const Move& move : knightMoves) {
+        if (move.from == from_idx && move.to == to_idx) {
+            found = true;
+			std::cout << "found knight move\n";
+            break;
+        }
+    }
+
+    return ((from_bb != 0) && (to_bb != 0));
+}
+
 void ChessBoard::movePiece(const sf::Vector2i& from, const int& newRow, const int& newCol) {
 
     char piece = board[from.y][from.x];
@@ -106,31 +190,22 @@ void ChessBoard::movePiece(const sf::Vector2i& from, const int& newRow, const in
     int from_idx = get_bitindex(from.y, from.x);
     int to_idx = get_bitindex(newRow, newCol);
 
-	uint64_t whitePieces = getWhitePieces();
-	uint64_t blackPieces = getBlackPieces();
-    (whitePieces >> from_idx) & 1ULL;
-
-	uint64_t from_bb = 1ULL << from_idx;
-	uint64_t to_bb = 1ULL << to_idx;
-	
-    /*std::cout << "================from bb=================" << "\n" << std::bitset<64>(from_bb) << "\n" << std::bitset<64>(to_bb) << "\n" ;*/
-    from_bb &= (whiteToMove) ? whitePieces : blackPieces;
-    to_bb &= (whiteToMove) ? ~whitePieces : ~blackPieces;
-
-    board[from.y][from.x] = '.';
-    board[newRow][newCol] = piece;
 
 
 
-    if ((from_bb * to_bb) > 0) {
 
 
+    if (validateMove(from_idx,to_idx)) {
+
+
+        board[from.y][from.x] = '.';
+        board[newRow][newCol] = piece;
 
         // Clear the bit at the original position
         bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);
-
         // Set the bit at the new position
         bitboards[piece_to_idx[piece]] |= 1ULL << to_idx;
+
         std::cout << "preturn chage: " << whiteToMove << "\n";
         changeTurn();
         std::cout << "postturn chage: " << whiteToMove << "\n";
@@ -139,7 +214,7 @@ void ChessBoard::movePiece(const sf::Vector2i& from, const int& newRow, const in
 		std::cout << "Invalid move\n";
         
 	}
-    std::cout << "from & to bb: " << "\n" << std::bitset<64>(from_bb) << "\n"  << std::bitset<64>(to_bb) << "\n" << from_bb <<"\n" << to_bb << "\n" << whiteToMove << "\n" << (!whiteToMove) << "\n" << "=========================" << "\n";
+   
 }
 
 const char (*ChessBoard::getBoard() const)[8] {
