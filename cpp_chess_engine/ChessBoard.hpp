@@ -35,6 +35,8 @@ private:
     std::string fen;
     std::array<uint64_t, 12> bitboards = {};
     uint64_t KNIGHT_MOVES[64];
+	uint64_t& friendly_pieces;
+	uint64_t& enemy_pieces;
 
 
     bool whiteToMove = true;
@@ -51,7 +53,7 @@ public:
     void initialize();
     bool getTurn();
 	void changeTurn();
-    std::vector<Move> get_knight_moves();
+
     bool validateMove(const int& from_idx, const int& to_idx);
     void setString(const std::string& newFen);
     void movePiece(const sf::Vector2i& from, const int& newRow, const int& newCol);

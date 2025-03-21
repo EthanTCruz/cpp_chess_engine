@@ -45,6 +45,8 @@ bool ChessBoard::getTurn() {
 }
 void ChessBoard::changeTurn() {
     whiteToMove = !whiteToMove;
+    friendly_pieces = (whiteToMove) ? getWhitePieces() : getBlackPieces();
+    enemy_pieces = (whiteToMove) ? getWhitePieces() : getBlackPieces();
 }
 
 
@@ -91,6 +93,8 @@ int ChessBoard::get_bitindex(int row, int col) {
 }
 void ChessBoard::initialize() {
     parseFEN();
+	friendly_pieces = (whiteToMove) ? getWhitePieces() : getBlackPieces();
+    enemy_pieces = (whiteToMove) ? getWhitePieces() : getBlackPieces();
 	init_knight_moves();
     std::cout << "Initialization logic executed.\n";
 }
@@ -102,7 +106,7 @@ void ChessBoard::setString(const std::string& newFen) {
 
 int bitScan(uint64_t bb) {
     unsigned long index;
-    // _BitScanForward64 returns a nonzero value if a set bit was found.
+
     if (_BitScanForward64(&index, bb))
         return static_cast<int>(index);
     // Handle the case where bb is 0 (if needed)
@@ -144,31 +148,7 @@ void ChessBoard::init_knight_moves() {
 }
 
 
-std::vector<Move> ChessBoard::get_knight_moves() {
-    std::vector<Move> moves;
-    int knight_idx = (whiteToMove) ? w_knight_idx : b_knight_idx;
-    uint64_t knightPositions = bitboards[knight_idx];
 
-    while (knightPositions) {
-        uint64_t lsb = knightPositions & static_cast<int64_t>(-static_cast<int64_t>(knightPositions)); // Fix LSB extraction
-        int fromSquare = bitScan(lsb);
-
-        uint64_t moveMask = KNIGHT_MOVES[fromSquare];
-
-        while (moveMask) {
-            uint64_t destLSB = moveMask & static_cast<int64_t>(-static_cast<int64_t>(moveMask)); // Fix LSB extraction
-            int toSquare = bitScan(destLSB);
-
-            moves.push_back({ fromSquare, toSquare });
-
-            moveMask &= moveMask - 1; // Remove the processed bit
-        }
-
-        knightPositions &= knightPositions - 1; // Remove the processed knight
-    }
-
-    return moves;
-}
 
 bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
 
@@ -180,28 +160,37 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
     uint64_t from_bb = 1ULL << from_idx;
     uint64_t to_bb = 1ULL << to_idx;
 
-    
+	// ensures from matches turn and to is not a friendly piece
     from_bb &= (whiteToMove) ? whitePieces : blackPieces;
     to_bb &= (whiteToMove) ? ~whitePieces : ~blackPieces;
 
-    from_bb &= (whiteToMove) ? whitePieces : blackPieces;
-    to_bb &= (whiteToMove) ? ~whitePieces : ~blackPieces;
+
     
-    bool found = false;
-    std::vector<Move> knightMoves = get_knight_moves();
-    for (const Move& move : knightMoves) {
-        std::cout << "checking knight move from: " << move.from << " move from idx: " << from_idx << " Move to: " << move.to  << " move to idx: " << to_idx << "\n";
+    uint64_t knights = (whiteToMove) ? bitboards[w_knight_idx] : bitboards[b_knight_idx];
+
+    while (knights) {
+        // get bit index of latest knight
+        int latest_knight = bitScan(knights);
+        // if no bit found, exit loop
+        if (latest_knight == -1) break;
+
+		// if the latest knight is not the one we are looking for remove it and continue to the next one
+		if (latest_knight != from_idx) {
+            knights &= knights - 1;
+            continue;
+		}
+        // if the projected moves overlaps with the to_bb mark it in the move bitboard
+		uint64_t move = KNIGHT_MOVES[latest_knight] & to_bb;
+        // also get rid of moves that overlap with friendly pieces
+		move &= (whiteToMove) ? ~whitePieces : ~blackPieces;
+
+		if (move != 0) {
+			return true;
+        }
+        else {
+            return false;
+        }
         
-        if (move.from == from_idx) {
-            if (move.to == to_idx) {
-            found = true;
-            std::cout << "found knight move\n";
-            break;
-        }
-            else {
-                return false;
-            }
-        }
     }
 
     return ((from_bb != 0) && (to_bb != 0));
