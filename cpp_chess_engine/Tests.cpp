@@ -1,12 +1,16 @@
+// tests.cpp
+
 #include <iostream>
 #include <string>
+#include "ChessBoard.hpp"
+// Include other headers if needed (e.g., "GUIBoard.hpp", etc.)
 
-// ANSI escape codes for colors.
+// ANSI escape codes for colored output.
 #define RESET "\033[0m"
 #define RED "\033[1;31m"
 #define GREEN "\033[1;32m"
 
-// Unicode characters for check and cross marks.
+// Unicode symbols for check and cross marks.
 #define CHECK_MARK "\u2714"
 #define CROSS_MARK "\u2718"
 
@@ -20,22 +24,17 @@ void checkTest(bool condition, const std::string& testName) {
     }
 }
 
-#include "ChessBoard.hpp"
-#include "GUIBoard.hpp"
-// Include any other necessary headers, e.g. "GetBitIndex.cpp"
-
-int main(int argc, char** argv) {
-    // Initialize the FEN string for the standard starting position.
+int main() {
+    // Use a specific FEN for testing.
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     ChessBoard cb(fen);
 
-    // Optional: print board state.
+    // Optionally, print the board for debugging.
     cb.printBoard();
-	std::cout << cb.getString() << std::endl;
 
     // Test valid knight move: b1 (row=7, col=1) to c3 (row=5, col=2).
     int knight_from = cb.get_bitindex(7, 1); // b1
-    int knight_to = cb.get_bitindex(5, 2);   // c3
+    int knight_to = cb.get_bitindex(5, 2); // c3
     bool validKnightMove = cb.validateMove(knight_from, knight_to);
     checkTest(validKnightMove, "Knight move from b1 to c3");
 
@@ -50,11 +49,7 @@ int main(int argc, char** argv) {
     bool invalidKnightMove = cb.validateMove(knight_from, knight_to);
     checkTest(!invalidKnightMove, "Invalid knight move from b1 to b3");
 
-    std::cout << "All tests executed." << std::endl;
-
-    // Proceed with GUI initialization if needed.
-    //GUIBoard gb(cb);
-    //gb.createSFMLWindow();
+    //std::cout << "All tests executed." << std::endl;
 
     return 0;
 }

@@ -6,16 +6,20 @@
 #include <array>
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include <cctype>
+#include <bitset>
 
 // The ChessBoard class manages the board state and delegates move validation.
 class ChessBoard {
 public:
     ChessBoard(const std::string& fen);
+    std::string getString() const;
     void setString(const std::string& newFen);
     void printBoard() const;
     const char (*getBoard() const)[8];
     // Validate a move from 'from_idx' to 'to_idx'
-    bool validateMove(const int& from_idx, const int& to_idx);
+    bool validateMove(const int& from_idx, const int& to_idx) ;
     // Move a piece on the board
     void movePiece(const sf::Vector2i& from, const int& newRow, const int& newCol);
 

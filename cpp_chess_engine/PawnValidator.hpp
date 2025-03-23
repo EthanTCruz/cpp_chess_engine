@@ -12,7 +12,7 @@ public:
     bool validate(int from_idx, int to_idx, const ChessBoard& board) const override;
 
 private:
-    std::array<uint64_t, 64> knightMoves;
+
     void initPawnMoves();
 };
 

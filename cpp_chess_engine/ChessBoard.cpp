@@ -1,10 +1,6 @@
 #include "ChessBoard.hpp"
 #include "KnightValidator.hpp"
 #include "PawnValidator.hpp"
-#include <iostream>
-#include <cctype>
-#include <bitset>
-
 
 // Bitboard index constants.
 namespace {
@@ -157,6 +153,7 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
     int col = from_idx % 8;
     char piece = board[row][col];
 
+
     // Delegate knight moves to the KnightValidator.
     if (piece == 'N' || piece == 'n') {
         KnightValidator knightValidator;
@@ -174,6 +171,60 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
         return false;
     }
     return true;
+}
+
+int getBitindex(int row, int col) {
+    // Map board coordinates to a bitboard index.
+    return (7 - row) * 8 + col;
+}
+
+std::string ChessBoard::getString() const{
+    std::string fenString;
+    // Loop over board rows (0 is rank 8, 7 is rank 1)
+    for (int row = 0; row < 8; ++row) {
+        int emptyCount = 0;
+        for (int col = 0; col < 8; ++col) {
+
+            int bitIndex = getBitindex(row, col);
+            char piece = '.';
+            // Check each piece type bitboard.
+            // The order of indices corresponds to:
+            // 0:'P', 1:'N', 2:'B', 3:'R', 4:'Q', 5:'K',
+            // 6:'p', 7:'n', 8:'b', 9:'r', 10:'q', 11:'k'
+            static const char pieceChar[12] = { 'P', 'N', 'B', 'R', 'Q', 'K',
+                                               'p', 'n', 'b', 'r', 'q', 'k' };
+            bool foundPiece = false;
+            for (int i = 0; i < 12; ++i) {
+                if (bitboards[i] & (1ULL << bitIndex)) {
+                    piece = pieceChar[i];
+                    foundPiece = true;
+                    break;
+                }
+            }
+            if (!foundPiece || piece == '.') {
+                ++emptyCount;
+            }
+            else {
+                if (emptyCount > 0) {
+                    fenString += std::to_string(emptyCount);
+                    emptyCount = 0;
+                }
+                fenString.push_back(piece);
+            }
+        }
+        if (emptyCount > 0) {
+            fenString += std::to_string(emptyCount);
+        }
+        if (row != 7)
+            fenString.push_back('/');
+    }
+    // Append turn information
+    fenString.push_back(' ');
+    fenString.push_back(whiteToMove ? 'w' : 'b');
+
+    // Note: You could extend this function to include castling rights, en passant, halfmove clock,
+    // and fullmove number if needed.
+    return fenString;
 }
 
 void ChessBoard::movePiece(const sf::Vector2i& from, const int& newRow, const int& newCol) {
