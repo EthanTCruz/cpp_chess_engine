@@ -53,8 +53,8 @@ int main(int argc, char** argv) {
     std::cout << "All tests executed." << std::endl;
 
     // Proceed with GUI initialization if needed.
-    //GUIBoard gb(cb);
-    //gb.createSFMLWindow();
+    GUIBoard gb(cb);
+    gb.createSFMLWindow();
 
     return 0;
 }
