@@ -93,7 +93,15 @@ int main(int argc, char** argv) {
     cb.printBoard();
 	std::cout << cb.getString() << std::endl;
 
+    std::string uciMove = "e2e4";
 
+    if (cb.movePieceUCI(uciMove)) {
+        std::cout << "Move executed. Board state:\n";
+        cb.printBoard();
+    }
+    else {
+        std::cout << "Invalid move.\n";
+    }
 
     // Proceed with GUI initialization if needed.
     GUIBoard gb(cb);

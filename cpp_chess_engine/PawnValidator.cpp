@@ -35,7 +35,7 @@ bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) 
     uint64_t a_file_p_bb = active_p_bb & ~A_FILE;
     uint64_t h_file_p_bb = active_p_bb & ~H_FILE;
     uint64_t enemy_pieces = board.getEnemyPieces();
-    uint64_t attack_p_bb = whiteToMove ? h_file_p_bb << 9 | a_file_p_bb << 7 : active_p_bb >> 9 | active_p_bb >> 7;
+    uint64_t attack_p_bb = whiteToMove ? h_file_p_bb << 9 | a_file_p_bb << 7 : a_file_p_bb >> 9 | h_file_p_bb >> 7;
 
     std::cout <<"attack vs actual: \n" << std::bitset<64>(attack_p_bb) << "\n";
     std::cout << "" << std::bitset<64>(target_bb) << "\n";

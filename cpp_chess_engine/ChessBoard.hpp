@@ -40,6 +40,7 @@ public:
     uint64_t getEnemyPieces() const;
     uint64_t getAllPieces() const;
 
+    bool movePieceUCI(const std::string& move);
 
     // Public helper to convert board coordinates to a bit index.
     int get_bitindex(int row, int col) ;
