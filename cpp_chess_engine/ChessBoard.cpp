@@ -48,6 +48,13 @@ void ChessBoard::initialize() {
     bitboards.fill(0ULL);
 
     parseFEN();
+
+}
+
+void ChessBoard::setString(const std::string& newFen) {
+    fen = newFen;
+    initialize();
+
 }
 
 int ChessBoard::get_bitindex(int row, int col)  {
@@ -178,21 +185,18 @@ int getBitindex(int row, int col) {
     return (7 - row) * 8 + col;
 }
 
-std::string ChessBoard::getString() const{
+std::string ChessBoard::getString() const {
     std::string fenString;
-    // Loop over board rows (0 is rank 8, 7 is rank 1)
+    // Build the piece placement portion.
     for (int row = 0; row < 8; ++row) {
         int emptyCount = 0;
         for (int col = 0; col < 8; ++col) {
-
             int bitIndex = getBitindex(row, col);
             char piece = '.';
-            // Check each piece type bitboard.
-            // The order of indices corresponds to:
-            // 0:'P', 1:'N', 2:'B', 3:'R', 4:'Q', 5:'K',
+            // Order of indices: 0:'P', 1:'N', 2:'B', 3:'R', 4:'Q', 5:'K',
             // 6:'p', 7:'n', 8:'b', 9:'r', 10:'q', 11:'k'
             static const char pieceChar[12] = { 'P', 'N', 'B', 'R', 'Q', 'K',
-                                               'p', 'n', 'b', 'r', 'q', 'k' };
+                                                'p', 'n', 'b', 'r', 'q', 'k' };
             bool foundPiece = false;
             for (int i = 0; i < 12; ++i) {
                 if (bitboards[i] & (1ULL << bitIndex)) {
@@ -218,13 +222,71 @@ std::string ChessBoard::getString() const{
         if (row != 7)
             fenString.push_back('/');
     }
-    // Append turn information
+
+    // Append active color.
     fenString.push_back(' ');
     fenString.push_back(whiteToMove ? 'w' : 'b');
 
-    // Note: You could extend this function to include castling rights, en passant, halfmove clock,
-    // and fullmove number if needed.
+    // Append castling rights.
+    fenString.push_back(' ');
+    // If castlingRights is empty, use '-' as per FEN convention.
+    if (castlingRights.empty())
+        fenString.push_back('-');
+    else
+        fenString += castlingRights;
+
+    // Append en passant target square.
+    // (Not implemented here so we use '-' as a placeholder.)
+    fenString.push_back(' ');
+    fenString.push_back('-');
+
+    // Append halfmove clock.
+    fenString.push_back(' ');
+    fenString += std::to_string(halfmoveClock);
+
+    // Append fullmove number.
+    fenString.push_back(' ');
+    fenString += std::to_string(fullmoveNumber);
+
     return fenString;
+}
+
+
+bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol) {
+    int from_idx = get_bitindex(fromRow, fromCol);
+    int to_idx = get_bitindex(newRow, newCol);
+    std::string original_fen = getString();
+    if (validateMove(from_idx, to_idx)) {
+        char piece = board[fromRow][fromCol];
+        char occupying_piece = board[newRow][newCol];
+        board[fromRow][fromCol] = '.';
+        board[newRow][newCol] = piece;
+
+        // Update bitboards: clear the old position and set the new position.
+        bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);
+        bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);
+
+        // Change turn.
+        whiteToMove = !whiteToMove;
+        
+
+        if (piece == 'p' || piece == 'P' || occupying_piece != '.') halfmoveClock += 1;
+        else halfmoveClock = 0;
+        
+        if (whiteToMove) fullmoveNumber += 1;
+        std::string fen = getString();
+        std::cout << "original fen: " << original_fen << "\n";
+        std::cout << "fromRow = " << fromRow << ";" << "\n";
+        std::cout << "fromCol = " << fromCol << ";" << "\n";
+        std::cout << "newRow = " << newRow << ";" << "\n";
+        std::cout << "newCol = " << newCol << ";" << "\n";
+        std::cout << "fen: " << fen << "\n";
+        return true;
+    }
+    else {
+        std::cout << "Invalid move\n";
+        return false;
+    }
 }
 
 void ChessBoard::movePiece(const sf::Vector2i& from, const int& newRow, const int& newCol) {

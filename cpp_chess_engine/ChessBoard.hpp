@@ -22,6 +22,7 @@ public:
     bool validateMove(const int& from_idx, const int& to_idx) ;
     // Move a piece on the board
     void movePiece(const sf::Vector2i& from, const int& newRow, const int& newCol);
+    bool movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol);
 
     // Bitboard getters for friendly pieces.
     uint64_t getWhitePieces() const;
@@ -46,6 +47,9 @@ public:
 private:
     std::string fen;
     bool whiteToMove = true;
+	int halfmoveClock = 0;
+	int fullmoveNumber = 1;
+    std::string castlingRights;
     char board[8][8];
     std::array<uint64_t, 12> bitboards = { 0ULL };
     std::unordered_map<char, int> piece_to_idx;
@@ -56,3 +60,5 @@ private:
 };
 
 #endif // CHESSBOARD_HPP
+
+

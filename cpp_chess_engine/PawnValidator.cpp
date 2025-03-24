@@ -22,13 +22,24 @@ bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) 
 	bool whiteToMove = board.getTurn();
     uint64_t Pawns = whiteToMove ? board.getWhitePawnBitboard() : board.getBlackPawnBitboard();
 	int rankIncrement = whiteToMove ? 8 : -8;
+    
 	uint64_t rankMask = whiteToMove ?  0x000000000000FF00 : 0x00FF000000000000;
     uint64_t backRankMask = whiteToMove ? 0xFF00000000000000 : 0x00000000000000FF;
+    const uint64_t A_FILE = 0x0101010101010101ULL;
+    const uint64_t H_FILE = 0x8080808080808080ULL;
 
     uint64_t allPieces = board.getAllPieces();
     uint64_t target_bb = 1ULL << to_idx;
     uint64_t from_bb = 1ULL << from_idx;
     uint64_t active_p_bb = Pawns & from_bb;
+    uint64_t a_file_p_bb = active_p_bb & ~A_FILE;
+    uint64_t h_file_p_bb = active_p_bb & ~H_FILE;
+    uint64_t enemy_pieces = board.getEnemyPieces();
+    uint64_t attack_p_bb = whiteToMove ? h_file_p_bb << 9 | a_file_p_bb << 7 : active_p_bb >> 9 | active_p_bb >> 7;
+
+    std::cout <<"attack vs actual: \n" << std::bitset<64>(attack_p_bb) << "\n";
+    std::cout << "" << std::bitset<64>(target_bb) << "\n";
+    if (target_bb & attack_p_bb & enemy_pieces) return true;
 
     // Check that there is a Pawn at the starting square.
     if (!(Pawns & (1ULL << from_idx))) {
@@ -45,20 +56,23 @@ bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) 
 
     if (whiteToMove) {
 
-        active_p_bb = (active_p_bb << rankIncrement) & ~allPieces;
-
+        active_p_bb = (active_p_bb << 8) & ~allPieces;
+		if (active_p_bb == 0) return false;
         if (active_p_bb & target_bb) return true;
 
-        active_p_bb = (active_p_bb << rankIncrement) & ~allPieces;
+        active_p_bb = (active_p_bb << 8) & ~allPieces;
 
         if (active_p_bb & target_bb) return true;
     }
     else {
-        active_p_bb = (rankIncrement >> active_p_bb) & ~allPieces;
-
+        //std::cout << "1st active bb: \n" << std::bitset<64>(active_p_bb) << "\n";
+        active_p_bb = (active_p_bb >> 8) & ~allPieces;
+        //std::cout << std::bitset<64>(active_p_bb) << "\n";
+        if (active_p_bb == 0) return false;
         if (active_p_bb & target_bb) return true;
 
-        active_p_bb = (rankIncrement >> active_p_bb) & ~allPieces;
+        active_p_bb = (active_p_bb >> 8) & ~allPieces;
+        //std::cout <<  std::bitset<64>(active_p_bb) << "\n";
         if (active_p_bb & target_bb) return true;
     }
 

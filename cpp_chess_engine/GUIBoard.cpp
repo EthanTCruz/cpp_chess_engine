@@ -44,7 +44,8 @@ void GUIBoard::createSFMLWindow() {
 
     std::optional<sf::Vector2i> selectedSquare; // currently selected square (if any)
 
-
+    int fromRow;
+    int fromCol;
     while (window.isOpen()) {
         // Event handling (SFML 3.0 style)
         while (const std::optional<sf::Event> ev = window.pollEvent()) {
@@ -68,7 +69,9 @@ void GUIBoard::createSFMLWindow() {
                         else {
                             // Move the previously selected piece to the new square
                             sf::Vector2i from = selectedSquare.value();
-                            cb.movePiece(from, row, col);
+                            fromRow = from.y;
+                            fromCol = from.x;
+                            cb.movePiece(fromRow, fromCol, row, col);
 
                             selectedSquare.reset(); // deselect after moving
                             board = cb.getBoard();
