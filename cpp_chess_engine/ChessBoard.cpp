@@ -251,6 +251,22 @@ std::string ChessBoard::getString() const {
     return fenString;
 }
 
+bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol, const char& promote) {
+	if (movePiece(fromRow, fromCol, newRow, newCol)) {
+		// Handle promotion if necessary.
+
+        int to_idx = get_bitindex(newRow, newCol);
+
+		char promote_value = whiteToMove ? std::toupper(promote) : std::tolower(promote);
+		int pawn_idx = whiteToMove ? w_pawn_idx : b_pawn_idx;
+
+        bitboards[pawn_idx] &= ~(1ULL << to_idx);
+        bitboards[piece_to_idx[promote_value]] |= (1ULL << to_idx);
+
+		return true;
+	}
+    return false;
+}
 
 bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol) {
     int from_idx = get_bitindex(fromRow, fromCol);
@@ -274,13 +290,13 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
         else halfmoveClock = 0;
         
         if (whiteToMove) fullmoveNumber += 1;
-        std::string fen = getString();
-        std::cout << "original fen: " << original_fen << "\n";
-        std::cout << "fromRow = " << fromRow << ";" << "\n";
-        std::cout << "fromCol = " << fromCol << ";" << "\n";
-        std::cout << "newRow = " << newRow << ";" << "\n";
-        std::cout << "newCol = " << newCol << ";" << "\n";
-        std::cout << "fen: " << fen << "\n";
+        //std::string fen = getString();
+        //std::cout << "original fen: " << original_fen << "\n";
+        //std::cout << "fromRow = " << fromRow << ";" << "\n";
+        //std::cout << "fromCol = " << fromCol << ";" << "\n";
+        //std::cout << "newRow = " << newRow << ";" << "\n";
+        //std::cout << "newCol = " << newCol << ";" << "\n";
+        //std::cout << "fen: " << fen << "\n";
         return true;
     }
     else {
@@ -300,9 +316,16 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     // Files: 'a' -> 0, 'b' -> 1, ... 'h' -> 7.
     // Ranks: '1'-'8' with row = 8 - (rank value) because row 0 is rank 8.
     int fromFile = move[0] - 'a';
-    int fromRank = move[1] - '0';
+    int fromRank = move[1] - '0' - 1;
     int toFile = move[2] - 'a';
-    int toRank = move[3] - '0';
+    int toRank = move[3] - '0' - 1;
+    char promotion = (move.length() == 5 ? move[4] : '0');
+	std::cout << "fromFile: " << fromFile << "\n";
+	std::cout << "fromRank: " << fromRank << "\n";
+	std::cout << "toFile: " << toFile << "\n";
+	std::cout << "toRank: " << toRank << "\n";
+	std::cout << "promotion: " << promotion << "\n";
+    
 
     // Check for out-of-bound values.
     if (fromFile < 0 || fromFile > 7 || toFile < 0 || toFile > 7 ||
@@ -316,36 +339,12 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     int toRow = 8 - toRank;
     int toCol = toFile;
 
-    // If the move is a promotion (e.g., "e7e8q"), handle it accordingly.
-    if (move.length() == 5) {
-        char promotion = move[4];
-        // For now, just note that promotion handling is not implemented.
-        std::cerr << "Promotion moves not implemented yet: " << move << std::endl;
-        return false;
-    }
 
     // Call the existing movePiece function.
+	if (promotion != '0') return movePiece(fromRow, fromCol, toRow, toCol, promotion);
+	else
     return movePiece(fromRow, fromCol, toRow, toCol);
 }
 
 
-void ChessBoard::movePiece(const sf::Vector2i& from, const int& newRow, const int& newCol) {
-    int from_idx = get_bitindex(from.y, from.x);
-    int to_idx = get_bitindex(newRow, newCol);
 
-    if (validateMove(from_idx, to_idx)) {
-        char piece = board[from.y][from.x];
-        board[from.y][from.x] = '.';
-        board[newRow][newCol] = piece;
-
-        // Update bitboards: clear the old position and set the new position.
-        bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);
-        bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);
-
-        // Change turn.
-        whiteToMove = !whiteToMove;
-    }
-    else {
-        std::cout << "Invalid move\n";
-    }
-}

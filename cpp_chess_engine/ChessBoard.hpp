@@ -5,7 +5,6 @@
 #include <cstdint>
 #include <array>
 #include <unordered_map>
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <cctype>
 #include <bitset>
@@ -21,9 +20,8 @@ public:
     // Validate a move from 'from_idx' to 'to_idx'
     bool validateMove(const int& from_idx, const int& to_idx) ;
     // Move a piece on the board
-    void movePiece(const sf::Vector2i& from, const int& newRow, const int& newCol);
     bool movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol);
-
+    bool movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol,const char& promote);
     // Bitboard getters for friendly pieces.
     uint64_t getWhitePieces() const;
     uint64_t getBlackPieces() const;

@@ -77,6 +77,9 @@ void tests() {
     checkTest(validPawnMove, "Pawn move from e2 to e3");
 
 
+    fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w - -0 5";
+	cb.setString(fen);
+    cb.movePieceUCI("e7f8q");
 
     std::cout << "All tests executed." << std::endl;
 }
@@ -86,14 +89,21 @@ int main(int argc, char** argv) {
     tests();
     
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w - -0 5";
     ChessBoard cb(fen);
 
 
     // Optional: print board state.
-    cb.printBoard();
+    //cb.printBoard();
 	std::cout << cb.getString() << std::endl;
-
+    
+    //b1(row = 7, col = 1) to c3(row = 5, col = 2).
+	//fromRow = 7;
+	//fromCol = 1;    
+	//newRow = 5;
+	//newCol = 2;
     std::string uciMove = "e2e4";
+    uciMove = "e7f8q";
 
     if (cb.movePieceUCI(uciMove)) {
         std::cout << "Move executed. Board state:\n";
@@ -102,6 +112,7 @@ int main(int argc, char** argv) {
     else {
         std::cout << "Invalid move.\n";
     }
+    
 
     // Proceed with GUI initialization if needed.
     GUIBoard gb(cb);
