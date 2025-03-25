@@ -316,9 +316,9 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     // Files: 'a' -> 0, 'b' -> 1, ... 'h' -> 7.
     // Ranks: '1'-'8' with row = 8 - (rank value) because row 0 is rank 8.
     int fromFile = move[0] - 'a';
-    int fromRank = move[1] - '0' - 1;
+    int fromRank = '8' - move[1];
     int toFile = move[2] - 'a';
-    int toRank = move[3] - '0' - 1;
+    int toRank = '8' - move[3];
     char promotion = (move.length() == 5 ? move[4] : '0');
 	std::cout << "fromFile: " << fromFile << "\n";
 	std::cout << "fromRank: " << fromRank << "\n";
@@ -327,12 +327,12 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
 	std::cout << "promotion: " << promotion << "\n";
     
 
-    // Check for out-of-bound values.
-    if (fromFile < 0 || fromFile > 7 || toFile < 0 || toFile > 7 ||
-        fromRank < 1 || fromRank > 8 || toRank < 1 || toRank > 8) {
-        std::cerr << "UCI move out of board bounds: " << move << std::endl;
-        return false;
-    }
+    //// Check for out-of-bound values.
+    //if (fromFile < 0 || fromFile > 7 || toFile < 0 || toFile > 7 ||
+    //    fromRank < 1 || fromRank > 8 || toRank < 1 || toRank > 8) {
+    //    std::cerr << "UCI move out of board bounds: " << move << std::endl;
+    //    return false;
+    //}
 
     int fromRow = 8 - fromRank; // Convert rank to row index.
     int fromCol = fromFile;
