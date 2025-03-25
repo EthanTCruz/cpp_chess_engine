@@ -61,6 +61,10 @@ int ChessBoard::get_bitindex(int row, int col)  {
     // Map board coordinates to a bitboard index.
     return (7 - row) * 8 + col;
 }
+int get_bitindex(int row, int col) {
+    // Map board coordinates to a bitboard index.
+    return (7 - row) * 8 + col;
+}
 
 void ChessBoard::parseFEN() {
     int row = 0, col = 0;
@@ -257,12 +261,12 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 
         int to_idx = get_bitindex(newRow, newCol);
 
-		char promote_value = whiteToMove ? std::toupper(promote) : std::tolower(promote);
+		char promote_value = !whiteToMove ? std::toupper(promote) : std::tolower(promote);
 		int pawn_idx = whiteToMove ? w_pawn_idx : b_pawn_idx;
 
         bitboards[pawn_idx] &= ~(1ULL << to_idx);
         bitboards[piece_to_idx[promote_value]] |= (1ULL << to_idx);
-
+        board[newRow][newCol] = promote_value;
 		return true;
 	}
     return false;
@@ -271,6 +275,13 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol) {
     int from_idx = get_bitindex(fromRow, fromCol);
     int to_idx = get_bitindex(newRow, newCol);
+    //std::cout << "fromCol = " << fromCol << ";" << "\n";
+    //std::cout << "fromRow = " << fromRow << ";" << "\n";
+    //std::cout << "newCol = " << newCol << ";" << "\n";
+    //std::cout << "newRow = " << newRow << ";" << "\n";
+    //std::cout << "from_idx = " << from_idx << ";" << "\n";
+    //std::cout << "to_idx = " << to_idx << ";" << "\n";
+
     std::string original_fen = getString();
     if (validateMove(from_idx, to_idx)) {
         char piece = board[fromRow][fromCol];
@@ -304,6 +315,28 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
         return false;
     }
 }
+int const RankToRow(const char& rank)  {
+	return  ('8' - rank);
+}
+
+int const FileToCol(const char& file) {
+	return (file - 'a');
+}
+
+//std::pair<int, int> ChessBoard::BoardCoordToCellIndex(const std::string& coord) {
+//    if (coord.length() < 4) {
+//        std::cerr << "Invalid UCI move format: " << move << std::endl;
+//        return false;
+//    }
+//    int fromCol = FileToCol(coord[0]);
+//    int fromRow = RankToRow(coord[1]);
+//    int toCol = FileToCol(coord[2]);
+//    int toRow = RankToRow(coord[3]);
+//
+//	int fromIndex = getBitindex(fromRow, fromCol);
+//    int newIndex = getBitindex(toRow, toCol);
+//	return { fromIndex, newIndex };
+//}
 
 bool ChessBoard::movePieceUCI(const std::string& move) {
     // A valid UCI move must be at least 4 characters (e.g., "e2e4")
@@ -315,16 +348,19 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     // Parse source and destination from the UCI string.
     // Files: 'a' -> 0, 'b' -> 1, ... 'h' -> 7.
     // Ranks: '1'-'8' with row = 8 - (rank value) because row 0 is rank 8.
-    int fromCol = 8 - (move[3] - '0');
+    int fromCol = (move[0] - 'a');
     int fromRow = '8' - move[1];
-    int toCol = 'h' - move[2];
-    int toRow = 8 - (move[3] - '0');
+    int toCol =  move[2] - 'a';
+    int toRow = '8' - (move[3]);
+
+
     char promotion = (move.length() == 5 ? move[4] : '0');
-	std::cout << "fromCol: " << fromCol << "\n";
-	std::cout << "fromRow: " << fromRow << "\n";
-	std::cout << "toCol: " << toCol << "\n";
-	std::cout << "toRow: " << toRow << "\n";
-	std::cout << "promotion: " << promotion << "\n";
+	//std::cout << "fromCol: " << fromCol << "\n";
+	//std::cout << "fromRow: " << fromRow << "\n";
+	//std::cout << "toCol: " << toCol << "\n";
+	//std::cout << "toRow: " << toRow << "\n";
+	//std::cout << "promotion: " << promotion << "\n";
+ //   std::cout << "============================" << "\n";
     
 
     //// Check for out-of-bound values.

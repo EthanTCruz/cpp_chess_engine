@@ -86,7 +86,7 @@ void tests() {
 
 int main(int argc, char** argv) {
     // Initialize the FEN string for the standard starting position.
-    tests();
+    //tests();
     
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w - -0 5";
@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 
     // Optional: print board state.
     //cb.printBoard();
-	std::cout << cb.getString() << std::endl;
+	//std::cout << cb.getString() << std::endl;
     
     //b1(row = 7, col = 1) to c3(row = 5, col = 2).
 	//fromRow = 7;
@@ -103,8 +103,8 @@ int main(int argc, char** argv) {
 	//newRow = 5;
 	//newCol = 2;
     std::string uciMove = "e2e4";
-    uciMove = "e7f8q";
-
+    uciMove = "d7e8q";
+	std::cout << "Executing move===========================: " << uciMove << std::endl;
     if (cb.movePieceUCI(uciMove)) {
         std::cout << "Move executed. Board state:\n";
         cb.printBoard();
