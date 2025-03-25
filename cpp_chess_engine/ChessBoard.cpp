@@ -315,15 +315,15 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     // Parse source and destination from the UCI string.
     // Files: 'a' -> 0, 'b' -> 1, ... 'h' -> 7.
     // Ranks: '1'-'8' with row = 8 - (rank value) because row 0 is rank 8.
-    int fromFile = move[0] - 'a';
-    int fromRank = '8' - move[1];
-    int toFile = move[2] - 'a';
-    int toRank = '8' - move[3];
+    int fromCol = 8 - (move[3] - '0');
+    int fromRow = '8' - move[1];
+    int toCol = 'h' - move[2];
+    int toRow = 8 - (move[3] - '0');
     char promotion = (move.length() == 5 ? move[4] : '0');
-	std::cout << "fromFile: " << fromFile << "\n";
-	std::cout << "fromRank: " << fromRank << "\n";
-	std::cout << "toFile: " << toFile << "\n";
-	std::cout << "toRank: " << toRank << "\n";
+	std::cout << "fromCol: " << fromCol << "\n";
+	std::cout << "fromRow: " << fromRow << "\n";
+	std::cout << "toCol: " << toCol << "\n";
+	std::cout << "toRow: " << toRow << "\n";
 	std::cout << "promotion: " << promotion << "\n";
     
 
@@ -334,10 +334,10 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     //    return false;
     //}
 
-    int fromRow = 8 - fromRank; // Convert rank to row index.
-    int fromCol = fromFile;
-    int toRow = 8 - toRank;
-    int toCol = toFile;
+    //int fromRow = 8 - fromRank; // Convert rank to row index.
+    //int fromCol = fromFile;
+    //int toRow = 8 - toRank;
+    //int toCol = toFile;
 
 
     // Call the existing movePiece function.
