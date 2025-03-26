@@ -37,7 +37,7 @@ public:
     uint64_t getFriendlyPieces() const;
     uint64_t getEnemyPieces() const;
     uint64_t getAllPieces() const;
-
+    int BoardCoordToCellIndex(const std::string& coord) const;
     bool movePieceUCI(const std::string& move);
 
     // Public helper to convert board coordinates to a bit index.

@@ -323,20 +323,18 @@ int const FileToCol(const char& file) {
 	return (file - 'a');
 }
 
-//std::pair<int, int> ChessBoard::BoardCoordToCellIndex(const std::string& coord) {
-//    if (coord.length() < 4) {
-//        std::cerr << "Invalid UCI move format: " << move << std::endl;
-//        return false;
-//    }
-//    int fromCol = FileToCol(coord[0]);
-//    int fromRow = RankToRow(coord[1]);
-//    int toCol = FileToCol(coord[2]);
-//    int toRow = RankToRow(coord[3]);
-//
-//	int fromIndex = getBitindex(fromRow, fromCol);
-//    int newIndex = getBitindex(toRow, toCol);
-//	return { fromIndex, newIndex };
-//}
+int ChessBoard::BoardCoordToCellIndex(const std::string& coord) const {
+    if (coord.length() < 2) {
+		std::cout << "Invalid coordinate format: " << coord << "\n";
+        return -1;
+    }
+    int col = FileToCol(coord[0]);
+    int row = RankToRow(coord[1]);
+
+
+	int idx = getBitindex(row, col);
+	return idx;
+}
 
 bool ChessBoard::movePieceUCI(const std::string& move) {
     // A valid UCI move must be at least 4 characters (e.g., "e2e4")
@@ -350,6 +348,7 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     // Ranks: '1'-'8' with row = 8 - (rank value) because row 0 is rank 8.
     int fromCol = (move[0] - 'a');
     int fromRow = '8' - move[1];
+    move.substr(0, 1);
     int toCol =  move[2] - 'a';
     int toRow = '8' - (move[3]);
 
