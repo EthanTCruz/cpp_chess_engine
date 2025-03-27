@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cctype>
 #include <bitset>
+#include <sstream>
 
 // The ChessBoard class manages the board state and delegates move validation.
 class ChessBoard {
@@ -37,6 +38,11 @@ public:
     uint64_t getFriendlyPieces() const;
     uint64_t getEnemyPieces() const;
     uint64_t getAllPieces() const;
+
+    uint64_t getEnPassant() const;
+    void setEnPassant( int& bitIndex) ;
+    void setEnPassant(const std::string& square) ;
+
     int BoardCoordToCellIndex(const std::string& coord) const;
     bool movePieceUCI(const std::string& move);
 
@@ -48,6 +54,7 @@ private:
     bool whiteToMove = true;
 	int halfmoveClock = 0;
 	int fullmoveNumber = 1;
+	uint64_t enPassant = 0ULL;
     std::string castlingRights;
     char board[8][8];
     std::array<uint64_t, 12> bitboards = { 0ULL };

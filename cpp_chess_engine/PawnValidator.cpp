@@ -36,6 +36,7 @@ bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) 
     uint64_t h_file_p_bb = active_p_bb & ~H_FILE;
     uint64_t enemy_pieces = board.getEnemyPieces();
     uint64_t attack_p_bb = whiteToMove ? h_file_p_bb << 9 | a_file_p_bb << 7 : a_file_p_bb >> 9 | h_file_p_bb >> 7;
+	uint64_t enPassant = board.getEnPassant();
 
     //std::cout <<"attack vs actual vs enemy : \n" << std::bitset<64>(attack_p_bb) << "\n";
     //std::cout << "" << std::bitset<64>(target_bb) << "\n";
@@ -43,7 +44,7 @@ bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) 
     //std::cout << "" << std::bitset<64>(board.getWhitePieces()) << "\n";
     //std::cout << "" << std::bitset<64>(board.getBlackPieces()) << "\n";
     //std::cout << "" << std::bitset<64>(enemy_pieces) << "\n";
-    if (target_bb & attack_p_bb & enemy_pieces) return true;
+    if ((target_bb & attack_p_bb & enemy_pieces) || (target_bb & attack_p_bb & enPassant)) return true;
 
     // Check that there is a Pawn at the starting square.
     if (!(Pawns & (1ULL << from_idx))) {

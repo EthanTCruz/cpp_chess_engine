@@ -67,10 +67,13 @@ int get_bitindex(int row, int col) {
 }
 
 void ChessBoard::parseFEN() {
+    std::istringstream fenStream(fen);
+    std::string piecePlacement, activeColor, castling, enPassantSquare, halfmoveClockStr, fullmoveNumberStr;
+
+    fenStream >> piecePlacement >> activeColor >> castling >> enPassantSquare >> halfmoveClockStr >> fullmoveNumberStr;
+
     int row = 0, col = 0;
-    for (char ch : fen) {
-        if (ch == ' ')
-            break;
+    for (char ch : piecePlacement) {
         if (ch == '/') {
             row++;
             col = 0;
@@ -92,6 +95,29 @@ void ChessBoard::parseFEN() {
             }
         }
     }
+
+    // Set the active color.
+    whiteToMove = (activeColor == "w");
+
+    // Set the castling rights.
+    castlingRights = castling;
+
+    // Set the en passant target square.
+    if (enPassantSquare != "-") {
+        int enPassantIndex = BoardCoordToCellIndex(enPassantSquare);
+        if (enPassantIndex != -1) {
+            enPassant |= 1ULL << enPassantIndex;
+        }
+    }
+    else {
+        enPassant = 0;
+    }
+
+    // Set the halfmove clock.
+    halfmoveClock = std::stoi(halfmoveClockStr);
+
+    // Set the fullmove number.
+    fullmoveNumber = std::stoi(fullmoveNumberStr);
 }
 
 
@@ -172,7 +198,7 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
 	} else if(piece == 'P' || piece == 'p') {
 		PawnValidator pawnValidator;
 		return pawnValidator.validate(from_idx, to_idx, *this);
-	}
+	} 
 
     // For other pieces, you could delegate to other validators.
     // Here we simply check that the destination is not occupied by a friendly piece.
@@ -187,6 +213,21 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
 int getBitindex(int row, int col) {
     // Map board coordinates to a bitboard index.
     return (7 - row) * 8 + col;
+}
+
+uint64_t ChessBoard::getEnPassant() const {
+	return enPassant;
+}
+
+void ChessBoard::setEnPassant( int& bitIndex)  {
+    if (bitIndex >= 0 && bitIndex < 64) {
+        enPassant = 1ULL << bitIndex;
+    }
+}
+
+void ChessBoard::setEnPassant(const std::string& square)  {
+	int bitIndex = BoardCoordToCellIndex(square);
+	setEnPassant(bitIndex);
 }
 
 std::string ChessBoard::getString() const {
@@ -288,6 +329,20 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
         char occupying_piece = board[newRow][newCol];
         board[fromRow][fromCol] = '.';
         board[newRow][newCol] = piece;
+		bool isPawn = (piece == 'P' || piece == 'p');
+		int rankEPAdjustment = whiteToMove ? 1 : -1;
+
+		if (isPawn && ((fromRow + (rankEPAdjustment*2)) == newRow)) {
+            int epIndex = (to_idx + (rankEPAdjustment * 8));
+			setEnPassant(epIndex);
+		}
+		else {
+			enPassant = 0ULL;
+		}
+        
+        if (isPawn && (fromRow == (newRow - rankEPAdjustment) && ((newCol == (fromCol + 1)) || (newCol == (fromCol - 1))))) {
+
+        }
 
         // Update bitboards: clear the old position and set the new position.
         bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);
