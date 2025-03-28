@@ -77,7 +77,7 @@ void tests() {
     checkTest(validPawnMove, "Pawn move from e2 to e3");
 
 
-    fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w - -0 5";
+    fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
 	cb.setString(fen);
     cb.movePieceUCI("e7f8q");
 
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     //tests();
     
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w - -0 5";
+    fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
     ChessBoard cb(fen);
 
 

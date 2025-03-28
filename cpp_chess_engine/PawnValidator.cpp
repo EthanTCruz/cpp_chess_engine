@@ -44,12 +44,15 @@ bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) 
     //std::cout << "" << std::bitset<64>(board.getWhitePieces()) << "\n";
     //std::cout << "" << std::bitset<64>(board.getBlackPieces()) << "\n";
     //std::cout << "" << std::bitset<64>(enemy_pieces) << "\n";
-    if ((target_bb & attack_p_bb & enemy_pieces) || (target_bb & attack_p_bb & enPassant)) return true;
 
     // Check that there is a Pawn at the starting square.
     if (!(Pawns & (1ULL << from_idx))) {
         return false;
     }
+
+    if ((target_bb & attack_p_bb & enemy_pieces) || (target_bb & attack_p_bb & enPassant)) return true;
+
+
 
     // focusing only on the case where the pawn is moving forward
     bool is_two_step_move = (((rankIncrement * 2) + from_idx) == to_idx); // pawn matches two step index

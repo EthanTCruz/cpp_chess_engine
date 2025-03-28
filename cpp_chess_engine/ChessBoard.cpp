@@ -113,6 +113,8 @@ void ChessBoard::parseFEN() {
         enPassant = 0;
     }
 
+    std::cout << "fen:  " << fen << "\n" << "hm: " << halfmoveClockStr << "\n" << "fm: " << fullmoveNumberStr << "\n";
+
     // Set the halfmove clock.
     halfmoveClock = std::stoi(halfmoveClockStr);
 
@@ -330,23 +332,45 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
         board[fromRow][fromCol] = '.';
         board[newRow][newCol] = piece;
 		bool isPawn = (piece == 'P' || piece == 'p');
-		int rankEPAdjustment = whiteToMove ? 1 : -1;
+        int rankEPAdjustment = whiteToMove ? -1 : 1;
+        uint64_t proposed_ep = 1ULL << to_idx;
 
-		if (isPawn && ((fromRow + (rankEPAdjustment*2)) == newRow)) {
-            int epIndex = (to_idx + (rankEPAdjustment * 8));
-			setEnPassant(epIndex);
-		}
-		else {
-			enPassant = 0ULL;
-		}
-        
-        if (isPawn && (fromRow == (newRow - rankEPAdjustment) && ((newCol == (fromCol + 1)) || (newCol == (fromCol - 1))))) {
-			board[fromRow][newCol] = '.'; 
+        //sets en passant
+
+
+        // en passant capture
+        std::cout << "propos ep: " << std::bitset<64>(proposed_ep) << "\n" << "actual ep: " << std::bitset<64>(enPassant) << "\n";
+        std::cout << "from col: " << fromCol << "\n" << "newCol: " << newCol << "\n" << "from row: " << fromRow << "\n" << "newRow: " << newRow << "\n" << "rankEPAdjustment: " << rankEPAdjustment << "\n";
+        if (isPawn && ((fromRow + (rankEPAdjustment * 2)) == newRow)) {
+
+            int epIndex = get_bitindex(newRow - rankEPAdjustment, newCol);
+            std::cout << "Ep RESEt: \n ep row : " << newRow - rankEPAdjustment << "\n" << "ep col: " << newCol << "\n";
+            setEnPassant(epIndex);
         }
+        else
+        if (isPawn && ((proposed_ep & enPassant) != 0)) {      
+            // Remove the captured pawn from the square behind the en passant target.     
+            board[newRow - rankEPAdjustment][newCol] = '.';       
+			std::cout << "eraesed: " << newRow + rankEPAdjustment << " " << newCol << "\n";
+            // For bitboards, use the opponent’s pawn index:       
+            int oppPawnIdx = whiteToMove ? b_pawn_idx : w_pawn_idx;       
+            int capture_idx = get_bitindex(newRow - rankEPAdjustment, newCol);       
+            bitboards[oppPawnIdx] &= ~(1ULL << capture_idx);   
+            enPassant = 0ULL;
+            
+        }
+            
+        else if (isPawn) {
+            enPassant = 0ULL;
+        }
+          
+            // Update the moving pawn’s bitboard normally.       
 
-        // Update bitboards: clear the old position and set the new position.
-        bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);
-        bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);
+            bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);       
+            bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);   
+
+
+
 
         // Change turn.
         whiteToMove = !whiteToMove;
