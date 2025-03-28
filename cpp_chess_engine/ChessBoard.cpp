@@ -341,7 +341,7 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 		}
         
         if (isPawn && (fromRow == (newRow - rankEPAdjustment) && ((newCol == (fromCol + 1)) || (newCol == (fromCol - 1))))) {
-
+			board[fromRow][newCol] = '.'; 
         }
 
         // Update bitboards: clear the old position and set the new position.
