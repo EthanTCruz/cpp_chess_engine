@@ -31,7 +31,14 @@ public:
     // Bitboard getters for knights.
     uint64_t getWhiteKnightBitboard() const;
     uint64_t getBlackKnightBitboard() const;
-
+    uint64_t getWhiteBishopBitboard() const;
+    uint64_t getWhiteRookBitboard() const ;
+    uint64_t getWhiteQueenBitboard() const ;
+    uint64_t getWhiteKingBitboard() const ;
+    uint64_t getBlackBishopBitboard() const;
+    uint64_t getBlackRookBitboard() const ;
+    uint64_t getBlackQueenBitboard() const;
+    uint64_t getBlackKingBitboard() const ;
     uint64_t getWhitePawnBitboard() const;
     uint64_t getBlackPawnBitboard() const;
 

@@ -1,6 +1,7 @@
 #include "ChessBoard.hpp"
 #include "KnightValidator.hpp"
 #include "PawnValidator.hpp"
+#include "RookValidator.hpp"
 
 // Bitboard index constants.
 namespace {
@@ -173,6 +174,30 @@ uint64_t ChessBoard::getAllPieces() const {
 uint64_t ChessBoard::getWhiteKnightBitboard() const {
     return bitboards[w_knight_idx];
 }
+uint64_t ChessBoard::getWhiteBishopBitboard() const {
+	return bitboards[w_bishop_idx];
+}
+uint64_t ChessBoard::getWhiteRookBitboard() const {
+	return bitboards[w_rook_idx];
+}
+uint64_t ChessBoard::getWhiteQueenBitboard() const {
+	return bitboards[w_queen_idx];
+}
+uint64_t ChessBoard::getWhiteKingBitboard() const {
+	return bitboards[w_king_idx];
+}
+uint64_t ChessBoard::getBlackBishopBitboard() const {
+	return bitboards[b_bishop_idx];
+}
+uint64_t ChessBoard::getBlackRookBitboard() const {
+	return bitboards[b_rook_idx];
+}
+uint64_t ChessBoard::getBlackQueenBitboard() const {
+	return bitboards[b_queen_idx];
+}
+uint64_t ChessBoard::getBlackKingBitboard() const {
+	return bitboards[b_king_idx];
+}
 
 uint64_t ChessBoard::getBlackKnightBitboard() const {
     return bitboards[b_knight_idx];
@@ -200,7 +225,12 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
 	} else if(piece == 'P' || piece == 'p') {
 		PawnValidator pawnValidator;
 		return pawnValidator.validate(from_idx, to_idx, *this);
-	} 
+	}
+	else if (piece == 'R' || piece == 'r') {
+		 RookValidator rookValidator;
+		 return rookValidator.validate(from_idx, to_idx, *this);
+	}
+
 
     // For other pieces, you could delegate to other validators.
     // Here we simply check that the destination is not occupied by a friendly piece.
@@ -339,12 +369,12 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 
 
         // en passant capture
-        std::cout << "propos ep: " << std::bitset<64>(proposed_ep) << "\n" << "actual ep: " << std::bitset<64>(enPassant) << "\n";
-        std::cout << "from col: " << fromCol << "\n" << "newCol: " << newCol << "\n" << "from row: " << fromRow << "\n" << "newRow: " << newRow << "\n" << "rankEPAdjustment: " << rankEPAdjustment << "\n";
+        // std::cout << "propos ep: " << std::bitset<64>(proposed_ep) << "\n" << "actual ep: " << std::bitset<64>(enPassant) << "\n";
+       // std::cout << "from col: " << fromCol << "\n" << "newCol: " << newCol << "\n" << "from row: " << fromRow << "\n" << "newRow: " << newRow << "\n" << "rankEPAdjustment: " << rankEPAdjustment << "\n";
         if (isPawn && ((fromRow + (rankEPAdjustment * 2)) == newRow)) {
 
             int epIndex = get_bitindex(newRow - rankEPAdjustment, newCol);
-            std::cout << "Ep RESEt: \n ep row : " << newRow - rankEPAdjustment << "\n" << "ep col: " << newCol << "\n";
+            // std::cout << "Ep RESEt: \n ep row : " << newRow - rankEPAdjustment << "\n" << "ep col: " << newCol << "\n";
             setEnPassant(epIndex);
         }
         else
