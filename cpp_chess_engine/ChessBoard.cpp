@@ -3,6 +3,9 @@
 #include "PawnValidator.hpp"
 #include "RookValidator.hpp"
 
+
+RookValidator rookValidator;
+
 // Bitboard index constants.
 namespace {
     const int w_pawn_idx = 0;
@@ -227,7 +230,7 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
 		return pawnValidator.validate(from_idx, to_idx, *this);
 	}
 	else if (piece == 'R' || piece == 'r') {
-		 RookValidator rookValidator;
+		 
 		 return rookValidator.validate(from_idx, to_idx, *this);
 	}
 

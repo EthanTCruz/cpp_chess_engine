@@ -72,6 +72,8 @@ private:
 
 };
 
+
+
 #endif // CHESSBOARD_HPP
 
 
