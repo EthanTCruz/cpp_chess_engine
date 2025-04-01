@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
-#include <cstdint>
+
 
 #ifdef _MSC_VER
 #include <intrin.h>
