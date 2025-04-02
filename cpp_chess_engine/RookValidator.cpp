@@ -18,6 +18,8 @@ Bitboard rookMasks[64];
 Bitboard rookAttacks[64][4096]; // largest possible rook occupancy table size is 4096
 
 #pragma intrinsic(__popcnt64, _BitScanForward64)
+
+// This function scans the bitboard from least significant bit to most significant bit and returns the index of the first set bit.
 int bitScanForward(uint64_t bb) {
     unsigned long index;
 #ifdef _WIN64
@@ -38,7 +40,7 @@ int bitScanForward(uint64_t bb) {
 Bitboard randomUint64FewBits(std::mt19937_64& rng) {
     return rng() & rng() & rng(); // Generates sparse candidates (fewer bits set)
 }
-
+// returns bitboard of actual attack path from square with occupancy
 Bitboard rookAttacksOnTheFly(int square, Bitboard occupancy) {
     Bitboard attacks = 0ULL;
     int rank = square / 8;
@@ -63,6 +65,8 @@ Bitboard rookAttacksOnTheFly(int square, Bitboard occupancy) {
     }
     return attacks;
 }
+
+
 Bitboard rookOccupancyMask(int square) {
     Bitboard mask = 0ULL;
     int rank = square / 8;
@@ -168,6 +172,9 @@ inline Bitboard RookValidator::getRookAttacks(int square, Bitboard occupancy) co
 }
 bool RookValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
     Bitboard occupancy = board.getAllPieces(); // ensure you have this method
+	Bitboard friendlyPieces = board.getFriendlyPieces(); 
+	if (((1ULL << from_idx) & friendlyPieces) == 0) return false;
     Bitboard possibleMoves = getRookAttacks(from_idx, occupancy);
+	possibleMoves &= ~friendlyPieces; // ensure you have this method
     return (possibleMoves & (1ULL << to_idx)) > 0;
 }
