@@ -10,9 +10,31 @@
 #include <iostream>
 #include <stdexcept>
 
+
 typedef uint64_t Bitboard;
 
+void printBitboard(uint64_t bitboard) {
+    for (int rank = 7; rank >= 0; --rank) {
+        for (int file = 0; file < 8; ++file) {
+            int index = rank * 8 + file;
+            if (bitboard & (1ULL << index)) {
+                std::cout << "1 ";
+            }
+            else {
+                std::cout << "0 ";
+            }
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
 
+void printBitset(const std::bitset<64>& bitset) {
+    for (int i = 63; i >= 0; --i) {
+        std::cout << bitset[i] << " ";
+    }
+    std::cout << std::endl;
+}
 
 Bitboard rookMasks[64];
 Bitboard rookAttacks[64][4096]; // largest possible rook occupancy table size is 4096
@@ -101,7 +123,7 @@ Bitboard findMagic(int square, int relevantBits, bool isRook) {
     std::vector<Bitboard> attacks(occupancies.size());
     for (size_t i = 0; i < occupancies.size(); i++)
         attacks[i] = rookAttacksOnTheFly(square, occupancies[i]);
-    std::mt19937_64 rng(std::random_device{}());
+    std::mt19937_64 rng(42);
     Bitboard magicCandidate;
     std::vector<Bitboard> used(4096); // max possible size for rook is 4096
     for (int trial = 0; trial < 100000000; trial++) {
@@ -176,5 +198,6 @@ bool RookValidator::validate(int from_idx, int to_idx, const ChessBoard& board) 
 	if (((1ULL << from_idx) & friendlyPieces) == 0) return false;
     Bitboard possibleMoves = getRookAttacks(from_idx, occupancy);
 	possibleMoves &= ~friendlyPieces; // ensure you have this method
+
     return (possibleMoves & (1ULL << to_idx)) > 0;
 }

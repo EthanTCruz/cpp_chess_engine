@@ -5,6 +5,7 @@
 #include <array>
 #include <cstdint>
 
+
 typedef uint64_t Bitboard;
 
 struct Magic {

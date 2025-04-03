@@ -23,6 +23,30 @@ namespace {
     const int b_king_idx = 11;
 }
 
+void printBitboardBoard(uint64_t bitboard) {
+    for (int rank = 7; rank >= 0; --rank) {
+        for (int file = 0; file < 8; ++file) {
+            int index = rank * 8 + file;
+            if (bitboard & (1ULL << index)) {
+                std::cout << "1 ";
+            }
+            else {
+                std::cout << "0 ";
+            }
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+void printBitsetBoard(const std::bitset<64>& bitset) {
+    for (int i = 63; i >= 0; --i) {
+        std::cout << bitset[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+
 ChessBoard::ChessBoard(const std::string& fen) : fen(fen) {
     // Map piece characters to their corresponding bitboard index.
     piece_to_idx = {
@@ -398,10 +422,14 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
         }
           
             // Update the moving pawn’s bitboard normally.       
+            printBitboardBoard(bitboards[piece_to_idx[piece]]);
+            if (occupying_piece != '.') bitboards[piece_to_idx[occupying_piece]] &= ~(1ULL << to_idx);
 
             bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);       
             bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);   
+            
 
+            printBitboardBoard(bitboards[piece_to_idx[piece]]);
 
 
 
