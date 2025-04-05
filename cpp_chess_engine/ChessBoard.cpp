@@ -2,6 +2,7 @@
 #include "KnightValidator.hpp"
 #include "PawnValidator.hpp"
 #include "RookValidator.hpp"
+#include <intrin.h>
 
 
 RookValidator rookValidator;
@@ -89,10 +90,46 @@ int ChessBoard::get_bitindex(int row, int col)  {
     // Map board coordinates to a bitboard index.
     return (7 - row) * 8 + col;
 }
+
 int get_bitindex(int row, int col) {
     // Map board coordinates to a bitboard index.
     return (7 - row) * 8 + col;
 }
+
+
+
+void ChessBoard::syncBoardWithBitboards() {
+    // Clear the board.
+    for (int r = 0; r < 8; ++r) {
+        for (int c = 0; c < 8; ++c) {
+            board[r][c] = '.';
+        }
+    }
+
+    // Map each bitboard index to its corresponding piece character.
+    static const char pieceChars[12] = { 'P', 'N', 'B', 'R', 'Q', 'K',
+                                           'p', 'n', 'b', 'r', 'q', 'k' };
+
+    // Iterate through each bitboard.
+    for (int i = 0; i < 12; ++i) {
+        uint64_t bb = bitboards[i];
+        while (bb) {
+            unsigned long index;
+            // _BitScanForward64 finds the index of the least significant set bit.
+            _BitScanForward64(&index, bb);
+            int pos = static_cast<int>(index);
+            // Convert bit index to board coordinates.
+            int row = 7 - (pos / 8);
+            int col = pos % 8;
+            // Place the corresponding piece on the board.
+            board[row][col] = pieceChars[i];
+            // Clear the least significant set bit.
+            bb &= bb - 1;
+        }
+    }
+}
+
+
 
 void ChessBoard::parseFEN() {
     std::istringstream fenStream(fen);
@@ -152,9 +189,11 @@ void ChessBoard::parseFEN() {
 
 
 
-const char (*ChessBoard::getBoard() const)[8] {
+
+const char (&ChessBoard::getBoard() const)[8][8] {
     return board;
 }
+
 
 void ChessBoard::printBoard() const {
     std::cout << "Board state:\n";
@@ -475,6 +514,8 @@ int ChessBoard::BoardCoordToCellIndex(const std::string& coord) const {
 	int idx = getBitindex(row, col);
 	return idx;
 }
+
+
 
 bool ChessBoard::movePieceUCI(const std::string& move) {
     // A valid UCI move must be at least 4 characters (e.g., "e2e4")

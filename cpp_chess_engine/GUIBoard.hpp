@@ -11,7 +11,8 @@
 class GUIBoard {
 private:
     ChessBoard& cb;
-    const char (*board)[8];
+
+    //const char (*board)[8];
     std::map<char, sf::Texture> textures;
 
 public:
@@ -24,6 +25,8 @@ public:
     void initializeTextures();
 
     void createSFMLWindow();
+    void syncBoardWithGUI();
+    const char(&getBoard() const)[8][8] { return cb.getBoard(); }
 };
 
 #endif // GUIBOARD_HPP

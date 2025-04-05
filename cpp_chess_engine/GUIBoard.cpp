@@ -1,7 +1,7 @@
 #include "GUIBoard.hpp"
 #include "ChessBoard.hpp"
 
-GUIBoard::GUIBoard(ChessBoard& cb) : cb(cb), board(cb.getBoard()) {
+GUIBoard::GUIBoard(ChessBoard& cb) : cb(cb) {
     initialize();  // Additional setup function
 }
 
@@ -27,7 +27,13 @@ void GUIBoard::initializeTextures() {
     }
 }
 
+void GUIBoard::syncBoardWithGUI() {
+
+}
+
 void GUIBoard::createSFMLWindow() {
+    cb.syncBoardWithBitboards();
+    
     const int windowSize = 800;
     sf::RenderWindow window(sf::VideoMode({ windowSize, windowSize }), "Chess Board",
         sf::Style::Titlebar | sf::Style::Close); // creates a window to put visuals in
@@ -65,7 +71,7 @@ void GUIBoard::createSFMLWindow() {
                     if (col >= 0 && col < 8 && row >= 0 && row < 8) {
                         if (!selectedSquare.has_value()) {
                             // If no piece is currently selected, select one if there is a piece.
-                            if (board[row][col] != '.') {
+                            if (getBoard()[row][col] != '.') {
                                 selectedSquare = sf::Vector2i(col, row);
                             }
                         }
@@ -77,7 +83,8 @@ void GUIBoard::createSFMLWindow() {
                             if (cb.validateMove(from_idx, to_idx)) {
                                 // Only move if the validator returns true.
                                 cb.movePiece(selectedSquare.value().y, selectedSquare.value().x, row, col);
-                                board = cb.getBoard();
+								cb.syncBoardWithBitboards();
+                                
                             }
                             // Deselect after attempting the move.
                             selectedSquare.reset();
@@ -125,7 +132,7 @@ void GUIBoard::createSFMLWindow() {
         // Draw the chess pieces.
         for (int r = 0; r < 8; ++r) {
             for (int c = 0; c < 8; ++c) {
-                char piece = board[r][c];
+                char piece = getBoard()[r][c];
                 if (piece == '.') continue;
                 auto texIt = textures.find(piece);
                 if (texIt == textures.end()) continue; // texture not found (should not happen)

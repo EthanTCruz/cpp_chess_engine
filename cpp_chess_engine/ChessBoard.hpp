@@ -17,7 +17,7 @@ public:
     std::string getString() const;
     void setString(const std::string& newFen);
     void printBoard() const;
-    const char (*getBoard() const)[8];
+    const char(&getBoard() const)[8][8];
     // Validate a move from 'from_idx' to 'to_idx'
     bool validateMove(const int& from_idx, const int& to_idx) ;
     // Move a piece on the board
@@ -50,6 +50,7 @@ public:
     void setEnPassant( int& bitIndex) ;
     void setEnPassant(const std::string& square) ;
 
+    void syncBoardWithBitboards();
     int BoardCoordToCellIndex(const std::string& coord) const;
     bool movePieceUCI(const std::string& move);
 
