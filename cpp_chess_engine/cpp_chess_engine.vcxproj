@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="ChessBoard.cpp" />
     <ClCompile Include="GUIBoard.cpp" />
+    <ClCompile Include="KingValidator.cpp" />
     <ClCompile Include="KnightValidator.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClInclude Include="ChessBoard.hpp" />
     <ClInclude Include="GUIBoard.hpp" />
+    <ClInclude Include="KingValidator.hpp" />
     <ClInclude Include="Move.hpp" />
     <ClInclude Include="MoveValidator.hpp" />
     <ClInclude Include="PawnValidator.hpp" />
