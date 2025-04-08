@@ -15,6 +15,7 @@ public:
     RookValidator();
     ~RookValidator();
     bool validate(int from_idx, int to_idx, const ChessBoard& board) const override;
+	Bitboard getAttacks(int square, const ChessBoard& board) const;
 
 private:
     std::array<Bitboard, 64> rookMoves;

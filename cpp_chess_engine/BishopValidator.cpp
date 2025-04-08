@@ -141,6 +141,18 @@ void BishopValidator::initBishopMagics() {
     }
 }
 
+Bitboard BishopValidator::getAttacks(int square, const ChessBoard& board) const {
+    Bitboard occupancy = board.getAllPieces();        // Must return a bitboard with all pieces.
+    Bitboard friendlyPieces = board.getFriendlyPieces(); // Must return a bitboard with friendly pieces.
+    // Ensure the moving piece is a friendly bishop.
+    if (((1ULL << square) & friendlyPieces) == 0)
+        return false;
+    Bitboard possibleMoves = getBishopAttacks(square, occupancy);
+    possibleMoves &= ~friendlyPieces;
+    return possibleMoves;
+}
+
+
 // Retrieves bishop attack bitboard from precomputed magic table.
 inline Bitboard BishopValidator::getBishopAttacks(int square, Bitboard occupancy) const {
     occupancy &= bishopMagics[square].mask;
@@ -151,12 +163,6 @@ inline Bitboard BishopValidator::getBishopAttacks(int square, Bitboard occupancy
 
 // Validates whether moving a bishop from from_idx to to_idx is legal.
 bool BishopValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
-    Bitboard occupancy = board.getAllPieces();        // Must return a bitboard with all pieces.
-    Bitboard friendlyPieces = board.getFriendlyPieces(); // Must return a bitboard with friendly pieces.
-    // Ensure the moving piece is a friendly bishop.
-    if (((1ULL << from_idx) & friendlyPieces) == 0)
-        return false;
-    Bitboard possibleMoves = getBishopAttacks(from_idx, occupancy);
-    possibleMoves &= ~friendlyPieces;
-    return (possibleMoves & (1ULL << to_idx)) != 0;
+    Bitboard attacks = getAttacks( from_idx, board);
+    return (attacks & (1ULL << to_idx)) != 0;
 }

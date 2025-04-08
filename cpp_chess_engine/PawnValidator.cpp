@@ -16,74 +16,57 @@ void PawnValidator::initPawnMoves() {
     
 }
 
-// should get rid of board functions in the future and pass directly in
-bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
+Bitboard PawnValidator::getAttacks(int square, const ChessBoard& board) const {
     // Retrieve the appropriate Pawn bitboard based on whose turn it is.
-	bool whiteToMove = board.getTurn();
-    uint64_t Pawns = whiteToMove ? board.getWhitePawnBitboard() : board.getBlackPawnBitboard();
-	int rankIncrement = whiteToMove ? 8 : -8;
-    
-	uint64_t rankMask = whiteToMove ?  0x000000000000FF00 : 0x00FF000000000000;
-    uint64_t backRankMask = whiteToMove ? 0xFF00000000000000 : 0x00000000000000FF;
-    const uint64_t A_FILE = 0x0101010101010101ULL;
-    const uint64_t H_FILE = 0x8080808080808080ULL;
+    bool whiteToMove = board.getTurn();
+    Bitboard Pawns = whiteToMove ? board.getWhitePawnBitboard() : board.getBlackPawnBitboard();
+    int rankIncrement = whiteToMove ? 8 : -8;
 
-    uint64_t allPieces = board.getAllPieces();
-    uint64_t target_bb = 1ULL << to_idx;
-    uint64_t from_bb = 1ULL << from_idx;
-    uint64_t active_p_bb = Pawns & from_bb;
-    uint64_t a_file_p_bb = active_p_bb & ~A_FILE;
-    uint64_t h_file_p_bb = active_p_bb & ~H_FILE;
-    uint64_t enemy_pieces = board.getEnemyPieces();
-    uint64_t attack_p_bb = whiteToMove ? h_file_p_bb << 9 | a_file_p_bb << 7 : a_file_p_bb >> 9 | h_file_p_bb >> 7;
-	uint64_t enPassant = board.getEnPassant();
+    Bitboard rankMask = whiteToMove ? 0x000000000000FF00 : 0x00FF000000000000;
+    Bitboard backRankMask = whiteToMove ? 0xFF00000000000000 : 0x00000000000000FF;
+    const Bitboard A_FILE = 0x0101010101010101ULL;
+    const Bitboard H_FILE = 0x8080808080808080ULL;
 
-    //std::cout <<"attack vs actual vs enemy : \n" << std::bitset<64>(attack_p_bb) << "\n";
-    //std::cout << "" << std::bitset<64>(target_bb) << "\n";
-    //std::cout << "" << std::bitset<64>(enemy_pieces) << "\n";
-    //std::cout << "" << std::bitset<64>(board.getWhitePieces()) << "\n";
-    //std::cout << "" << std::bitset<64>(board.getBlackPieces()) << "\n";
-    //std::cout << "" << std::bitset<64>(enemy_pieces) << "\n";
+    Bitboard allPieces = board.getAllPieces();
+    Bitboard from_bb = 1ULL << square;
+    Bitboard active_p_bb = Pawns & from_bb;
+    Bitboard a_file_p_bb = active_p_bb & ~A_FILE;
+    Bitboard h_file_p_bb = active_p_bb & ~H_FILE;
+    Bitboard enemy_pieces = board.getEnemyPieces();
+    Bitboard attack_p_bb = whiteToMove ? h_file_p_bb << 9 | a_file_p_bb << 7 : a_file_p_bb >> 9 | h_file_p_bb >> 7;
+    Bitboard enPassant = board.getEnPassant();
+	
+    Bitboard legalMoves = 0ULL;
+
+    // tmp to negate errors
+	Bitboard to_idx = 1ULL << square;
+    Bitboard target_bb = 1ULL << square;
 
     // Check that there is a Pawn at the starting square.
-    if (!(Pawns & (1ULL << from_idx))) {
+    if (!(Pawns & (1ULL << square))) {
         return false;
     }
 
-    if ((target_bb & attack_p_bb & enemy_pieces) || (target_bb & attack_p_bb & enPassant)) return true;
+    // getting attacks
+    legalMoves |= (attack_p_bb & enemy_pieces) | (attack_p_bb & enPassant);
+
+    // detecting possible one step moves
+	Bitboard oneStepMove = (1ULL << (rankIncrement + square)) & ~allPieces;
+	// detecting possible two step moves
+    Bitboard twoStepMove = (board.getTurn()) ? (oneStepMove << (8)) : (oneStepMove >> (8));
+	twoStepMove &= ((rankMask & from_bb) != 0) ? ~allPieces : 0 ;
+	legalMoves |= oneStepMove | twoStepMove;
 
 
 
-    // focusing only on the case where the pawn is moving forward
-    bool is_two_step_move = (((rankIncrement * 2) + from_idx) == to_idx); // pawn matches two step index
-    is_two_step_move = is_two_step_move && ((rankMask & from_bb) != 0); // confirms pawn is on right rank
-    bool is_one_step_move = ((rankIncrement + from_idx) == to_idx); // pawn matches one step index
-    if (!is_two_step_move && !is_one_step_move) return false;
+    return legalMoves;
+}
 
-    // Use the precomputed moves to see if the destination is legal.
-
-    if (whiteToMove) {
-
-        active_p_bb = (active_p_bb << 8) & ~allPieces;
-		if (active_p_bb == 0) return false;
-        if (active_p_bb & target_bb) return true;
-
-        active_p_bb = (active_p_bb << 8) & ~allPieces;
-
-        if (active_p_bb & target_bb) return true;
-    }
-    else {
-        //std::cout << "1st active bb: \n" << std::bitset<64>(active_p_bb) << "\n";
-        active_p_bb = (active_p_bb >> 8) & ~allPieces;
-        //std::cout << std::bitset<64>(active_p_bb) << "\n";
-        if (active_p_bb == 0) return false;
-        if (active_p_bb & target_bb) return true;
-
-        active_p_bb = (active_p_bb >> 8) & ~allPieces;
-        //std::cout <<  std::bitset<64>(active_p_bb) << "\n";
-        if (active_p_bb & target_bb) return true;
-    }
-
-        return false;
+// should get rid of board functions in the future and pass directly in
+bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
+	Bitboard attacks = getAttacks(from_idx, board);
+	Bitboard target_bb = 1ULL << to_idx;
+	return (attacks & target_bb) != 0;
+   
     }
 

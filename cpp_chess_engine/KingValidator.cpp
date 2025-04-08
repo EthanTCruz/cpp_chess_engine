@@ -82,27 +82,28 @@ void KingValidator::initKingMoves() {
     }
 }
 
-bool KingValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
+Bitboard KingValidator::getAttacks(int square, const ChessBoard& board) const {
     // Retrieve the king bitboard based on whose turn it is.
-    uint64_t kings = board.getTurn() ? board.getWhiteKingBitboard() : board.getBlackKingBitboard();
+    Bitboard kings = board.getTurn() ? board.getWhiteKingBitboard() : board.getBlackKingBitboard();
 
     // Check that a king exists at the starting square.
-    if (!(kings & (1ULL << from_idx))) {
+    if (!(kings & (1ULL << square))) {
         return false;
     }
 
     // Use precomputed moves to verify the destination.
-    uint64_t legalMoves = kingMoves[from_idx];
-    uint64_t destination = 1ULL << to_idx;
+    Bitboard legalMoves = kingMoves[square];
+	legalMoves &= ~board.getFriendlyPieces();
 
-    if (!(legalMoves & destination)) {
-        return false;
-    }
 
-    // Ensure the destination square is not occupied by a friendly piece.
-    uint64_t friendlyPieces = board.getTurn() ? board.getWhitePieces() : board.getBlackPieces();
-    if (friendlyPieces & destination) {
-        return false;
-    }
-    return true;
+
+    return legalMoves;
+}
+
+bool KingValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
+    // Retrieve the king bitboard based on whose turn it is.
+	Bitboard legalMoves = getAttacks(from_idx, board);
+
+	return (legalMoves & (1ULL << to_idx));
+
 }
