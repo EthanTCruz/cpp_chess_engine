@@ -132,6 +132,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BishopValidator.cpp" />
+    <ClCompile Include="BitOps.cpp" />
     <ClCompile Include="ChessBoard.cpp" />
     <ClCompile Include="GUIBoard.cpp" />
     <ClCompile Include="KingValidator.cpp" />
@@ -159,6 +161,9 @@
     <None Include="..\..\..\..\..\..\SFML-3.0.0\bin\sfml-window-d-3.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BishopValidator.hpp" />
+    <ClInclude Include="Bitboard.hpp" />
+    <ClInclude Include="BitOps.hpp" />
     <ClInclude Include="ChessBoard.hpp" />
     <ClInclude Include="GUIBoard.hpp" />
     <ClInclude Include="KingValidator.hpp" />

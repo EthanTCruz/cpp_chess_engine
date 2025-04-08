@@ -3,11 +3,13 @@
 #include "KingValidator.hpp"
 #include "PawnValidator.hpp"
 #include "RookValidator.hpp"
+#include "BishopValidator.hpp"
 #include <intrin.h>
 
 
 RookValidator rookValidator;
 KingValidator kingValidator;
+BishopValidator bishopValidator;
 
 // Bitboard index constants.
 namespace {
@@ -301,6 +303,10 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
     else if (piece == 'K' || piece == 'k') {
         return kingValidator.validate(from_idx, to_idx, *this);
     }
+	else if (piece == 'B' || piece == 'b') {
+
+		return bishopValidator.validate(from_idx, to_idx, *this);
+	}
 
 
     // For other pieces, you could delegate to other validators.

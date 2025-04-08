@@ -65,15 +65,15 @@ void KingValidator::initKingMoves() {
         //start up and rotate clockwise
         if ((king << 8) & ~RANK_1) moves |= (king << 8);
         
-        if ((king << 7) & ~A1) moves |= (king << 7);
-        if ((king >> 1) & ~A_FILE) moves |= (king >> 1);
-        if ((king >> 9) & ~A8) moves |= (king >> 9);
+        if (king  & ~A_FILE) moves |= (king << 7);
+        if (king & ~A_FILE) moves |= (king >> 1);
+        if (king & ~A_FILE) moves |= (king >> 9);
 
-        if ((king >> 8) & ~RANK_8) moves |= (king >> 8);
+        if (king & ~RANK_8) moves |= (king >> 8);
         
-        if ((king >> 7) & ~H8) moves |= (king >> 7);
-        if ((king << 1) & ~H_FILE) moves |= (king << 1);
-        if ((king << 9) & ~H1) moves |= (king << 9);
+        if (king & ~H_FILE) moves |= (king >> 7);
+        if (king  & ~H_FILE) moves |= (king << 1);
+        if (king & ~H_FILE) moves |= (king << 9);
 
 
 
