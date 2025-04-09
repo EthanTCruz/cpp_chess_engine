@@ -14,6 +14,8 @@ public:
     BishopValidator();
     ~BishopValidator();
     bool validate(int from_idx, int to_idx, const ChessBoard& board) const override;
+    bool validate(int from_idx, Bitboard target, const ChessBoard& board) const;
+
     Bitboard getAttacks(int square, const ChessBoard& board) const;
 private:
     std::array<Bitboard, 64> bishopMoves;

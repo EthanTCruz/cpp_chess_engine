@@ -1,6 +1,6 @@
 #ifndef MOVE_VALIDATOR_HPP
 #define MOVE_VALIDATOR_HPP
-
+#include "Bitboard.hpp"
 class ChessBoard; // Forward declaration
 
 // Abstract interface for move validators.
@@ -9,6 +9,7 @@ public:
     virtual ~MoveValidator() {}
     // Validate a move from square 'from_idx' to square 'to_idx' on the given board.
     virtual bool validate(int from_idx, int to_idx, const ChessBoard& board) const = 0;
+    //virtual bool validate(Bitboard origin, Bitboard target, const ChessBoard& board) const = 0;
 };
 
 #endif // MOVE_VALIDATOR_HPP

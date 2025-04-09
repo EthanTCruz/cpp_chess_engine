@@ -170,7 +170,13 @@ void ChessBoard::parseFEN() {
     whiteToMove = (activeColor == "w");
 
     // Set the castling rights.
+
     castlingRights = castling;
+
+    whiteCanCastleKingside = castling.find('K') != std::string::npos;
+    whiteCanCastleQueenside = castling.find('Q') != std::string::npos;
+    blackCanCastleKingside = castling.find('k') != std::string::npos;
+    blackCanCastleQueenside = castling.find('q') != std::string::npos;
 
     // Set the en passant target square.
     if (enPassantSquare != "-") {
@@ -241,6 +247,18 @@ uint64_t ChessBoard::getAllPieces() const {
     return whitePieces | blackPieces;
 }
 
+bool ChessBoard::canWhiteCastleKingside() const{
+	return whiteCanCastleKingside;
+}
+bool ChessBoard::canWhiteCastleQueenside() const {
+	return whiteCanCastleQueenside;
+}
+bool ChessBoard::canBlackCastleKingside() const {
+	return blackCanCastleKingside;
+}
+bool ChessBoard::canBlackCastleQueenside() const {
+	return blackCanCastleQueenside;
+}
 
 uint64_t ChessBoard::getWhiteKnightBitboard() const {
     return bitboards[w_knight_idx];
@@ -287,42 +305,36 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
     int row = 7 - (from_idx / 8);
     int col = from_idx % 8;
     char piece = board[row][col];
-
+	Bitboard origin = 1ULL << from_idx;
+    Bitboard destination = 1ULL << to_idx;
 
     // Delegate knight moves to the KnightValidator.
-    if (piece == 'N' || piece == 'n') {
+    if (origin & (bitboards[w_knight_idx] | bitboards[b_knight_idx])) {
 
-        return knightValidator.validate(from_idx, to_idx, *this);
-	} else if(piece == 'P' || piece == 'p') {
+        return knightValidator.validate(from_idx, destination, *this);
+	} else if(origin & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx])) {
 		
-		return pawnValidator.validate(from_idx, to_idx, *this);
+		return pawnValidator.validate(origin, destination, *this);
 	}
-	else if (piece == 'R' || piece == 'r') {
+	else if (origin & (bitboards[w_rook_idx] | bitboards[b_rook_idx])) {
 		 
-		 return rookValidator.validate(from_idx, to_idx, *this);
+		 return rookValidator.validate(from_idx, destination, *this);
 	}
-    else if (piece == 'K' || piece == 'k') {
-        return kingValidator.validate(from_idx, to_idx, *this);
+    else if (origin & (bitboards[w_king_idx] | bitboards[b_king_idx])) {
+        return kingValidator.validate(from_idx, destination, *this);
     }
-	else if (piece == 'B' || piece == 'b') {
+	else if (origin & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx]))
 
-		return bishopValidator.validate(from_idx, to_idx, *this);
-	}
-    else if (piece == 'Q' || piece == 'q') {
-        if (bishopValidator.validate(from_idx, to_idx, *this)) return true;
-        return rookValidator.validate(from_idx, to_idx, *this);
+		return bishopValidator.validate(from_idx, destination, *this);
+	
+    else if (origin & (bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
+        if (bishopValidator.validate(from_idx, destination, *this)) return true;
+        return rookValidator.validate(from_idx, destination, *this);
 
     }
 
 
-    // For other pieces, you could delegate to other validators.
-    // Here we simply check that the destination is not occupied by a friendly piece.
-    uint64_t friendlyPieces = whiteToMove ? getWhitePieces() : getBlackPieces();
-    uint64_t destination = 1ULL << to_idx;
-    if (destination & friendlyPieces) {
-        return false;
-    }
-    return true;
+    return false;
 }
 
 int getBitindex(int row, int col) {
@@ -390,7 +402,14 @@ std::string ChessBoard::getString() const {
     // Append castling rights.
     fenString.push_back(' ');
     // If castlingRights is empty, use '-' as per FEN convention.
-    if (castlingRights.empty())
+	std::string castlingRights = "";
+
+    castlingRights += whiteCanCastleKingside ? "K" : "";
+    castlingRights += whiteCanCastleQueenside ? "Q" : "";
+    castlingRights += blackCanCastleKingside ? "k" : "";
+    castlingRights += blackCanCastleQueenside ? "q" : "";
+
+    if (castlingRights == "")
         fenString.push_back('-');
     else
         fenString += castlingRights;
@@ -469,7 +488,8 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
             int oppPawnIdx = whiteToMove ? b_pawn_idx : w_pawn_idx;       
             int capture_idx = get_bitindex(newRow - rankEPAdjustment, newCol);       
             bitboards[oppPawnIdx] &= ~(1ULL << capture_idx);   
-            enPassant = 0ULL;
+            
+			enPassant = 0ULL;
             
         }
             
@@ -482,8 +502,11 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
             if (occupying_piece != '.') bitboards[piece_to_idx[occupying_piece]] &= ~(1ULL << to_idx);
 
             bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);       
-            bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);   
-            
+            bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);
+
+            if (isPawn && ((fromRow + (rankEPAdjustment * 2)) != newRow)) {
+                enPassant = 0ULL;
+            }
 
             //printBitboardBoard(bitboards[piece_to_idx[piece]]);
 

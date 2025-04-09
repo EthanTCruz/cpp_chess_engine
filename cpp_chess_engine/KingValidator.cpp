@@ -26,28 +26,7 @@ const uint64_t A8 = A_FILE | RANK_8;
 const uint64_t H1 = H_FILE | RANK_1;
 const uint64_t H8 = H_FILE | RANK_8;
 
-void printBitboard(uint64_t bitboard) {
-    for (int rank = 7; rank >= 0; --rank) {
-        for (int file = 0; file < 8; ++file) {
-            int index = rank * 8 + file;
-            if (bitboard & (1ULL << index)) {
-                std::cout << "1 ";
-            }
-            else {
-                std::cout << "0 ";
-            }
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
 
-void printBitset(const std::bitset<64>& bitset) {
-    for (int i = 63; i >= 0; --i) {
-        std::cout << bitset[i] << " ";
-    }
-    std::cout << std::endl;
-}
 
 
 KingValidator::KingValidator() {
@@ -86,24 +65,32 @@ Bitboard KingValidator::getAttacks(int square, const ChessBoard& board) const {
     // Retrieve the king bitboard based on whose turn it is.
     Bitboard kings = board.getTurn() ? board.getWhiteKingBitboard() : board.getBlackKingBitboard();
 
-    // Check that a king exists at the starting square.
-    if (!(kings & (1ULL << square))) {
-        return false;
-    }
-
     // Use precomputed moves to verify the destination.
     Bitboard legalMoves = kingMoves[square];
 	legalMoves &= ~board.getFriendlyPieces();
 
+    return legalMoves;
+}
 
+
+Bitboard KingValidator::getAttacks(Bitboard origin, const ChessBoard& board) const {
+    // Retrieve the king bitboard based on whose turn it is.
+    Bitboard kings = board.getTurn() ? board.getWhiteKingBitboard() : board.getBlackKingBitboard();
+
+    // Use precomputed moves to verify the destination.
+    Bitboard legalMoves = kingMoves[bitScanForward(origin)];
+    legalMoves &= ~board.getFriendlyPieces();
 
     return legalMoves;
 }
 
 bool KingValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
-    // Retrieve the king bitboard based on whose turn it is.
 	Bitboard legalMoves = getAttacks(from_idx, board);
-
 	return (legalMoves & (1ULL << to_idx));
+}
 
+
+bool KingValidator::validate(int from_idx, Bitboard target, const ChessBoard& board) const {
+    Bitboard legalMoves = getAttacks(from_idx, board);
+    return (legalMoves & target);
 }

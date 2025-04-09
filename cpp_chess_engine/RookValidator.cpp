@@ -125,7 +125,7 @@ void RookValidator::initRookMagics() {
 Bitboard RookValidator::getAttacks(int square, const ChessBoard& board) const {
     Bitboard occupancy = board.getAllPieces(); // ensure you have this method
     Bitboard friendlyPieces = board.getFriendlyPieces();
-    if (((1ULL << square) & friendlyPieces) == 0) return false;
+    //if (((1ULL << square) & friendlyPieces) == 0) return false;
     Bitboard possibleMoves = getRookAttacks(square, occupancy);
     possibleMoves &= ~friendlyPieces; // ensure you have this method
 
@@ -141,4 +141,9 @@ inline Bitboard RookValidator::getRookAttacks(int square, Bitboard occupancy) co
 bool RookValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
 	Bitboard attacks = getAttacks(from_idx, board);
     return (attacks & (1ULL << to_idx)) > 0;
+}
+
+bool RookValidator::validate(int from_idx, Bitboard target, const ChessBoard& board) const {
+    Bitboard attacks = getAttacks(from_idx, board);
+    return (attacks & target) > 0;
 }

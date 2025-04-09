@@ -36,19 +36,28 @@ Bitboard KnightValidator::getAttacks(int square, const ChessBoard& board) const 
 
 }
 
+
 bool KnightValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
     // Retrieve the knight bitboard based on whose turn it is.
     Bitboard knights = board.getTurn() ? board.getWhiteKnightBitboard() : board.getBlackKnightBitboard();
 
-    // Check that a knight exists at the starting square.
-    if (!(knights & (1ULL << from_idx))) {
-        return false;
-    }
+
 
     Bitboard legalMoves  = getAttacks(from_idx, board);
     Bitboard destination = 1ULL << to_idx;
 
     if (!(legalMoves & destination)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool KnightValidator::validate(int from_idx, Bitboard target, const ChessBoard& board) const {
+    Bitboard legalMoves = getAttacks(from_idx, board);
+
+
+    if (!(legalMoves & target)) {
         return false;
     }
 

@@ -47,6 +47,12 @@ public:
     uint64_t getAllPieces() const;
 
     uint64_t getEnPassant() const;
+
+    bool canWhiteCastleKingside() const ;
+	bool canWhiteCastleQueenside() const;
+	bool canBlackCastleKingside() const;
+	bool canBlackCastleQueenside() const;
+
     void setEnPassant( int& bitIndex) ;
     void setEnPassant(const std::string& square) ;
 
@@ -64,6 +70,10 @@ private:
 	int fullmoveNumber = 1;
 	uint64_t enPassant = 0ULL;
     std::string castlingRights;
+	bool whiteCanCastleKingside = true;
+	bool whiteCanCastleQueenside = true;
+	bool blackCanCastleKingside = true;
+	bool blackCanCastleQueenside = true;
     char board[8][8];
     std::array<uint64_t, 12> bitboards = { 0ULL };
     std::unordered_map<char, int> piece_to_idx;

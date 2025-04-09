@@ -16,7 +16,9 @@ void PawnValidator::initPawnMoves() {
     
 }
 
-Bitboard PawnValidator::getAttacks(int square, const ChessBoard& board) const {
+
+
+Bitboard PawnValidator::getAttacks(Bitboard origin, const ChessBoard& board) const {
     // Retrieve the appropriate Pawn bitboard based on whose turn it is.
     bool whiteToMove = board.getTurn();
     Bitboard Pawns = whiteToMove ? board.getWhitePawnBitboard() : board.getBlackPawnBitboard();
@@ -28,22 +30,20 @@ Bitboard PawnValidator::getAttacks(int square, const ChessBoard& board) const {
     const Bitboard H_FILE = 0x8080808080808080ULL;
 
     Bitboard allPieces = board.getAllPieces();
-    Bitboard from_bb = 1ULL << square;
-    Bitboard active_p_bb = Pawns & from_bb;
+    
+    Bitboard active_p_bb = Pawns & origin;
     Bitboard a_file_p_bb = active_p_bb & ~A_FILE;
     Bitboard h_file_p_bb = active_p_bb & ~H_FILE;
     Bitboard enemy_pieces = board.getEnemyPieces();
     Bitboard attack_p_bb = whiteToMove ? h_file_p_bb << 9 | a_file_p_bb << 7 : a_file_p_bb >> 9 | h_file_p_bb >> 7;
     Bitboard enPassant = board.getEnPassant();
-	
+
     Bitboard legalMoves = 0ULL;
 
-    // tmp to negate errors
-	Bitboard to_idx = 1ULL << square;
-    Bitboard target_bb = 1ULL << square;
+
 
     // Check that there is a Pawn at the starting square.
-    if (!(Pawns & (1ULL << square))) {
+    if (!(Pawns & origin)) {
         return false;
     }
 
@@ -51,22 +51,23 @@ Bitboard PawnValidator::getAttacks(int square, const ChessBoard& board) const {
     legalMoves |= (attack_p_bb & enemy_pieces) | (attack_p_bb & enPassant);
 
     // detecting possible one step moves
-	Bitboard oneStepMove = (1ULL << (rankIncrement + square)) & ~allPieces;
-	// detecting possible two step moves
-    Bitboard twoStepMove = (board.getTurn()) ? (oneStepMove << (8)) : (oneStepMove >> (8));
-	twoStepMove &= ((rankMask & from_bb) != 0) ? ~allPieces : 0 ;
-	legalMoves |= oneStepMove | twoStepMove;
+    Bitboard oneStepMove = (whiteToMove) ? (origin << (8)) : (origin >> (8));
+    // detecting possible two step moves
+    Bitboard twoStepMove = (whiteToMove) ? (oneStepMove << (8)) : (oneStepMove >> (8));
+    twoStepMove &= ((rankMask & origin) != 0) ? ~allPieces : 0;
+    legalMoves |= oneStepMove | twoStepMove;
 
 
 
     return legalMoves;
 }
 
-// should get rid of board functions in the future and pass directly in
 bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
-	Bitboard attacks = getAttacks(from_idx, board);
-	Bitboard target_bb = 1ULL << to_idx;
-	return (attacks & target_bb) != 0;
-   
-    }
+    return false;
+}
 
+bool PawnValidator::validate(Bitboard origin, Bitboard target, const ChessBoard& board) const {
+    Bitboard attacks = getAttacks(origin, board);
+
+    return (attacks & target) != 0;
+}
