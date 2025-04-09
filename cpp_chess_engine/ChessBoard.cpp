@@ -6,10 +6,11 @@
 #include "BishopValidator.hpp"
 #include <intrin.h>
 
-
 RookValidator rookValidator;
 KingValidator kingValidator;
 BishopValidator bishopValidator;
+KnightValidator knightValidator;
+PawnValidator pawnValidator;
 
 // Bitboard index constants.
 namespace {
@@ -290,10 +291,10 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
 
     // Delegate knight moves to the KnightValidator.
     if (piece == 'N' || piece == 'n') {
-        KnightValidator knightValidator;
+
         return knightValidator.validate(from_idx, to_idx, *this);
 	} else if(piece == 'P' || piece == 'p') {
-		PawnValidator pawnValidator;
+		
 		return pawnValidator.validate(from_idx, to_idx, *this);
 	}
 	else if (piece == 'R' || piece == 'r') {
@@ -307,6 +308,11 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
 
 		return bishopValidator.validate(from_idx, to_idx, *this);
 	}
+    else if (piece == 'Q' || piece == 'q') {
+        if (bishopValidator.validate(from_idx, to_idx, *this)) return true;
+        return rookValidator.validate(from_idx, to_idx, *this);
+
+    }
 
 
     // For other pieces, you could delegate to other validators.
@@ -412,7 +418,7 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
         int to_idx = get_bitindex(newRow, newCol);
 
 		char promote_value = !whiteToMove ? std::toupper(promote) : std::tolower(promote);
-		int pawn_idx = whiteToMove ? w_pawn_idx : b_pawn_idx;
+		int pawn_idx = !whiteToMove ? w_pawn_idx : b_pawn_idx;
 
         bitboards[pawn_idx] &= ~(1ULL << to_idx);
         bitboards[piece_to_idx[promote_value]] |= (1ULL << to_idx);
@@ -472,14 +478,14 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
         }
           
             // Update the moving pawn’s bitboard normally.       
-            printBitboardBoard(bitboards[piece_to_idx[piece]]);
+            //printBitboardBoard(bitboards[piece_to_idx[piece]]);
             if (occupying_piece != '.') bitboards[piece_to_idx[occupying_piece]] &= ~(1ULL << to_idx);
 
             bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);       
             bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);   
             
 
-            printBitboardBoard(bitboards[piece_to_idx[piece]]);
+            //printBitboardBoard(bitboards[piece_to_idx[piece]]);
 
 
 
