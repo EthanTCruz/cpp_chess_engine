@@ -307,25 +307,17 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
     char piece = board[row][col];
 	Bitboard origin = 1ULL << from_idx;
     Bitboard destination = 1ULL << to_idx;
+	if (~getFriendlyPieces() & origin) return false; 
+    
+    if (origin & (bitboards[w_knight_idx] | bitboards[b_knight_idx])) return knightValidator.validate(from_idx, destination, *this);
 
-    // Delegate knight moves to the KnightValidator.
-    if (origin & (bitboards[w_knight_idx] | bitboards[b_knight_idx])) {
+	else if(origin & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx])) return pawnValidator.validate(origin, destination, *this);
 
-        return knightValidator.validate(from_idx, destination, *this);
-	} else if(origin & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx])) {
-		
-		return pawnValidator.validate(origin, destination, *this);
-	}
-	else if (origin & (bitboards[w_rook_idx] | bitboards[b_rook_idx])) {
-		 
-		 return rookValidator.validate(from_idx, destination, *this);
-	}
-    else if (origin & (bitboards[w_king_idx] | bitboards[b_king_idx])) {
-        return kingValidator.validate(from_idx, destination, *this);
-    }
-	else if (origin & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx]))
-
-		return bishopValidator.validate(from_idx, destination, *this);
+	else if (origin & (bitboards[w_rook_idx] | bitboards[b_rook_idx])) return rookValidator.validate(from_idx, destination, *this);
+	
+    else if (origin & (bitboards[w_king_idx] | bitboards[b_king_idx])) return kingValidator.validate(from_idx, destination, *this);
+    
+	else if (origin & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx])) return bishopValidator.validate(from_idx, destination, *this);
 	
     else if (origin & (bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
         if (bishopValidator.validate(from_idx, destination, *this)) return true;
