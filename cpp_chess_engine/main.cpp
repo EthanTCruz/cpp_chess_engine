@@ -80,7 +80,7 @@ void tests() {
     fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
 	cb.setString(fen);
     cb.movePieceUCI("e7f8q");
-
+    
     std::cout << "All tests executed." << std::endl;
 }
 
@@ -113,6 +113,7 @@ int main(int argc, char** argv) {
         std::cout << "Invalid move.\n";
     }
     
+    cb.movePieceUCI("c5b4");
 
     // Proceed with GUI initialization if needed.
     GUIBoard gb(cb);

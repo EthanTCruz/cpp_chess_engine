@@ -165,6 +165,7 @@
     <ClInclude Include="Bitboard.hpp" />
     <ClInclude Include="BitOps.hpp" />
     <ClInclude Include="ChessBoard.hpp" />
+    <ClInclude Include="Constants.hpp" />
     <ClInclude Include="GUIBoard.hpp" />
     <ClInclude Include="KingValidator.hpp" />
     <ClInclude Include="Move.hpp" />

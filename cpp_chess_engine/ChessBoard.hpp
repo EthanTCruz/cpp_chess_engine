@@ -9,6 +9,7 @@
 #include <cctype>
 #include <bitset>
 #include <sstream>
+#include "Bitboard.hpp"
 
 // The ChessBoard class manages the board state and delegates move validation.
 class ChessBoard {
@@ -27,6 +28,7 @@ public:
     uint64_t getWhitePieces() const;
     uint64_t getBlackPieces() const;
     bool getTurn() const;
+    bool castleCheck(Bitboard from_bb, Bitboard to_bb) const;
 
     // Bitboard getters for knights.
     uint64_t getWhiteKnightBitboard() const;
@@ -47,6 +49,12 @@ public:
     uint64_t getAllPieces() const;
 
     uint64_t getEnPassant() const;
+
+    void castleWhiteKingside();
+    void castleWhiteQueenside();
+    void castleBlackQueenside();
+    void castleBlackKingside();
+
 
     bool canWhiteCastleKingside() const ;
 	bool canWhiteCastleQueenside() const;
@@ -74,6 +82,17 @@ private:
 	bool whiteCanCastleQueenside = true;
 	bool blackCanCastleKingside = true;
 	bool blackCanCastleQueenside = true;
+
+    //Bitboard w_king_castle = 1ULL << 62;
+    //Bitboard w_queen_castle = 1ULL << 58;
+    //Bitboard b_king_castle = 1ULL << 6;
+    //Bitboard b_queen_castle = 1ULL << 2;
+
+    Bitboard b_king_castle = 1ULL << 6;
+    Bitboard b_queen_castle = 1ULL << 2;
+    Bitboard w_king_castle = 1ULL << 62;
+    Bitboard w_queen_castle = 1ULL << 58;
+
     char board[8][8];
     std::array<uint64_t, 12> bitboards = { 0ULL };
     std::unordered_map<char, int> piece_to_idx;

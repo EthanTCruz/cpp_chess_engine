@@ -4,7 +4,9 @@
 #include "PawnValidator.hpp"
 #include "RookValidator.hpp"
 #include "BishopValidator.hpp"
+#include "Constants.hpp"
 #include <intrin.h>
+
 
 RookValidator rookValidator;
 KingValidator kingValidator;
@@ -241,6 +243,7 @@ uint64_t ChessBoard::getEnemyPieces() const {
     uint64_t enemyPieces = !whiteToMove ? getWhitePieces() : getBlackPieces();
     return enemyPieces;
 }
+
 uint64_t ChessBoard::getAllPieces() const {
     uint64_t whitePieces = getWhitePieces();
     uint64_t blackPieces= getBlackPieces();
@@ -300,6 +303,8 @@ uint64_t ChessBoard::getBlackPawnBitboard() const {
     return bitboards[b_pawn_idx];
 }
 
+
+
 bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
     // Convert the bit index back to board coordinates.
     int row = 7 - (from_idx / 8);
@@ -311,11 +316,18 @@ bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
     
     if (origin & (bitboards[w_knight_idx] | bitboards[b_knight_idx])) return knightValidator.validate(from_idx, destination, *this);
 
-	else if(origin & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx])) return pawnValidator.validate(origin, destination, *this);
+    else if (origin & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx])) return pawnValidator.validate(origin, destination, *this);
 
-	else if (origin & (bitboards[w_rook_idx] | bitboards[b_rook_idx])) return rookValidator.validate(from_idx, destination, *this);
-	
-    else if (origin & (bitboards[w_king_idx] | bitboards[b_king_idx])) return kingValidator.validate(from_idx, destination, *this);
+    else if (origin & (bitboards[w_rook_idx] | bitboards[b_rook_idx])) return rookValidator.validate(from_idx, destination, *this);
+
+    else if (origin & (bitboards[w_king_idx] | bitboards[b_king_idx])) /*return kingValidator.validate(from_idx, destination, *this);*/
+    {
+        if (kingValidator.validate(from_idx, destination, *this)) return true;
+        else return (castleCheck(origin, destination));
+    }
+            
+
+
     
 	else if (origin & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx])) return bishopValidator.validate(from_idx, destination, *this);
 	
@@ -442,15 +454,21 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol) {
     int from_idx = get_bitindex(fromRow, fromCol);
     int to_idx = get_bitindex(newRow, newCol);
-    //std::cout << "fromCol = " << fromCol << ";" << "\n";
-    //std::cout << "fromRow = " << fromRow << ";" << "\n";
-    //std::cout << "newCol = " << newCol << ";" << "\n";
-    //std::cout << "newRow = " << newRow << ";" << "\n";
-    //std::cout << "from_idx = " << from_idx << ";" << "\n";
-    //std::cout << "to_idx = " << to_idx << ";" << "\n";
+    Bitboard origin = 1ULL << from_idx;
+    Bitboard destination = 1ULL << to_idx;
 
     std::string original_fen = getString();
     if (validateMove(from_idx, to_idx)) {
+        if (castleCheck(origin, destination)) {
+            if (whiteToMove) {
+                if (destination & w_king_castle) castleWhiteKingside(); else castleWhiteQueenside();
+
+            }
+            else {
+                if (destination & b_king_castle) castleBlackKingside(); else castleBlackQueenside();
+
+            }
+        }
         char piece = board[fromRow][fromCol];
         char occupying_piece = board[newRow][newCol];
         board[fromRow][fromCol] = '.';
@@ -485,7 +503,7 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
             
         }
             
-        else if (isPawn) {
+        else  {
             enPassant = 0ULL;
         }
           
@@ -546,8 +564,46 @@ int ChessBoard::BoardCoordToCellIndex(const std::string& coord) const {
 	int idx = getBitindex(row, col);
 	return idx;
 }
+void ChessBoard::castleWhiteKingside() {
+    bitboards[w_king_idx] = bitboards[w_king_idx] << 2;
+    Bitboard initial_rook_position = 1ULL << 7;
+    Bitboard new_rook_position = 1ULL << 4;
+    bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
+}
+void ChessBoard::castleWhiteQueenside() {
+    bitboards[w_king_idx] = bitboards[w_king_idx] >> 2;
+    Bitboard initial_rook_position = 1ULL << 0;
+    Bitboard new_rook_position = 1ULL >> 3;
+    bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
+}
+void ChessBoard::castleBlackQueenside() {
+    bitboards[b_king_idx] = bitboards[b_king_idx] << 2;
+    Bitboard initial_rook_position = 1ULL << 0;
+    Bitboard new_rook_position = 1ULL << 3;
+    bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
+}
+void ChessBoard::castleBlackKingside() {
+    bitboards[b_king_idx] = bitboards[b_king_idx] >> 2;
+    Bitboard initial_rook_position = 1ULL << 7;
+    Bitboard new_rook_position = 1ULL << 4;
+    bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
+}
 
+bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
+    Bitboard initial_position = InitialPositions::b_king;
+    Bitboard target_position = b_king_castle | b_queen_castle;
 
+    if (whiteToMove) {
+        Bitboard initial_position = InitialPositions::w_king;
+        Bitboard target_position = w_king_castle | w_queen_castle;
+    }
+
+    Bitboard validStart = from_bb & initial_position;
+    Bitboard validEnd = to_bb & target_position;
+    
+    return ((validStart != 0) && (validEnd != 0)) ;
+
+}
 
 bool ChessBoard::movePieceUCI(const std::string& move) {
     // A valid UCI move must be at least 4 characters (e.g., "e2e4")
