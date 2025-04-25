@@ -88,10 +88,10 @@ private:
     //Bitboard b_king_castle = 1ULL << 6;
     //Bitboard b_queen_castle = 1ULL << 2;
 
-    Bitboard b_king_castle = 1ULL << 6;
-    Bitboard b_queen_castle = 1ULL << 2;
-    Bitboard w_king_castle = 1ULL << 62;
-    Bitboard w_queen_castle = 1ULL << 58;
+    Bitboard w_king_castle = 1ULL << 6;
+    Bitboard w_queen_castle = 1ULL << 2;
+    Bitboard b_king_castle = 1ULL << 62;
+    Bitboard b_queen_castle = 1ULL << 58;
 
     char board[8][8];
     std::array<uint64_t, 12> bitboards = { 0ULL };

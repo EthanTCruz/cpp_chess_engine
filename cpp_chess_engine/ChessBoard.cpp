@@ -567,26 +567,26 @@ int ChessBoard::BoardCoordToCellIndex(const std::string& coord) const {
 void ChessBoard::castleWhiteKingside() {
     bitboards[w_king_idx] = bitboards[w_king_idx] << 2;
     Bitboard initial_rook_position = 1ULL << 7;
-    Bitboard new_rook_position = 1ULL << 4;
+    Bitboard new_rook_position = 1ULL << 5;
     bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
 }
 void ChessBoard::castleWhiteQueenside() {
     bitboards[w_king_idx] = bitboards[w_king_idx] >> 2;
     Bitboard initial_rook_position = 1ULL << 0;
-    Bitboard new_rook_position = 1ULL >> 3;
-    bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
-}
-void ChessBoard::castleBlackQueenside() {
-    bitboards[b_king_idx] = bitboards[b_king_idx] << 2;
-    Bitboard initial_rook_position = 1ULL << 0;
     Bitboard new_rook_position = 1ULL << 3;
     bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
 }
-void ChessBoard::castleBlackKingside() {
+void ChessBoard::castleBlackQueenside() {
     bitboards[b_king_idx] = bitboards[b_king_idx] >> 2;
-    Bitboard initial_rook_position = 1ULL << 7;
-    Bitboard new_rook_position = 1ULL << 4;
-    bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
+    Bitboard initial_rook_position = 1ULL << 56;
+    Bitboard new_rook_position = 1ULL << 59;
+    bitboards[b_rook_idx] = (bitboards[b_rook_idx] & ~initial_rook_position) | new_rook_position;
+}
+void ChessBoard::castleBlackKingside() {
+    bitboards[b_king_idx] = bitboards[b_king_idx] << 2;
+    Bitboard initial_rook_position = 1ULL << 63;
+    Bitboard new_rook_position = 1ULL << 61;
+    bitboards[b_rook_idx] = (bitboards[b_rook_idx] & ~initial_rook_position) | new_rook_position;
 }
 
 bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
@@ -594,8 +594,8 @@ bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
     Bitboard target_position = b_king_castle | b_queen_castle;
 
     if (whiteToMove) {
-        Bitboard initial_position = InitialPositions::w_king;
-        Bitboard target_position = w_king_castle | w_queen_castle;
+        initial_position = InitialPositions::w_king;
+        target_position = w_king_castle | w_queen_castle;
     }
 
     Bitboard validStart = from_bb & initial_position;

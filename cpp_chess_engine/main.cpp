@@ -79,7 +79,9 @@ void tests() {
 
     fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
 	cb.setString(fen);
-    cb.movePieceUCI("e7f8q");
+    cb.movePieceUCI("a2a4");
+    cb.movePieceUCI("e8d8");
+    cb.movePieceUCI("e7d8q");
     
     std::cout << "All tests executed." << std::endl;
 }
@@ -102,19 +104,22 @@ int main(int argc, char** argv) {
 	//fromCol = 1;    
 	//newRow = 5;
 	//newCol = 2;
-    std::string uciMove = "e2e4";
-    uciMove = "d7e8q";
-	std::cout << "Executing move===========================: " << uciMove << std::endl;
-    if (cb.movePieceUCI(uciMove)) {
-        std::cout << "Move executed. Board state:\n";
-        cb.printBoard();
-    }
-    else {
-        std::cout << "Invalid move.\n";
-    }
+
+    cb.movePieceUCI("a2a4");
+    cb.movePieceUCI("d8c8");
+    cb.movePieceUCI("d7c8q");
     
     cb.movePieceUCI("c5b4");
-
+    cb.movePieceUCI("d1g4");
+    cb.movePieceUCI("b4a5");
+    cb.movePieceUCI("d2d4");
+    cb.movePieceUCI("a5b4");
+    cb.movePieceUCI("b1c3");
+    cb.movePieceUCI("b4a5");
+    cb.movePieceUCI("c1e3");
+    cb.movePieceUCI("a5b4");
+    //cb.movePieceUCI("d2d4");
+    //cb.movePieceUCI("b4a5");
     // Proceed with GUI initialization if needed.
     GUIBoard gb(cb);
     gb.createSFMLWindow();

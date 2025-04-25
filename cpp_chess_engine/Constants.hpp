@@ -30,8 +30,8 @@ namespace Rank{
 }
 
 namespace InitialPositions {
-	const Bitboard w_king = 1ULL << 60;
-	const Bitboard b_king = 1ULL << 4;
+	const Bitboard w_king = 1ULL << 4;
+	const Bitboard b_king = 1ULL << 60;
 
 }
 
