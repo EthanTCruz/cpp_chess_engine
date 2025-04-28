@@ -605,13 +605,17 @@ bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
 
 }
 
+bool ChessBoard::isAttacked(const int& from_idx) {
+    return true;
+}
+
 bool ChessBoard::movePieceUCI(const std::string& move) {
     // A valid UCI move must be at least 4 characters (e.g., "e2e4")
     if (move.length() < 4) {
         std::cerr << "Invalid UCI move format: " << move << std::endl;
         return false;
     }
-
+    std::cout << move << '\n';
     // Parse source and destination from the UCI string.
     // Files: 'a' -> 0, 'b' -> 1, ... 'h' -> 7.
     // Ranks: '1'-'8' with row = 8 - (rank value) because row 0 is rank 8.

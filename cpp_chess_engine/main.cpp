@@ -90,8 +90,8 @@ int main(int argc, char** argv) {
     // Initialize the FEN string for the standard starting position.
     //tests();
     
-    std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
+    std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
+    //fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
     ChessBoard cb(fen);
 
 
@@ -104,11 +104,20 @@ int main(int argc, char** argv) {
 	//fromCol = 1;    
 	//newRow = 5;
 	//newCol = 2;
+    cb.movePieceUCI("e2e4");
+    cb.movePieceUCI("d7d5");
+    cb.movePieceUCI("e4d5");
+    cb.movePieceUCI("e7e5");
+    cb.movePieceUCI("d5d6");
+    cb.movePieceUCI("c8f5");
+    cb.movePieceUCI("d6c7");
+    cb.movePieceUCI("f8c5");
+    cb.movePieceUCI("c7b8q");
+    cb.movePieceUCI("d8b8");
+
 
     cb.movePieceUCI("a2a4");
-    cb.movePieceUCI("d8c8");
-    cb.movePieceUCI("d7c8q");
-    
+
     cb.movePieceUCI("c5b4");
     cb.movePieceUCI("d1g4");
     cb.movePieceUCI("b4a5");
@@ -118,7 +127,6 @@ int main(int argc, char** argv) {
     cb.movePieceUCI("b4a5");
     cb.movePieceUCI("c1e3");
     cb.movePieceUCI("a5b4");
-    //cb.movePieceUCI("d2d4");
     //cb.movePieceUCI("b4a5");
     // Proceed with GUI initialization if needed.
     GUIBoard gb(cb);
