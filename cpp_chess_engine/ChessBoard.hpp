@@ -22,7 +22,7 @@ public:
     // Validate a move from 'from_idx' to 'to_idx'
     bool validateMove(const int& from_idx, const int& to_idx);
     bool isAttacked(const int& from_idx);
-    Bitboard ChessBoard::getAttacks(const int& from_idx);
+    Bitboard getAttacks(const int& from_idx);
     // Move a piece on the board
     bool movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol);
     bool movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol,const char& promote);

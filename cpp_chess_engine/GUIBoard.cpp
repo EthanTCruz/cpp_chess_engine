@@ -151,12 +151,20 @@ void GUIBoard::createSFMLWindow() {
             int fromCol = attackSourceSquare.value().x;
 
             int from_idx = (7 - fromRow) * 8 + fromCol;
+
+			Bitboard attacks = cb.getAttacks(from_idx);
+
             for (int r = 0; r < 8; ++r) {
                 for (int c = 0; c < 8; ++c) {
                     int target_idx = (7 - r) * 8 + c;
                     if (cb.isAttacked(from_idx)) {
-                        attackedHighlight.setPosition(sf::Vector2f(c * static_cast<float>(cellSize), r * static_cast<float>(cellSize)));
-                        window.draw(attackedHighlight);
+						int target_idx = cb.get_bitindex(r, c);
+						if (attacks & (1ULL << target_idx)) {
+							attackedHighlight.setPosition(sf::Vector2f(c * static_cast<float>(cellSize), r * static_cast<float>(cellSize)));
+							window.draw(attackedHighlight);
+						}
+                        //attackedHighlight.setPosition(sf::Vector2f(c * static_cast<float>(cellSize), r * static_cast<float>(cellSize)));
+                        //window.draw(attackedHighlight);
                     }
                 }
             }
