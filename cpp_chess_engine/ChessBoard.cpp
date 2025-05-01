@@ -605,6 +605,17 @@ bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
 
 }
 
+Bitboard ChessBoard::getAttacks(const int& from_idx) {
+    Bitboard king_attacks = kingValidator.getAttacks(from_idx, *this) & (getFriendlyPieces() & (bitboards[w_king_idx] | bitboards[b_king_idx]));
+    Bitboard bishop_attacks = bishopValidator.getAttacks(from_idx, *this) & (getFriendlyPieces() & (bitboards[w_king_idx] | bitboards[b_king_idx]));
+    Bitboard rook_attacks = rookValidator.getAttacks(from_idx, *this) & (getFriendlyPieces() & (bitboards[w_king_idx] | bitboards[b_king_idx]));
+    Bitboard knight_attacks = knightValidator.getAttacks(from_idx, *this) & (getFriendlyPieces() & (bitboards[w_king_idx] | bitboards[b_king_idx]));
+    Bitboard pawn_attacks = pawnValidator.getAttacks(from_idx, *this) & (getFriendlyPieces() & (bitboards[w_king_idx] | bitboards[b_king_idx]));
+
+	return king_attacks | bishop_attacks | rook_attacks | knight_attacks | pawn_attacks;
+
+}
+
 bool ChessBoard::isAttacked(const int& from_idx) {
     // Convert the bit index back to board coordinates.
     int row = 7 - (from_idx / 8);
