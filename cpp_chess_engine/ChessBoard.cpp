@@ -606,14 +606,15 @@ bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
 }
 
 Bitboard ChessBoard::getAttacks(const int& from_idx) {
+    
     Bitboard king_attacks = kingValidator.getAttacks(from_idx, *this) & (getEnemyPieces() & (bitboards[w_king_idx] | bitboards[b_king_idx]));
     Bitboard bishop_attacks = bishopValidator.getAttacks(from_idx, *this) & (getEnemyPieces() & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx]));
     Bitboard rook_attacks = rookValidator.getAttacks(from_idx, *this) & (getEnemyPieces() & (bitboards[w_rook_idx] | bitboards[b_rook_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx]));
     Bitboard knight_attacks = knightValidator.getAttacks(from_idx, *this) & (getEnemyPieces() & (bitboards[w_knight_idx] | bitboards[b_knight_idx]));
-    Bitboard pawn_attacks = pawnValidator.getAttacks(from_idx, *this) & (getEnemyPieces() & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx]));
+    Bitboard pawn_attacks = pawnValidator.getAttacks(1Ull << from_idx, *this) & (getEnemyPieces() & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx]));
+    
 
 	return king_attacks | bishop_attacks | rook_attacks | knight_attacks | pawn_attacks;
-
 }
 
 bool ChessBoard::isAttacked(const int& from_idx) {
@@ -624,10 +625,10 @@ bool ChessBoard::isAttacked(const int& from_idx) {
     Bitboard origin = 1ULL << from_idx;
 
     // Change turn
-    whiteToMove = !whiteToMove;
+    
     Bitboard attacks = getAttacks(from_idx);
     // Revert turn
-    whiteToMove = !whiteToMove;
+    
 
     return false;
     return true;

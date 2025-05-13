@@ -1,7 +1,6 @@
 #include "KingValidator.hpp"
 #include "ChessBoard.hpp"
 #include <cstdint>
-
 #include "Constants.hpp"
 
 

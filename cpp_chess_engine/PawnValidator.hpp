@@ -11,10 +11,12 @@ class PawnValidator : public MoveValidator {
 public:
     PawnValidator();
 
+
     bool validate(int from_idx, int to_idx, const ChessBoard& board) const override;
     bool validate(Bitboard origin, Bitboard target, const ChessBoard& board) const;
 
     
+    Bitboard getMoves(Bitboard origin, const ChessBoard& board) const;
     Bitboard getAttacks(Bitboard origin, const ChessBoard& board) const;
 private:
 
