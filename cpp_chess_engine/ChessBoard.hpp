@@ -27,30 +27,36 @@ public:
     bool movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol);
     bool movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol,const char& promote);
     // Bitboard getters for friendly pieces.
-    uint64_t getWhitePieces() const;
-    uint64_t getBlackPieces() const;
+    Bitboard getWhitePieces() const;
+    Bitboard getBlackPieces() const;
     bool getTurn() const;
     bool castleCheck(Bitboard from_bb, Bitboard to_bb) const;
 
     // Bitboard getters for knights.
-    uint64_t getWhiteKnightBitboard() const;
-    uint64_t getBlackKnightBitboard() const;
-    uint64_t getWhiteBishopBitboard() const;
-    uint64_t getWhiteRookBitboard() const ;
-    uint64_t getWhiteQueenBitboard() const ;
-    uint64_t getWhiteKingBitboard() const ;
-    uint64_t getBlackBishopBitboard() const;
-    uint64_t getBlackRookBitboard() const ;
-    uint64_t getBlackQueenBitboard() const;
-    uint64_t getBlackKingBitboard() const ;
-    uint64_t getWhitePawnBitboard() const;
-    uint64_t getBlackPawnBitboard() const;
+    Bitboard getWhiteKnightBitboard() const;
+    Bitboard getBlackKnightBitboard() const;
+    Bitboard getWhiteBishopBitboard() const;
+    Bitboard getWhiteRookBitboard() const ;
+    Bitboard getWhiteQueenBitboard() const ;
+    Bitboard getWhiteKingBitboard() const ;
+    Bitboard getBlackBishopBitboard() const;
+    Bitboard getBlackRookBitboard() const ;
+    Bitboard getBlackQueenBitboard() const;
+    Bitboard getBlackKingBitboard() const ;
+    Bitboard getWhitePawnBitboard() const;
+    Bitboard getBlackPawnBitboard() const;
 
-    uint64_t getFriendlyPieces() const;
-    uint64_t getEnemyPieces() const;
-    uint64_t getAllPieces() const;
+    Bitboard getFriendlyPieces() const;
+    Bitboard getEnemyPieces() const;
+    Bitboard getAllPieces() const;
 
-    uint64_t getEnPassant() const;
+    Bitboard getEnPassant() const;
+
+    std::unordered_map<Bitboard, Bitboard> getAllMoves();
+
+    Bitboard getMoves(const int& from_idx) const;
+
+	Bitboard getCastlingRights() const;
 
     void castleWhiteKingside();
     void castleWhiteQueenside();
@@ -78,7 +84,7 @@ private:
     bool whiteToMove = true;
 	int halfmoveClock = 0;
 	int fullmoveNumber = 1;
-	uint64_t enPassant = 0ULL;
+	Bitboard enPassant = 0ULL;
     std::string castlingRights;
 	bool whiteCanCastleKingside = true;
 	bool whiteCanCastleQueenside = true;
@@ -96,7 +102,7 @@ private:
     Bitboard b_queen_castle = 1ULL << 58;
 
     char board[8][8];
-    std::array<uint64_t, 12> bitboards = { 0ULL };
+    std::array<Bitboard, 12> bitboards = { 0ULL };
     std::unordered_map<char, int> piece_to_idx;
 
     void initialize();

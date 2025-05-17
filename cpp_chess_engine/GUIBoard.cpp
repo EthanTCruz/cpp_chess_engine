@@ -1,5 +1,6 @@
 #include "GUIBoard.hpp"
 #include "ChessBoard.hpp"
+#include "BitOps.hpp"
 
 GUIBoard::GUIBoard(ChessBoard& cb) : cb(cb) {
     initialize();  // Additional setup function
@@ -123,30 +124,45 @@ void GUIBoard::createSFMLWindow() {
 
         // If a piece is selected, check all 64 squares for valid moves and highlight them.
         if (selectedSquare.has_value()) {
+            std::unordered_map<Bitboard, Bitboard> allMoves = cb.getAllMoves();
             int fromRow = selectedSquare.value().y;
             int fromCol = selectedSquare.value().x;
+
             // Calculate source bit index using the formula: (7 - row) * 8 + col.
             int from_idx = (7 - fromRow) * 8 + fromCol;
-            for (int r = 0; r < 8; ++r) {
-                for (int c = 0; c < 8; ++c) {
-                    // Skip the square that contains the selected piece.
-                    if (r == fromRow && c == fromCol)
-                        continue;
-                    int to_idx = (7 - r) * 8 + c;
-                    // Use ChessBoard's validate function to check move legality.
-                    if (cb.validateMove(from_idx, to_idx)) {
-                        validMoveHighlight.setPosition(sf::Vector2f(c * static_cast<float>(cellSize), r * static_cast<float>(cellSize)));
-                        window.draw(validMoveHighlight);
-                    }
-                }
+            Bitboard key = 1ULL << from_idx;
+
+            // Retrieve the moves bitboard.
+            Bitboard moves = allMoves[key];
+
+            // Iterate through all bits in the `moves` bitboard.
+            while (moves) {
+
+                
+                // Calculate the index of the destination square
+                int to_idx = bitScanForward(moves);  // Count trailing zeros to get the index
+
+                // Calculate the row and column from the bit index
+                int toRow = 7 - (to_idx / 8);
+                int toCol = to_idx % 8;
+
+                moves &= moves - 1;
+
+
+                // Highlight the valid move square
+                validMoveHighlight.setPosition(sf::Vector2f(toCol * static_cast<float>(cellSize), toRow * static_cast<float>(cellSize)));
+                window.draw(validMoveHighlight);
+
             }
-            // Draw the selected square highlight on top.
+
+            // Draw the selected square highlight on top
             selectedHighlight.setPosition(sf::Vector2f(fromCol * static_cast<float>(cellSize), fromRow * static_cast<float>(cellSize)));
             window.draw(selectedHighlight);
         }
 
         // attacked-square highlights
         if (attackSourceSquare.has_value()) {
+			
             int fromRow = attackSourceSquare.value().y;
             int fromCol = attackSourceSquare.value().x;
 
