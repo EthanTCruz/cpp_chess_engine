@@ -95,39 +95,45 @@ int main(int argc, char** argv) {
     ChessBoard cb(fen);
 
 
-    // Optional: print board state.
-    //cb.printBoard();
-	//std::cout << cb.getString() << std::endl;
-    
-    //b1(row = 7, col = 1) to c3(row = 5, col = 2).
-	//fromRow = 7;
-	//fromCol = 1;    
-	//newRow = 5;
-	//newCol = 2;
-    cb.movePieceUCI("e2e4");
-    cb.movePieceUCI("d7d5");
-    cb.movePieceUCI("e4d5");
-    cb.movePieceUCI("e7e5");
-    cb.movePieceUCI("d5d6");
-    cb.movePieceUCI("c8f5");
-    cb.movePieceUCI("d6c7");
-    cb.movePieceUCI("f8c5");
-    cb.movePieceUCI("c7b8q");
-    cb.movePieceUCI("d8b8");
+    //cb.movePieceUCI("e2e4");
+    //cb.movePieceUCI("d7d5");
+    //cb.movePieceUCI("e4d5");
+    //cb.movePieceUCI("e7e5");
+    //cb.movePieceUCI("d5d6");
+    //cb.movePieceUCI("c8f5");
+    //cb.movePieceUCI("d6c7");
+    //cb.movePieceUCI("f8c5");
+    //cb.movePieceUCI("c7b8q");
+    //cb.movePieceUCI("d8b8");
 
 
-    cb.movePieceUCI("a2a4");
+    //cb.movePieceUCI("a2a4");
 
-    cb.movePieceUCI("c5b4");
-    cb.movePieceUCI("d1g4");
-    cb.movePieceUCI("b4a5");
-    cb.movePieceUCI("d2d4");
-    cb.movePieceUCI("a5b4");
-    cb.movePieceUCI("b1c3");
-    cb.movePieceUCI("b4a5");
-    cb.movePieceUCI("c1e3");
-    cb.movePieceUCI("a5b4");
+    //cb.movePieceUCI("c5b4");
+    //cb.movePieceUCI("d1g4");
     //cb.movePieceUCI("b4a5");
+    //cb.movePieceUCI("d2d4");
+    //cb.movePieceUCI("a5b4");
+    //cb.movePieceUCI("b1c3");
+    //cb.movePieceUCI("b4a5");
+    //cb.movePieceUCI("c1e3");
+    //cb.movePieceUCI("a5b4");
+
+    cb.movePieceUCI("e2e4");
+    cb.movePieceUCI("e7e5");
+    cb.movePieceUCI("g1f3");
+    cb.movePieceUCI("d7d5");
+    cb.movePieceUCI("d2d3");
+    cb.movePieceUCI("c8g4");
+    cb.movePieceUCI("b8c6");
+    cb.movePieceUCI("b1c3");
+    cb.movePieceUCI("f8b4");
+    //cb.movePieceUCI("");
+    //cb.movePieceUCI("");
+    //cb.movePieceUCI("");
+    //cb.movePieceUCI("");
+
+
     // Proceed with GUI initialization if needed.
     GUIBoard gb(cb);
     gb.createSFMLWindow();

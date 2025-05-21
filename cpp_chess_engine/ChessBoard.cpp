@@ -680,9 +680,34 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::getAllMoves()  {
 
         all_pieces &= all_pieces - 1;  // Clear the least significant '1' bit
     }
+
+
     return allMoves;
 }
 
+std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unordered_map<Bitboard, Bitboard>& allMoves) {
+   std::unordered_map<Bitboard, Bitboard> parsedMoves = allMoves; // Create a copy to modify
+   Bitboard enemy_pieces = getEnemyPieces();
+   Bitboard friendly_pieces = getFriendlyPieces();
+
+   Bitboard enemy_bishops = enemy_pieces & (bitboards[b_bishop_idx] | bitboards[w_bishop_idx]);
+   Bitboard friendly_king = friendly_pieces & (bitboards[w_king_idx] | bitboards[b_king_idx]);
+
+   while (enemy_bishops) {
+       int index = bitScanForward(enemy_bishops);  // Index of least significant '1' bit
+       Bitboard isolated_bishop = 1ULL << index;
+
+       // Ensure the bishop exists in the map before accessing it
+       if (parsedMoves.find(isolated_bishop) != parsedMoves.end()) {
+           Bitboard bishop_attacks = parsedMoves[isolated_bishop];
+           parsedMoves[isolated_bishop] = bishop_attacks;
+       }
+
+       enemy_bishops &= enemy_bishops - 1;  // Clear the least significant '1' bit
+   }
+
+   return parsedMoves;
+}
 
 
 bool ChessBoard::isAttacked(const int& from_idx) {

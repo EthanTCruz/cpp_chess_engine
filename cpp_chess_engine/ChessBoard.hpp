@@ -53,6 +53,7 @@ public:
     Bitboard getEnPassant() const;
 
     std::unordered_map<Bitboard, Bitboard> getAllMoves();
+    std::unordered_map<Bitboard, Bitboard> parseMoves(const std::unordered_map<Bitboard, Bitboard>& allMoves);
 
     Bitboard getMoves(const int& from_idx) const;
 
