@@ -685,6 +685,10 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::getAllMoves()  {
     return allMoves;
 }
 
+bool hasPinnedPiece(Bitboard pin_ray) {
+    return (pin_ray & (pin_ray - 1)) == 0;
+}
+
 std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unordered_map<Bitboard, Bitboard>& allMoves) {
    std::unordered_map<Bitboard, Bitboard> parsedMoves = allMoves; // Create a copy to modify
    Bitboard enemy_pieces = getEnemyPieces();
@@ -692,16 +696,34 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unorder
 
    Bitboard enemy_bishops = enemy_pieces & (bitboards[b_bishop_idx] | bitboards[w_bishop_idx]);
    Bitboard friendly_king = friendly_pieces & (bitboards[w_king_idx] | bitboards[b_king_idx]);
+   int friendly_king_idx = bitScanForward(friendly_king);
 
    while (enemy_bishops) {
-       int index = bitScanForward(enemy_bishops);  // Index of least significant '1' bit
-       Bitboard isolated_bishop = 1ULL << index;
+       int enemy_bishop_idx = bitScanForward(enemy_bishops);  // Index of least significant '1' bit
+       Bitboard isolated_bishop = 1ULL << enemy_bishop_idx;
 
-       // Ensure the bishop exists in the map before accessing it
-       if (parsedMoves.find(isolated_bishop) != parsedMoves.end()) {
-           Bitboard bishop_attacks = parsedMoves[isolated_bishop];
-           parsedMoves[isolated_bishop] = bishop_attacks;
+	   Bitboard king_threats = bishopValidator.getAttacks(friendly_king_idx, *this);
+	   Bitboard bishop_attacks = bishopValidator.getAttacks(enemy_bishop_idx, *this);
+
+	   Bitboard pin_lane = bishop_attacks & king_threats;
+	   Bitboard pinned_pieces = pin_lane & friendly_pieces;
+
+       if (hasPinnedPiece(pinned_pieces)) {
+		   int pinned_piece_idx = bitScanForward(pinned_pieces);  // Index of least significant '1' bit
+		   Bitboard pinned_piece = 1ULL << pinned_piece_idx;
+           if (parsedMoves.find(pinned_piece) != parsedMoves.end()) {
+               
+                parsedMoves[pinned_piece] &= pin_lane;  // Restrict moves to the pin lane
+               if (parsedMoves[pinned_piece] == 0ULL) {  // If no moves left, remove it
+                   parsedMoves.erase(pinned_piece);  // Remove pinned piece from possible moves
+               }
+           
+
+		   }
        }
+
+
+
 
        enemy_bishops &= enemy_bishops - 1;  // Clear the least significant '1' bit
    }
