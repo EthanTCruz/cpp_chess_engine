@@ -681,6 +681,7 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::getAllMoves()  {
         all_pieces &= all_pieces - 1;  // Clear the least significant '1' bit
     }
 
+    allMoves = parseMoves(allMoves);
 
     return allMoves;
 }
@@ -702,10 +703,10 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unorder
        int enemy_bishop_idx = bitScanForward(enemy_bishops);  // Index of least significant '1' bit
        Bitboard isolated_bishop = 1ULL << enemy_bishop_idx;
 
-	   Bitboard king_threats = bishopValidator.getAttacks(friendly_king_idx, *this);
-	   Bitboard bishop_attacks = bishopValidator.getAttacks(enemy_bishop_idx, *this);
+	   Bitboard king_threats = bishopValidator.getBishopAttacks(friendly_king_idx, 0ULL);
+	   Bitboard bishop_attacks = bishopValidator.getBishopAttacks(enemy_bishop_idx, 0ULL) ;
 
-	   Bitboard pin_lane = bishop_attacks & king_threats;
+	   Bitboard pin_lane = bishop_attacks & king_threats | isolated_bishop;
 	   Bitboard pinned_pieces = pin_lane & friendly_pieces;
 
        if (hasPinnedPiece(pinned_pieces)) {

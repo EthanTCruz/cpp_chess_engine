@@ -162,7 +162,7 @@ inline Bitboard BishopValidator::getBishopAttacks(int square, Bitboard occupancy
 
 // Validates whether moving a bishop from from_idx to to_idx is legal.
 bool BishopValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
-    Bitboard attacks = getAttacks( from_idx, board);
+    Bitboard attacks = getAttacks(from_idx, board);
     return (attacks & (1ULL << to_idx)) != 0;
 }
 
