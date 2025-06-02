@@ -19,13 +19,14 @@ public:
     bool validate(int from_idx, Bitboard target, const ChessBoard& board) const;
 
 	Bitboard getAttacks(int square, const ChessBoard& board) const;
+    inline Bitboard getRookAttacks(int square, Bitboard occupancy) const;
 
 private:
     std::array<Bitboard, 64> rookMoves;
     Magic rookMagics[64];
     void initRookMoves();
     void initRookMagics();
-    inline Bitboard getRookAttacks(int square, Bitboard occupancy) const;
+    
 };
 
 #endif // ROOK_VALIDATOR_HPP

@@ -40,10 +40,6 @@ Bitboard PawnValidator::getAttacks(Bitboard origin, const ChessBoard& board) con
     Bitboard legalMoves = 0ULL;
 
 
-
-
-
-    // getting attacks
     legalMoves |= (attack_p_bb);
 
 
@@ -74,6 +70,7 @@ Bitboard PawnValidator::getMoves(Bitboard origin, const ChessBoard& board) const
 
     // detecting possible one step moves
     Bitboard oneStepMove = (whiteToMove) ? (origin << (8)) : (origin >> (8));
+    oneStepMove &= ~allPieces;
     // detecting possible two step moves
     Bitboard twoStepMove = (whiteToMove) ? (oneStepMove << (8)) : (oneStepMove >> (8));
     twoStepMove &= ((rankMask & origin) != 0) ? ~allPieces : 0;
