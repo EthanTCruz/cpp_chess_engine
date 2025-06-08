@@ -25,7 +25,7 @@ bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) 
 Bitboard PawnValidator::getAttacks(Bitboard origin, const ChessBoard& board) const {
     // Retrieve the appropriate Pawn bitboard based on whose turn it is.
     bool whiteToMove = board.getTurn();
-    Bitboard Pawns = whiteToMove ? board.getWhitePawnBitboard() : board.getBlackPawnBitboard();
+    Bitboard Pawns = board.getPawnBitboards() & board.getFriendlyPieces();
     
     
 

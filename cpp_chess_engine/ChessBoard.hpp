@@ -23,6 +23,11 @@ public:
     bool validateMove(const int& from_idx, const int& to_idx);
     bool isAttacked(const int& from_idx);
     Bitboard getAttacks(const int& from_idx);
+    Bitboard getEnemyAttacks();
+
+    std::unordered_map<Bitboard, Bitboard> removeBishopPins(const std::unordered_map<Bitboard, Bitboard>& allMoves);
+    std::unordered_map<Bitboard, Bitboard> removeRookPins(const std::unordered_map<Bitboard, Bitboard>& allMoves);
+    
     // Move a piece on the board
     bool movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol);
     bool movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol,const char& promote);
@@ -46,6 +51,13 @@ public:
     Bitboard getWhitePawnBitboard() const;
     Bitboard getBlackPawnBitboard() const;
 
+    Bitboard getPawnBitboards() const;
+	Bitboard getKnightBitboards() const;
+	Bitboard getBishopBitboards() const;
+	Bitboard getRookBitboards() const;
+	Bitboard getQueenBitboards() const;
+	Bitboard getKingBitboards() const;
+
     Bitboard getFriendlyPieces() const;
     Bitboard getEnemyPieces() const;
     Bitboard getAllPieces() const;
@@ -55,20 +67,21 @@ public:
     std::unordered_map<Bitboard, Bitboard> getAllMoves();
     std::unordered_map<Bitboard, Bitboard> parseMoves(const std::unordered_map<Bitboard, Bitboard>& allMoves);
 
-    Bitboard getMoves(const int& from_idx) const;
+    Bitboard getMoves(const int& from_idx) ;
 
-	Bitboard getCastlingRights() const;
+	Bitboard getCastlingRights();
 
     void castleWhiteKingside();
     void castleWhiteQueenside();
     void castleBlackQueenside();
     void castleBlackKingside();
 
+    Bitboard validCastles(Bitboard attacks, Bitboard all_pieces) const;
 
-    bool canWhiteCastleKingside() const ;
-	bool canWhiteCastleQueenside() const;
-	bool canBlackCastleKingside() const;
-	bool canBlackCastleQueenside() const;
+    bool canWhiteCastleKingside(Bitboard attacks, Bitboard all_pieces) const ;
+	bool canWhiteCastleQueenside(Bitboard attacks, Bitboard all_pieces) const;
+	bool canBlackCastleKingside(Bitboard attacks, Bitboard all_pieces) const;
+	bool canBlackCastleQueenside(Bitboard attacks, Bitboard all_pieces) const;
 
     void setEnPassant( int& bitIndex) ;
     void setEnPassant(const std::string& square) ;
@@ -98,9 +111,16 @@ private:
     //Bitboard b_queen_castle = 1ULL << 2;
 
     Bitboard w_king_castle = 1ULL << 6;
+    Bitboard w_king_castle_conditions = (w_king_castle >> 1) | w_king_castle;
+
     Bitboard w_queen_castle = 1ULL << 2;
+    Bitboard w_queen_castle_conditions = (w_queen_castle >> 1) | (w_queen_castle << 1) | w_queen_castle;
+    
     Bitboard b_king_castle = 1ULL << 62;
+    Bitboard b_king_castle_conditions = (b_king_castle >> 1) | b_king_castle;
+    
     Bitboard b_queen_castle = 1ULL << 58;
+    Bitboard b_queen_castle_conditions = (b_queen_castle >> 1) | (b_queen_castle << 1) | b_queen_castle;
 
     char board[8][8];
     std::array<Bitboard, 12> bitboards = { 0ULL };

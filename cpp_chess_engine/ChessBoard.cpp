@@ -31,20 +31,27 @@ namespace {
     const int b_king_idx = 11;
 }
 
-void printBitboardBoard(uint64_t bitboard) {
+std::string printBitboardBoard(uint64_t bitboard) {
+    std::string bboard = "";
     for (int rank = 7; rank >= 0; --rank) {
         for (int file = 0; file < 8; ++file) {
             int index = rank * 8 + file;
             if (bitboard & (1ULL << index)) {
+                bboard += "1 ";
                 std::cout << "1 ";
             }
             else {
+                bboard += "0 ";
                 std::cout << "0 ";
             }
         }
+        bboard += "\n";
         std::cout << std::endl;
     }
+    bboard += "\n";
     std::cout << std::endl;
+
+    return bboard;
 }
 
 void printBitsetBoard(const std::bitset<64>& bitset) {
@@ -85,6 +92,72 @@ void ChessBoard::initialize() {
 
     parseFEN();
 
+}
+
+
+
+uint64_t ChessBoard::getWhiteKnightBitboard() const {
+    return bitboards[w_knight_idx];
+}
+uint64_t ChessBoard::getWhiteBishopBitboard() const {
+    return bitboards[w_bishop_idx];
+}
+uint64_t ChessBoard::getWhiteRookBitboard() const {
+    return bitboards[w_rook_idx];
+}
+uint64_t ChessBoard::getWhiteQueenBitboard() const {
+    return bitboards[w_queen_idx];
+}
+uint64_t ChessBoard::getWhiteKingBitboard() const {
+    return bitboards[w_king_idx];
+}
+uint64_t ChessBoard::getBlackBishopBitboard() const {
+    return bitboards[b_bishop_idx];
+}
+uint64_t ChessBoard::getBlackRookBitboard() const {
+    return bitboards[b_rook_idx];
+}
+uint64_t ChessBoard::getBlackQueenBitboard() const {
+    return bitboards[b_queen_idx];
+}
+uint64_t ChessBoard::getBlackKingBitboard() const {
+    return bitboards[b_king_idx];
+}
+
+uint64_t ChessBoard::getBlackKnightBitboard() const {
+    return bitboards[b_knight_idx];
+}
+
+uint64_t ChessBoard::getWhitePawnBitboard() const {
+    return bitboards[w_pawn_idx];
+}
+
+uint64_t ChessBoard::getBlackPawnBitboard() const {
+    return bitboards[b_pawn_idx];
+}
+
+uint64_t ChessBoard::getPawnBitboards() const {
+    return bitboards[b_pawn_idx] | bitboards[w_pawn_idx];
+}
+
+uint64_t ChessBoard::getKnightBitboards() const {
+	return bitboards[w_knight_idx] | bitboards[b_knight_idx];
+}
+
+uint64_t ChessBoard::getBishopBitboards() const {
+	return bitboards[w_bishop_idx] | bitboards[b_bishop_idx];
+}
+
+uint64_t ChessBoard::getRookBitboards() const {
+	return bitboards[w_rook_idx] | bitboards[b_rook_idx];
+}
+
+uint64_t ChessBoard::getQueenBitboards() const {
+	return bitboards[w_queen_idx] | bitboards[b_queen_idx];
+}
+
+uint64_t ChessBoard::getKingBitboards() const {
+	return bitboards[w_king_idx] | bitboards[b_king_idx];
 }
 
 void ChessBoard::setString(const std::string& newFen) {
@@ -250,58 +323,27 @@ uint64_t ChessBoard::getAllPieces() const {
     return whitePieces | blackPieces;
 }
 
-bool ChessBoard::canWhiteCastleKingside() const{
-	return whiteCanCastleKingside;
+
+
+
+bool ChessBoard::canWhiteCastleKingside(Bitboard attacks, Bitboard all_pieces) const{
+    Bitboard invalid_conditions = attacks | all_pieces;
+    invalid_conditions &= w_king_castle_conditions;
+    bool can_castle = invalid_conditions ? whiteCanCastleKingside : false;
+    
+	return can_castle;
 }
-bool ChessBoard::canWhiteCastleQueenside() const {
+bool ChessBoard::canWhiteCastleQueenside(Bitboard attacks, Bitboard all_pieces) const {
 	return whiteCanCastleQueenside;
 }
-bool ChessBoard::canBlackCastleKingside() const {
+bool ChessBoard::canBlackCastleKingside(Bitboard attacks, Bitboard all_pieces) const {
 	return blackCanCastleKingside;
 }
-bool ChessBoard::canBlackCastleQueenside() const {
+bool ChessBoard::canBlackCastleQueenside(Bitboard attacks, Bitboard all_pieces) const {
 	return blackCanCastleQueenside;
 }
 
-uint64_t ChessBoard::getWhiteKnightBitboard() const {
-    return bitboards[w_knight_idx];
-}
-uint64_t ChessBoard::getWhiteBishopBitboard() const {
-	return bitboards[w_bishop_idx];
-}
-uint64_t ChessBoard::getWhiteRookBitboard() const {
-	return bitboards[w_rook_idx];
-}
-uint64_t ChessBoard::getWhiteQueenBitboard() const {
-	return bitboards[w_queen_idx];
-}
-uint64_t ChessBoard::getWhiteKingBitboard() const {
-	return bitboards[w_king_idx];
-}
-uint64_t ChessBoard::getBlackBishopBitboard() const {
-	return bitboards[b_bishop_idx];
-}
-uint64_t ChessBoard::getBlackRookBitboard() const {
-	return bitboards[b_rook_idx];
-}
-uint64_t ChessBoard::getBlackQueenBitboard() const {
-	return bitboards[b_queen_idx];
-}
-uint64_t ChessBoard::getBlackKingBitboard() const {
-	return bitboards[b_king_idx];
-}
 
-uint64_t ChessBoard::getBlackKnightBitboard() const {
-    return bitboards[b_knight_idx];
-}
-
-uint64_t ChessBoard::getWhitePawnBitboard() const {
-    return bitboards[w_pawn_idx];
-}
-
-uint64_t ChessBoard::getBlackPawnBitboard() const {
-    return bitboards[b_pawn_idx];
-}
 
 
 
@@ -607,18 +649,78 @@ bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
 
 }
 
-Bitboard ChessBoard::getCastlingRights() const {
+// goal is to get ~w_king_castle then & with king moves
+Bitboard ChessBoard::validCastles(Bitboard attacks, Bitboard all_pieces) const {
+    // to start get castle move squares
+    Bitboard valid_castles = b_king_castle | b_queen_castle;
+    Bitboard k_castle = b_king_castle;
+    Bitboard q_castle = b_queen_castle;
+
+    // next get which squares need to be clear of attacks and pieces for castling
+    Bitboard k_castle_condition = b_king_castle_conditions;
+    Bitboard q_castle_condition = b_queen_castle_conditions;
+
+    if (whiteToMove) {
+        k_castle_condition = w_king_castle_conditions;
+        q_castle_condition = w_queen_castle_conditions;
+
+        k_castle = w_king_castle;
+        q_castle = w_queen_castle;
+
+        valid_castles = w_king_castle | w_queen_castle;
+    }
+
+    // if invalid conditions == 0 or false, then valid
+    Bitboard invalid_conditions = attacks | all_pieces;
+    invalid_conditions &= (k_castle_condition | q_castle_condition);
+
+
+    return ~valid_castles;
+}
+
+
+Bitboard ChessBoard::getCastlingRights()  {
     Bitboard initial_position = InitialPositions::b_king;
     Bitboard target_position = b_king_castle | b_queen_castle;
 	Bitboard king_position = bitboards[b_king_idx];
+    Bitboard k_castle = b_king_castle;
+    Bitboard q_castle = b_queen_castle;
+
+    Bitboard k_castle_condition = b_king_castle_conditions;
+    Bitboard q_castle_condition = b_queen_castle_conditions;
+
+	bool can_castle_kingside = blackCanCastleKingside;
+	bool can_castle_queenside = blackCanCastleQueenside;
+
     if (whiteToMove) {
         initial_position = InitialPositions::w_king;
         target_position = w_king_castle | w_queen_castle;
         king_position = bitboards[w_king_idx];
+
+        k_castle = w_king_castle;
+        q_castle = w_queen_castle;
+
+		can_castle_kingside = whiteCanCastleKingside;
+		can_castle_queenside = whiteCanCastleQueenside;
+
+        k_castle_condition = w_king_castle_conditions;
+        q_castle_condition = w_queen_castle_conditions;
     }
 
     Bitboard validStart = king_position & initial_position;
 	Bitboard castling_rights = validStart ? target_position : 0ULL;
+
+	Bitboard enemy_pieces = getEnemyPieces();
+    Bitboard attacks = getEnemyAttacks();
+    Bitboard friendly_pieces = getFriendlyPieces();
+
+	if (((attacks | friendly_pieces) & k_castle_condition) || !can_castle_kingside) {
+		castling_rights &= ~k_castle;
+	}
+	if (((attacks | friendly_pieces) & q_castle_condition) || !can_castle_queenside) {
+        
+		castling_rights &= ~q_castle;
+	}
 
     return castling_rights;
 
@@ -636,7 +738,7 @@ Bitboard ChessBoard::getAttacks(const int& from_idx) {
 	return king_attacks | bishop_attacks | rook_attacks | knight_attacks | pawn_attacks;
 }
 
-Bitboard ChessBoard::getMoves(const int& from_idx) const{
+Bitboard ChessBoard::getMoves(const int& from_idx) {
     int row = 7 - (from_idx / 8);
     int col = from_idx % 8;
     char piece = board[row][col];
@@ -668,17 +770,17 @@ Bitboard ChessBoard::getMoves(const int& from_idx) const{
 
 std::unordered_map<Bitboard, Bitboard> ChessBoard::getAllMoves()  {
 	std::unordered_map<Bitboard, Bitboard> allMoves;
-	Bitboard all_pieces = getAllPieces();
+	Bitboard friendly_pieces = getFriendlyPieces();
 
    
-    while (all_pieces) {
-        int index = bitScanForward(all_pieces);  // Index of least significant '1' bit
+    while (friendly_pieces) {
+        int index = bitScanForward(friendly_pieces);  // Index of least significant '1' bit
         Bitboard isolatedBit = 1ULL << index;
 		Bitboard attacks = getMoves(index);
 
 		allMoves[isolatedBit] = attacks;
 
-        all_pieces &= all_pieces - 1;  // Clear the least significant '1' bit
+        friendly_pieces &= friendly_pieces - 1;  // Clear the least significant '1' bit
     }
 
     allMoves = parseMoves(allMoves);
@@ -694,120 +796,152 @@ bool hasPinnedPiece(Bitboard pin_ray) {
     return (pin_ray != 0ULL) && ((pin_ray & (pin_ray - 1)) == 0ULL);
 }
 
+Bitboard ChessBoard::getEnemyAttacks()  {
+    Bitboard enemy_attacks = 0ULL;
+    Bitboard enemy_pieces = getEnemyPieces();
+
+    while (enemy_pieces) {
+        int index = bitScanForward(enemy_pieces);
+        Bitboard isolatedBit = 1ULL << index;
+        Bitboard attacks = getMoves(index);
+
+
+
+        if (isolatedBit & (bitboards[w_king_idx] | bitboards[b_king_idx])) {
+            enemy_attacks |= kingValidator.getAttacks(index, *this);
+        }
+        else if (isolatedBit & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
+            enemy_attacks |= bishopValidator.getAttacks(index, *this);
+        }
+        else if (isolatedBit & (bitboards[w_rook_idx] | bitboards[b_rook_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
+            enemy_attacks |= rookValidator.getAttacks(index, *this);
+        }
+        else if (isolatedBit & (bitboards[w_knight_idx] | bitboards[b_knight_idx])) {
+            enemy_attacks |= knightValidator.getAttacks(index, *this);
+        }
+        else if (isolatedBit & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx])) {
+            whiteToMove = !whiteToMove;
+            enemy_attacks |= pawnValidator.getAttacks(isolatedBit, *this);
+            whiteToMove = !whiteToMove;
+        }
+
+
+        enemy_pieces &= enemy_pieces - 1;
+    }
+
+	return enemy_attacks;
+}
+
+std::unordered_map<Bitboard, Bitboard> ChessBoard::removeBishopPins(const std::unordered_map<Bitboard, Bitboard>& allMoves) {
+    std::unordered_map<Bitboard, Bitboard> parsedMoves = allMoves;
+    Bitboard queens = (bitboards[w_queen_idx] | bitboards[b_queen_idx]);
+    Bitboard enemy_pieces = getEnemyPieces();
+    Bitboard enemy_bishops = enemy_pieces & (bitboards[b_bishop_idx] | bitboards[w_bishop_idx] | queens);
+	Bitboard friendly_pieces = getFriendlyPieces();
+
+    Bitboard friendly_king = friendly_pieces & (bitboards[w_king_idx] | bitboards[b_king_idx]);
+    int friendly_king_idx = bitScanForward(friendly_king);
+    Bitboard occupancy = getAllPieces();
+
+    while (enemy_bishops) {
+        int enemy_bishop_idx = bitScanForward(enemy_bishops);  // Index of least significant '1' bit
+        Bitboard isolated_bishop = 1ULL << enemy_bishop_idx;
+
+        Bitboard king_threats = bishopValidator.getBishopAttacks(friendly_king_idx, occupancy);
+        Bitboard bishop_attacks = bishopValidator.getBishopAttacks(enemy_bishop_idx, occupancy);
+
+        Bitboard pin_lane = bishop_attacks & king_threats | isolated_bishop;
+        Bitboard pinned_pieces = pin_lane & friendly_pieces;
+
+        if (hasPinnedPiece(pinned_pieces)) {
+            int pinned_piece_idx = bitScanForward(pinned_pieces);  // Index of least significant '1' bit
+            Bitboard pinned_piece = 1ULL << pinned_piece_idx;
+            if (parsedMoves.find(pinned_piece) != parsedMoves.end()) {
+
+                parsedMoves[pinned_piece] &= pin_lane;  // Restrict moves to the pin lane
+                if (parsedMoves[pinned_piece] == 0ULL) {  // If no moves left, remove it
+                    parsedMoves.erase(pinned_piece);  // Remove pinned piece from possible moves
+                }
+
+
+            }
+        }
+
+
+
+
+        enemy_bishops &= enemy_bishops - 1;  // Clear the least significant '1' bit
+    }
+	return parsedMoves;
+}
+
+std::unordered_map<Bitboard, Bitboard> ChessBoard::removeRookPins(const std::unordered_map<Bitboard, Bitboard>& allMoves) {
+    std::unordered_map<Bitboard, Bitboard> parsedMoves = allMoves;
+    Bitboard queens = (bitboards[w_queen_idx] | bitboards[b_queen_idx]);
+    Bitboard enemy_pieces = getEnemyPieces();
+    Bitboard friendly_pieces = getFriendlyPieces();
+
+    Bitboard friendly_king = friendly_pieces & (bitboards[w_king_idx] | bitboards[b_king_idx]);
+    int friendly_king_idx = bitScanForward(friendly_king);
+    Bitboard occupancy = getAllPieces();
+
+    Bitboard enemy_rooks = enemy_pieces & (bitboards[b_rook_idx] | bitboards[w_rook_idx] | queens);
+
+
+    while (enemy_rooks) {
+        int enemy_rook_idx = bitScanForward(enemy_rooks);  // Index of least significant '1' bit
+        Bitboard isolated_rook = 1ULL << enemy_rook_idx;
+
+        Bitboard king_threats = rookValidator.getRookAttacks(friendly_king_idx, occupancy);
+        Bitboard rook_attacks = rookValidator.getRookAttacks(enemy_rook_idx, occupancy);
+
+        Bitboard pin_lane = rook_attacks & king_threats | isolated_rook;
+        Bitboard pinned_pieces = pin_lane & friendly_pieces;
+
+        if (hasPinnedPiece(pinned_pieces)) {
+            int pinned_piece_idx = bitScanForward(pinned_pieces);  // Index of least significant '1' bit
+            Bitboard pinned_piece = 1ULL << pinned_piece_idx;
+            if (parsedMoves.find(pinned_piece) != parsedMoves.end()) {
+
+                parsedMoves[pinned_piece] &= pin_lane;  // Restrict moves to the pin lane
+                if (parsedMoves[pinned_piece] == 0ULL) {  // If no moves left, remove it
+                    parsedMoves.erase(pinned_piece);  // Remove pinned piece from possible moves
+                }
+
+
+            }
+        }
+
+
+
+
+        enemy_rooks &= enemy_rooks - 1;  // Clear the least significant '1' bit
+    }
+    return parsedMoves;
+}
+
 std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unordered_map<Bitboard, Bitboard>& allMoves) {
-   std::unordered_map<Bitboard, Bitboard> parsedMoves = allMoves; // Create a copy to modify
-   Bitboard enemy_pieces = getEnemyPieces();
+   std::unordered_map<Bitboard, Bitboard> parsedMoves = allMoves; 
+
    Bitboard friendly_pieces = getFriendlyPieces();
-   Bitboard queens = (bitboards[w_queen_idx] | bitboards[b_queen_idx]);
-   Bitboard enemy_bishops = enemy_pieces & (bitboards[b_bishop_idx] | bitboards[w_bishop_idx] | queens);
-   //Bitboard enemy_bishops = enemy_pieces & (bitboards[b_bishop_idx] | bitboards[w_bishop_idx]);
    Bitboard friendly_king = friendly_pieces & (bitboards[w_king_idx] | bitboards[b_king_idx]);
    int friendly_king_idx = bitScanForward(friendly_king);
-   Bitboard occupancy = getAllPieces();
 
 
-   while (enemy_bishops) {
-       int enemy_bishop_idx = bitScanForward(enemy_bishops);  // Index of least significant '1' bit
-       Bitboard isolated_bishop = 1ULL << enemy_bishop_idx;
 
-	   Bitboard king_threats = bishopValidator.getBishopAttacks(friendly_king_idx, occupancy);
-	   Bitboard bishop_attacks = bishopValidator.getBishopAttacks(enemy_bishop_idx, occupancy) ;
+   parsedMoves = removeBishopPins(parsedMoves); // Remove bishop pins first
 
-	   Bitboard pin_lane = bishop_attacks & king_threats | isolated_bishop;
-	   Bitboard pinned_pieces = pin_lane & friendly_pieces;
+   parsedMoves = removeRookPins(parsedMoves); // Remove rook pins after bishop pins
 
-       if (hasPinnedPiece(pinned_pieces)) {
-		   int pinned_piece_idx = bitScanForward(pinned_pieces);  // Index of least significant '1' bit
-		   Bitboard pinned_piece = 1ULL << pinned_piece_idx;
-           if (parsedMoves.find(pinned_piece) != parsedMoves.end()) {
-               
-                parsedMoves[pinned_piece] &= pin_lane;  // Restrict moves to the pin lane
-               if (parsedMoves[pinned_piece] == 0ULL) {  // If no moves left, remove it
-                   parsedMoves.erase(pinned_piece);  // Remove pinned piece from possible moves
-               }
-           
+   Bitboard enemy_attacks = getEnemyAttacks();
 
-		   }
+   if (parsedMoves.find(friendly_king) != parsedMoves.end()) {
+       parsedMoves[friendly_king] &= ~enemy_attacks;  // Remove all moves that are attacked by enemy pieces
+       if (parsedMoves[friendly_king] == 0ULL) {  // If no moves left, remove it
+           parsedMoves.erase(friendly_king);  // Remove king move from possible moves
        }
-
-
-
-
-       enemy_bishops &= enemy_bishops - 1;  // Clear the least significant '1' bit
    }
 
-   Bitboard enemy_rooks = enemy_pieces & (bitboards[b_rook_idx] | bitboards[w_rook_idx] | queens);
-
-
-   while (enemy_rooks) {
-       int enemy_rook_idx = bitScanForward(enemy_rooks);  // Index of least significant '1' bit
-       Bitboard isolated_rook = 1ULL << enemy_rook_idx;
-
-       Bitboard king_threats = rookValidator.getRookAttacks(friendly_king_idx, occupancy);
-       Bitboard rook_attacks = rookValidator.getRookAttacks(enemy_rook_idx, occupancy);
-
-       Bitboard pin_lane = rook_attacks & king_threats | isolated_rook;
-       Bitboard pinned_pieces = pin_lane & friendly_pieces;
-
-       if (hasPinnedPiece(pinned_pieces)) {
-           int pinned_piece_idx = bitScanForward(pinned_pieces);  // Index of least significant '1' bit
-           Bitboard pinned_piece = 1ULL << pinned_piece_idx;
-           if (parsedMoves.find(pinned_piece) != parsedMoves.end()) {
-
-               parsedMoves[pinned_piece] &= pin_lane;  // Restrict moves to the pin lane
-               if (parsedMoves[pinned_piece] == 0ULL) {  // If no moves left, remove it
-                   parsedMoves.erase(pinned_piece);  // Remove pinned piece from possible moves
-               }
-
-
-           }
-       }
-
-
-
-
-       enemy_rooks &= enemy_rooks - 1;  // Clear the least significant '1' bit
-   }
-
-
-    
-
-   Bitboard king_moves = kingValidator.getAttacks(friendly_king_idx, *this);
-   Bitboard invalid_king_moves = ~0ULL;
-
-
-   while (king_moves) {
-	   int king_move_idx = bitScanForward(king_moves);   //Index of least significant '1' bit
-	   Bitboard king_move = 1ULL << king_move_idx;   //Get the current king move
-
-       
-       Bitboard king_attacks = kingValidator.getAttacks(king_move_idx, *this) & (enemy_pieces & (bitboards[w_king_idx] | bitboards[b_king_idx]));
-       Bitboard bishop_attacks = bishopValidator.getAttacks(king_move_idx, *this) & (enemy_pieces & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx]));
-       Bitboard rook_attacks = rookValidator.getAttacks(king_move_idx, *this) & (enemy_pieces & (bitboards[w_rook_idx] | bitboards[b_rook_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx]));
-       Bitboard knight_attacks = knightValidator.getAttacks(king_move_idx, *this) & (enemy_pieces & (bitboards[w_knight_idx] | bitboards[b_knight_idx]));
-       Bitboard pawn_attacks = pawnValidator.getAttacks(king_move, *this) & (enemy_pieces & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx]));
-       Bitboard all_attacks = king_attacks | bishop_attacks | rook_attacks | knight_attacks | pawn_attacks;
-       
-       //recheck this logic
-       if (all_attacks) {
-		   if (parsedMoves.find(friendly_king) != parsedMoves.end()) {
-			   parsedMoves[friendly_king] &= ~king_move;  // Remove all attacks from the king's move
-
-			   if (parsedMoves[king_move] == 0ULL) {  // If no moves left, remove it
-				   parsedMoves.erase(king_move);  // Remove king move from possible moves
-			   }
-		   }
-
-       }
-       
-
-	   king_moves &= king_moves - 1;  // Clear the least significant '1' bit
-   }
-
-
-
-
-   //return king_attacks | bishop_attacks | rook_attacks | knight_attacks | pawn_attacks;
 
 
    return parsedMoves;

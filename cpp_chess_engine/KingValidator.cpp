@@ -47,9 +47,6 @@ void KingValidator::initKingMoves() {
 }
 
 Bitboard KingValidator::getAttacks(int square, const ChessBoard& board) const {
-    // Retrieve the king bitboard based on whose turn it is.
-    bool whiteToMove = board.getTurn();
-    Bitboard kings = whiteToMove ? board.getWhiteKingBitboard() : board.getBlackKingBitboard();
 
 
 
@@ -62,8 +59,6 @@ Bitboard KingValidator::getAttacks(int square, const ChessBoard& board) const {
 
 
 Bitboard KingValidator::getAttacks(Bitboard origin, const ChessBoard& board) const {
-    // Retrieve the king bitboard based on whose turn it is.
-    Bitboard kings = board.getTurn() ? board.getWhiteKingBitboard() : board.getBlackKingBitboard();
 
     // Use precomputed moves to verify the destination.
     Bitboard legalMoves = kingMoves[bitScanForward(origin)];

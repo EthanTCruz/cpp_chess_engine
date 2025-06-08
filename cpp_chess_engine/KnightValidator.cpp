@@ -38,8 +38,7 @@ Bitboard KnightValidator::getAttacks(int square, const ChessBoard& board) const 
 
 
 bool KnightValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
-    // Retrieve the knight bitboard based on whose turn it is.
-    Bitboard knights = board.getTurn() ? board.getWhiteKnightBitboard() : board.getBlackKnightBitboard();
+
 
 
 
