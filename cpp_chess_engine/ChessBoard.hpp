@@ -24,7 +24,11 @@ public:
     bool isAttacked(const int& from_idx);
     Bitboard getAttacks(const int& from_idx);
     Bitboard getEnemyAttacks();
+    Bitboard getEnemyAttacksIgnoringKing();
 
+    Bitboard getRookPinLanes(const int& rook_idx, const Bitboard& target_idx, const Bitboard& occupancy);
+    Bitboard getBishopPinLanes(const int& bishop_idx, const Bitboard& target_idx, const Bitboard& occupancy);
+    
     std::unordered_map<Bitboard, Bitboard> removeBishopPins(const std::unordered_map<Bitboard, Bitboard>& allMoves);
     std::unordered_map<Bitboard, Bitboard> removeRookPins(const std::unordered_map<Bitboard, Bitboard>& allMoves);
     
@@ -36,7 +40,8 @@ public:
     Bitboard getBlackPieces() const;
     bool getTurn() const;
     bool castleCheck(Bitboard from_bb, Bitboard to_bb) const;
-
+	void changeTurn();
+	void switchTurn(); // Switches the turn without incrementing the halfmove clock or fullmove number.
     // Bitboard getters for knights.
     Bitboard getWhiteKnightBitboard() const;
     Bitboard getBlackKnightBitboard() const;
@@ -104,6 +109,9 @@ private:
 	bool whiteCanCastleQueenside = true;
 	bool blackCanCastleKingside = true;
 	bool blackCanCastleQueenside = true;
+
+	Bitboard friendlyPieces = 0ULL;
+	Bitboard enemyPieces = 0ULL;
 
     //Bitboard w_king_castle = 1ULL << 62;
     //Bitboard w_queen_castle = 1ULL << 58;

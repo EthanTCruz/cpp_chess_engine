@@ -27,13 +27,13 @@ void KingValidator::initKingMoves() {
         // Use appropriate edge masks to avoid wrap-around moves.
         
         //start up and rotate clockwise
-        if ((king << 8) & ~Rank::RANK_1) moves |= (king << 8);
+        if (king & ~Rank::RANK_8) moves |= (king << 8);
         
         if (king  & ~Files::A) moves |= (king << 7);
         if (king & ~Files::A) moves |= (king >> 1);
         if (king & ~Files::A) moves |= (king >> 9);
 
-        if (king & ~Rank::RANK_8) moves |= (king >> 8);
+        if (king & ~Rank::RANK_1) moves |= (king >> 8);
         
         if (king & ~Files::H) moves |= (king >> 7);
         if (king  & ~Files::H) moves |= (king << 1);

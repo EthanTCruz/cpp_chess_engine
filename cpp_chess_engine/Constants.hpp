@@ -32,7 +32,12 @@ namespace Rank{
 namespace InitialPositions {
 	const Bitboard w_king = 1ULL << 4;
 	const Bitboard b_king = 1ULL << 60;
+	const Bitboard wk_rook = 1ULL << 7;
+	const Bitboard wq_rook = 1ULL << 0;
+	const Bitboard bk_rook = 1ULL << 63;
+	const Bitboard bq_rook = 1ULL << 56;
 
+	const std::string BaseFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
 }
 
 namespace CastlingTrigger {
@@ -41,6 +46,7 @@ namespace CastlingTrigger {
 	const Bitboard w_king = 1ULL << 6;
 	const Bitboard w_queen = 1ULL << 2;
 
+	const Bitboard all = b_king | b_queen | w_king | w_queen;
 }
 
 #endif
