@@ -78,6 +78,13 @@ ChessBoard::ChessBoard() {
     initialize();
 }
 
+void ChessBoard::ResetBoard() {
+    // Map piece characters to their corresponding bitboard index.
+    fen = STARTING_FEN;
+    initialize();
+}
+
+
 void ChessBoard::initialize() {
 
     piece_to_idx = {
@@ -672,8 +679,8 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 			else {
 				std::cout << "Stalemate!\n";
 			}
-			fen = STARTING_FEN;
-			initialize();
+
+			ResetBoard();
 		}
         
 
