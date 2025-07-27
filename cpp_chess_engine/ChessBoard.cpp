@@ -31,7 +31,7 @@ namespace {
     const int b_king_idx = 11;
 }
 
-std::string printBitboardBoard(uint64_t bitboard) {
+std::string printBitboardBoard(Bitboard bitboard) {
     std::string bboard = "";
     for (int rank = 7; rank >= 0; --rank) {
         for (int file = 0; file < 8; ++file) {
@@ -96,67 +96,67 @@ void ChessBoard::initialize() {
 
 
 
-uint64_t ChessBoard::getWhiteKnightBitboard() const {
+Bitboard ChessBoard::getWhiteKnightBitboard() const {
     return bitboards[w_knight_idx];
 }
-uint64_t ChessBoard::getWhiteBishopBitboard() const {
+Bitboard ChessBoard::getWhiteBishopBitboard() const {
     return bitboards[w_bishop_idx];
 }
-uint64_t ChessBoard::getWhiteRookBitboard() const {
+Bitboard ChessBoard::getWhiteRookBitboard() const {
     return bitboards[w_rook_idx];
 }
-uint64_t ChessBoard::getWhiteQueenBitboard() const {
+Bitboard ChessBoard::getWhiteQueenBitboard() const {
     return bitboards[w_queen_idx];
 }
-uint64_t ChessBoard::getWhiteKingBitboard() const {
+Bitboard ChessBoard::getWhiteKingBitboard() const {
     return bitboards[w_king_idx];
 }
-uint64_t ChessBoard::getBlackBishopBitboard() const {
+Bitboard ChessBoard::getBlackBishopBitboard() const {
     return bitboards[b_bishop_idx];
 }
-uint64_t ChessBoard::getBlackRookBitboard() const {
+Bitboard ChessBoard::getBlackRookBitboard() const {
     return bitboards[b_rook_idx];
 }
-uint64_t ChessBoard::getBlackQueenBitboard() const {
+Bitboard ChessBoard::getBlackQueenBitboard() const {
     return bitboards[b_queen_idx];
 }
-uint64_t ChessBoard::getBlackKingBitboard() const {
+Bitboard ChessBoard::getBlackKingBitboard() const {
     return bitboards[b_king_idx];
 }
 
-uint64_t ChessBoard::getBlackKnightBitboard() const {
+Bitboard ChessBoard::getBlackKnightBitboard() const {
     return bitboards[b_knight_idx];
 }
 
-uint64_t ChessBoard::getWhitePawnBitboard() const {
+Bitboard ChessBoard::getWhitePawnBitboard() const {
     return bitboards[w_pawn_idx];
 }
 
-uint64_t ChessBoard::getBlackPawnBitboard() const {
+Bitboard ChessBoard::getBlackPawnBitboard() const {
     return bitboards[b_pawn_idx];
 }
 
-uint64_t ChessBoard::getPawnBitboards() const {
+Bitboard ChessBoard::getPawnBitboards() const {
     return bitboards[b_pawn_idx] | bitboards[w_pawn_idx];
 }
 
-uint64_t ChessBoard::getKnightBitboards() const {
+Bitboard ChessBoard::getKnightBitboards() const {
 	return bitboards[w_knight_idx] | bitboards[b_knight_idx];
 }
 
-uint64_t ChessBoard::getBishopBitboards() const {
+Bitboard ChessBoard::getBishopBitboards() const {
 	return bitboards[w_bishop_idx] | bitboards[b_bishop_idx];
 }
 
-uint64_t ChessBoard::getRookBitboards() const {
+Bitboard ChessBoard::getRookBitboards() const {
 	return bitboards[w_rook_idx] | bitboards[b_rook_idx];
 }
 
-uint64_t ChessBoard::getQueenBitboards() const {
+Bitboard ChessBoard::getQueenBitboards() const {
 	return bitboards[w_queen_idx] | bitboards[b_queen_idx];
 }
 
-uint64_t ChessBoard::getKingBitboards() const {
+Bitboard ChessBoard::getKingBitboards() const {
 	return bitboards[w_king_idx] | bitboards[b_king_idx];
 }
 
@@ -192,7 +192,7 @@ void ChessBoard::syncBoardWithBitboards() {
 
     // Iterate through each bitboard.
     for (int i = 0; i < 12; ++i) {
-        uint64_t bb = bitboards[i];
+        Bitboard bb = bitboards[i];
         while (bb) {
             unsigned long index;
             // _BitScanForward64 finds the index of the least significant set bit.
@@ -304,31 +304,31 @@ bool ChessBoard::getTurn() const {
     return whiteToMove;
 }
 
-uint64_t ChessBoard::getWhitePieces() const {
+Bitboard ChessBoard::getWhitePieces() const {
     return bitboards[w_pawn_idx] | bitboards[w_knight_idx] |
         bitboards[w_bishop_idx] | bitboards[w_rook_idx] |
         bitboards[w_queen_idx] | bitboards[w_king_idx];
 }
 
-uint64_t ChessBoard::getBlackPieces() const {
+Bitboard ChessBoard::getBlackPieces() const {
     return bitboards[b_pawn_idx] | bitboards[b_knight_idx] |
         bitboards[b_bishop_idx] | bitboards[b_rook_idx] |
         bitboards[b_queen_idx] | bitboards[b_king_idx];
 }
 
-uint64_t ChessBoard::getFriendlyPieces() const {
-    uint64_t friendlyPieces = whiteToMove ? getWhitePieces() : getBlackPieces();
+Bitboard ChessBoard::getFriendlyPieces() const {
+    Bitboard friendlyPieces = whiteToMove ? getWhitePieces() : getBlackPieces();
     return friendlyPieces;
 }
 
-uint64_t ChessBoard::getEnemyPieces() const {
-    uint64_t enemyPieces = !whiteToMove ? getWhitePieces() : getBlackPieces();
+Bitboard ChessBoard::getEnemyPieces() const {
+    Bitboard enemyPieces = !whiteToMove ? getWhitePieces() : getBlackPieces();
     return enemyPieces;
 }
 
-uint64_t ChessBoard::getAllPieces() const {
-    uint64_t whitePieces = getWhitePieces();
-    uint64_t blackPieces= getBlackPieces();
+Bitboard ChessBoard::getAllPieces() const {
+    Bitboard whitePieces = getWhitePieces();
+    Bitboard blackPieces= getBlackPieces();
     return whitePieces | blackPieces;
 }
 
@@ -404,7 +404,7 @@ int getBitindex(int row, int col) {
     return (7 - row) * 8 + col;
 }
 
-uint64_t ChessBoard::getEnPassant() const {
+Bitboard ChessBoard::getEnPassant() const {
 	return enPassant;
 }
 
@@ -530,14 +530,14 @@ void ChessBoard::changeTurn() {
 void ChessBoard::switchTurn() {
 	// Switch the turn without incrementing the halfmove clock or fullmove number.
 	whiteToMove = !whiteToMove;
-	if (whiteToMove) {
-		friendlyPieces = getWhitePieces();
-		enemyPieces = getBlackPieces();
-	}
-	else {
-		friendlyPieces = getBlackPieces();
-		enemyPieces = getWhitePieces();
-	}
+    if (whiteToMove) {
+        friendlyPieces = getWhitePieces();
+        enemyPieces = getBlackPieces();
+    }
+    else {
+        friendlyPieces = getBlackPieces();
+        enemyPieces = getWhitePieces();
+    }
 }
 
 
@@ -565,7 +565,7 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
         board[newRow][newCol] = piece;
 		bool isPawn = (piece == 'P' || piece == 'p');
         int rankEPAdjustment = whiteToMove ? -1 : 1;
-        uint64_t proposed_ep = 1ULL << to_idx;
+        Bitboard proposed_ep = 1ULL << to_idx;
 
         //sets en passant
 
@@ -645,10 +645,11 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 			// Handle checkmate or stalemate here.
             // problems occur here
             // checkmate occurs if friendly pieces create mate
-            changeTurn();
+            //changeTurn();
             Bitboard enemy_attacks = getEnemyAttacks();
-            changeTurn();
-			if (enemy_attacks & friendlyPieces & getKingBitboards()) {
+            Bitboard friendly_pieces = getFriendlyPieces();
+            //changeTurn();
+			if (enemy_attacks & getFriendlyPieces() & getKingBitboards()) {
 				std::cout << "Checkmate!\n";
 			}
 			else {
@@ -845,7 +846,7 @@ Bitboard ChessBoard::getMoves(const int& from_idx) {
     if (knight_moves) moves |= knightValidator.getAttacks(from_idx, *this);
 	if (pawn_moves) moves |= pawnValidator.getMoves(origin, *this);
 	if (rook_moves) moves |= rookValidator.getAttacks(from_idx, *this);
-	if (king_moves) moves |= kingValidator.getAttacks(from_idx, *this) | getCastlingRights();
+    if (king_moves) moves |= kingValidator.getAttacks(from_idx, *this); // | getCastlingRights();
 	if (bishop_moves) moves |= bishopValidator.getAttacks(from_idx, *this);
 	if (queen_moves) moves |= rookValidator.getAttacks(from_idx, *this) | bishopValidator.getAttacks(from_idx, *this);
 
@@ -863,6 +864,7 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::getAllMoves()  {
         int index = bitScanForward(friendly_pieces);  // Index of least significant '1' bit
         Bitboard isolatedBit = 1ULL << index;
 		Bitboard attacks = getMoves(index);
+        if (isolatedBit & (getKingBitboards() & friendly_pieces)) attacks |= getCastlingRights();
 
 		allMoves[isolatedBit] = attacks;
 
@@ -947,6 +949,7 @@ Bitboard ChessBoard::getEnemyAttacks() {
     Bitboard enemy_attacks = 0ULL;
     Bitboard enemy_pieces = getEnemyPieces();
 
+    switchTurn();
     while (enemy_pieces) {
         int index = bitScanForward(enemy_pieces);
         Bitboard isolatedBit = 1ULL << index;
@@ -967,15 +970,15 @@ Bitboard ChessBoard::getEnemyAttacks() {
             enemy_attacks |= knightValidator.getAttacks(index, *this);
         }
         else if (isolatedBit & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx])) {
-            switchTurn();
+            //switchTurn();
             enemy_attacks |= pawnValidator.getAttacks(isolatedBit, *this);
-            switchTurn();
+            //switchTurn();
         }
 
 
         enemy_pieces &= enemy_pieces - 1;
     }
-
+    switchTurn();
     return enemy_attacks;
 }
 
