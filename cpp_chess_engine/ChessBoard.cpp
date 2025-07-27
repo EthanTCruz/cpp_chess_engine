@@ -29,7 +29,11 @@ namespace {
     const int b_rook_idx = 9;
     const int b_queen_idx = 10;
     const int b_king_idx = 11;
+
+
 }
+
+
 
 std::string printBitboardBoard(Bitboard bitboard) {
     std::string bboard = "";
@@ -64,24 +68,32 @@ void printBitsetBoard(const std::bitset<64>& bitset) {
 
 ChessBoard::ChessBoard(const std::string& fen) : fen(fen) {
     // Map piece characters to their corresponding bitboard index.
-    piece_to_idx = {
-        {'P', w_pawn_idx},
-        {'N', w_knight_idx},
-        {'B', w_bishop_idx},
-        {'R', w_rook_idx},
-        {'Q', w_queen_idx},
-        {'K', w_king_idx},
-        {'p', b_pawn_idx},
-        {'n', b_knight_idx},
-        {'b', b_bishop_idx},
-        {'r', b_rook_idx},
-        {'q', b_queen_idx},
-        {'k', b_king_idx}
-    };
+
+    initialize();
+}
+
+ChessBoard::ChessBoard() {
+    // Map piece characters to their corresponding bitboard index.
+	fen = STARTING_FEN;
     initialize();
 }
 
 void ChessBoard::initialize() {
+
+    piece_to_idx = {
+    {'P', w_pawn_idx},
+    {'N', w_knight_idx},
+    {'B', w_bishop_idx},
+    {'R', w_rook_idx},
+    {'Q', w_queen_idx},
+    {'K', w_king_idx},
+    {'p', b_pawn_idx},
+    {'n', b_knight_idx},
+    {'b', b_bishop_idx},
+    {'r', b_rook_idx},
+    {'q', b_queen_idx},
+    {'k', b_king_idx}
+    };
     // Initialize board to empty.
     for (int r = 0; r < 8; ++r)
         for (int c = 0; c < 8; ++c)
@@ -655,6 +667,8 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 			else {
 				std::cout << "Stalemate!\n";
 			}
+			fen = STARTING_FEN;
+			initialize();
 		}
         
 

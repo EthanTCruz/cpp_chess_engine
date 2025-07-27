@@ -15,6 +15,7 @@
 class ChessBoard {
 public:
     ChessBoard(const std::string& fen);
+    ChessBoard();
     std::string getString() const;
     void setString(const std::string& newFen);
     void printBoard() const;
@@ -99,6 +100,7 @@ public:
     int get_bitindex(int row, int col) ;
 
 private:
+	std::string STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     std::string fen;
     bool whiteToMove = true;
 	int halfmoveClock = 0;
