@@ -542,14 +542,19 @@ void ChessBoard::changeTurn() {
 void ChessBoard::switchTurn() {
 	// Switch the turn without incrementing the halfmove clock or fullmove number.
 	whiteToMove = !whiteToMove;
-    if (whiteToMove) {
-        friendlyPieces = getWhitePieces();
-        enemyPieces = getBlackPieces();
-    }
-    else {
-        friendlyPieces = getBlackPieces();
-        enemyPieces = getWhitePieces();
-    }
+
+	Bitboard tmp_pieces = getFriendlyPieces();
+	friendlyPieces = getEnemyPieces();
+    enemyPieces = tmp_pieces;
+
+    //if (whiteToMove) {
+    //    friendlyPieces = getWhitePieces();
+    //    enemyPieces = getBlackPieces();
+    //}
+    //else {
+    //    friendlyPieces = getBlackPieces();
+    //    enemyPieces = getWhitePieces();
+    //}
 }
 
 
