@@ -5,30 +5,43 @@
 #include <ctime>
 #include <iostream>
 #include <bitset>
-#ifdef _WIN64
+#if defined(_MSC_VER)
 #include <intrin.h>
 #endif
 
 // Scans the bitboard from least significant bit to most significant bit
 // and returns the index of the first set bit.
 int bitScanForward(Bitboard bb) {
+#if defined(_MSC_VER)
+#if defined(_WIN64)
     unsigned long index;
-#ifdef _WIN64
     _BitScanForward64(&index, bb);
+    return static_cast<int>(index);
 #else
+    unsigned long index;
     if (static_cast<uint32_t>(bb) != 0) {
-        // Note: on non-Windows systems you might use __builtin_ctzll if available.
         _BitScanForward(&index, static_cast<uint32_t>(bb));
-    }
-    else {
+        return static_cast<int>(index);
+    } else {
         _BitScanForward(&index, static_cast<uint32_t>(bb >> 32));
-        index += 32;
+        return static_cast<int>(index + 32);
     }
 #endif
-    return static_cast<int>(index);
+#else
+    return static_cast<int>(__builtin_ctzll(bb));
+#endif
 }
 
-// Sets occupancy given an index into the mask’s bit count.
+// Counts the number of set bits in a bitboard.
+int popcount(Bitboard bb) {
+#if defined(_MSC_VER)
+    return static_cast<int>(__popcnt64(bb));
+#else
+    return __builtin_popcountll(bb);
+#endif
+}
+
+// Sets occupancy given an index into the masks bit count.
 Bitboard setOccupancy(int index, int bitsInMask, Bitboard mask) {
     Bitboard occupancy = 0ULL;
     for (int i = 0; i < bitsInMask; i++) {
@@ -42,7 +55,7 @@ Bitboard setOccupancy(int index, int bitsInMask, Bitboard mask) {
 
 // Generates all occupancy variations for a given mask.
 std::vector<Bitboard> generateOccupancies(Bitboard mask) {
-    int bits = __popcnt64(mask);  // Use __popcnt64 on MSVC or __builtin_popcountll on GCC/Clang.
+    int bits = popcount(mask);
     int occupancyVariations = 1 << bits;
     std::vector<Bitboard> occupancies(occupancyVariations);
     for (int index = 0; index < occupancyVariations; index++) {

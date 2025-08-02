@@ -13,7 +13,9 @@
 
 
 #include <array>
+#if defined(_MSC_VER)
 #include <intrin.h>
+#endif
 
 
 
@@ -73,7 +75,7 @@ Bitboard findMagic(int square, int relevantBits, bool isRook) {
     std::vector<Bitboard> used(4096); // max possible size for rook is 4096
     for (int trial = 0; trial < 100000000; trial++) {
         magicCandidate = randomUint64FewBits(rng);
-        if (__popcnt64((magicCandidate * rookOccupancyMask(square)) & 0xFF00000000000000ULL) < 6)
+        if (popcount((magicCandidate * rookOccupancyMask(square)) & 0xFF00000000000000ULL) < 6)
             continue;
         std::fill(used.begin(), used.end(), 0ULL);
         bool collision = false;
@@ -109,7 +111,7 @@ void RookValidator::initRookMagics() {
     for (int square = 0; square < 64; square++) {
         Magic& m = rookMagics[square];
         m.mask = rookOccupancyMask(square);
-        int relevantBits = __popcnt64(m.mask);
+        int relevantBits = popcount(m.mask);
         int occupancyVariations = 1 << relevantBits;
         m.shift = 64 - relevantBits;
         m.attacks = new Bitboard[occupancyVariations];

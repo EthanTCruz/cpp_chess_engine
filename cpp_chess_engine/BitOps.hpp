@@ -10,7 +10,10 @@
 // and returns the index of the first set bit.
 int bitScanForward(Bitboard bb);
 
-// Sets occupancy given an index into the mask’s bits.
+// Counts the number of set bits in a bitboard.
+int popcount(Bitboard bb);
+
+// Sets occupancy given an index into the masks bits.
 Bitboard setOccupancy(int index, int bitsInMask, Bitboard mask);
 
 // Generates all occupancy variations for a given mask.

@@ -90,7 +90,7 @@ Bitboard findMagicBishop(int square, int relevantBits) {
     for (int trial = 0; trial < 100000000; trial++) {
         magicCandidate = randomUint64FewBits(rng);
         // Heuristic check similar to the rook version; adjust the threshold as needed.
-        if (__popcnt64((magicCandidate * mask) & 0xFF00000000000000ULL) < 6)
+        if (popcount((magicCandidate * mask) & 0xFF00000000000000ULL) < 6)
             continue;
 
         std::fill(used.begin(), used.end(), 0ULL);
@@ -128,7 +128,7 @@ void BishopValidator::initBishopMagics() {
     for (int square = 0; square < 64; square++) {
         Magic& m = bishopMagics[square];
         m.mask = bishopOccupancyMask(square);
-        int relevantBits = __popcnt64(m.mask);
+        int relevantBits = popcount(m.mask);
         int occupancyVariations = 1 << relevantBits;
         m.shift = 64 - relevantBits;
         m.attacks = new Bitboard[occupancyVariations];
