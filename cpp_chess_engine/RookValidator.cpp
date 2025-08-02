@@ -134,7 +134,7 @@ Bitboard RookValidator::getAttacks(int square, const ChessBoard& board) const {
     return possibleMoves;
 }
 
-inline Bitboard RookValidator::getRookAttacks(int square, Bitboard occupancy) const {
+Bitboard RookValidator::getRookAttacks(int square, Bitboard occupancy) const {
     occupancy &= rookMagics[square].mask;
     occupancy *= rookMagics[square].magic;
     occupancy >>= rookMagics[square].shift;

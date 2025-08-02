@@ -17,7 +17,7 @@ public:
     bool validate(int from_idx, Bitboard target, const ChessBoard& board) const;
 
     Bitboard getAttacks(int square, const ChessBoard& board) const;
-    inline Bitboard getBishopAttacks(int square, Bitboard occupancy) const;
+    Bitboard getBishopAttacks(int square, Bitboard occupancy) const;
 private:
     std::array<Bitboard, 64> bishopMoves;
     Magic bishopMagics[64];

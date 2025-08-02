@@ -1,6 +1,7 @@
 #include "GUIBoard.hpp"
 #include "ChessBoard.hpp"
 #include "BitOps.hpp"
+#include <optional>
 
 GUIBoard::GUIBoard(ChessBoard& cb) : cb(cb) {
     initialize();  // Additional setup function
@@ -62,18 +63,16 @@ void GUIBoard::createSFMLWindow() {
 
     while (window.isOpen()) {
         // --- Event Handling ---
-        while (const std::optional<sf::Event> ev = window.pollEvent()) {
-            if (!ev.has_value()) break;
-            const sf::Event& event = *ev;
-
-            if (event.is<sf::Event::Closed>()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
                 window.close();
             }
-            else if (auto mb = event.getIf<sf::Event::MouseButtonPressed>()) {
-                int col = mb->position.x / cellSize;
-                int row = mb->position.y / cellSize;
+            else if (event.type == sf::Event::MouseButtonPressed) {
+                int col = event.mouseButton.x / cellSize;
+                int row = event.mouseButton.y / cellSize;
 
-                if (mb->button == sf::Mouse::Button::Left) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
                     // clear any attack highlights on a normal (left) click
                     attackSourceSquare.reset();
 
@@ -96,7 +95,7 @@ void GUIBoard::createSFMLWindow() {
                         }
                     }
                 }
-                else if (mb->button == sf::Mouse::Button::Right) {
+                else if (event.mouseButton.button == sf::Mouse::Right) {
                     sf::Vector2i clicked{ col, row };
                     // toggle attack highlight on repeated right-click
                     if (attackSourceSquare && *attackSourceSquare == clicked) {
