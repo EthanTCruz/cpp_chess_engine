@@ -10,6 +10,12 @@ To build the project you need a C++ compiler and CMake installed on your system.
 ./scripts/build_linux.sh
 ```
 
+On Linux, SFML additionally requires the `libudev` headers. You can install them with:
+
+```bash
+sudo apt install libudev-dev
+```
+
 ### Windows
 ```powershell
 .\scripts\build_windows.ps1
