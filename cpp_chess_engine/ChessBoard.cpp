@@ -5,7 +5,7 @@
 #include "RookValidator.hpp"
 #include "BishopValidator.hpp"
 #include "Constants.hpp"
-#include <intrin.h>
+#include "BitOps.hpp"
 
 
 RookValidator rookValidator;
@@ -213,10 +213,7 @@ void ChessBoard::syncBoardWithBitboards() {
     for (int i = 0; i < 12; ++i) {
         Bitboard bb = bitboards[i];
         while (bb) {
-            unsigned long index;
-            // _BitScanForward64 finds the index of the least significant set bit.
-            _BitScanForward64(&index, bb);
-            int pos = static_cast<int>(index);
+            int pos = bitScanForward(bb);
             // Convert bit index to board coordinates.
             int row = 7 - (pos / 8);
             int col = pos % 8;
@@ -625,7 +622,7 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
             // Remove the captured pawn from the square behind the en passant target.     
             board[newRow - rankEPAdjustment][newCol] = '.';       
 			std::cout << "eraesed: " << newRow + rankEPAdjustment << " " << newCol << "\n";
-            // For bitboards, use the opponent’s pawn index:       
+            // For bitboards, use the opponentÂ’s pawn index:       
             int oppPawnIdx = whiteToMove ? b_pawn_idx : w_pawn_idx;       
             int capture_idx = get_bitindex(newRow - rankEPAdjustment, newCol);       
             bitboards[oppPawnIdx] &= ~(1ULL << capture_idx);   
@@ -638,7 +635,7 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
             enPassant = 0ULL;
         }
           
-            // Update the moving pawn’s bitboard normally.       
+            // Update the moving pawnÂ’s bitboard normally.       
             //printBitboardBoard(bitboards[piece_to_idx[piece]]);
             if (occupying_piece != '.') bitboards[piece_to_idx[occupying_piece]] &= ~(1ULL << to_idx);
 
