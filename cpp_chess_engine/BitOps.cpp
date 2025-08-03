@@ -7,6 +7,7 @@
 #include <bitset>
 #if defined(_MSC_VER)
 #include <intrin.h>
+#include <nmmintrin.h>
 #endif
 
 // Scans the bitboard from least significant bit to most significant bit
@@ -32,12 +33,34 @@ int bitScanForward(Bitboard bb) {
 #endif
 }
 
-// Counts the number of set bits in a bitboard.
+// Counts the number of set bits in a bitboard using the most efficient
+// implementation available for the current platform.
 int popcount(Bitboard bb) {
 #if defined(_MSC_VER)
-    return static_cast<int>(__popcnt64(bb));
+    // On Windows use the intrinsics provided by MSVC. When targeting x64 we
+    // can take advantage of the 64-bit popcount instruction directly. For
+    // 32-bit builds fall back to two 32-bit operations to cover the full
+    // 64-bit value.
+#   if defined(_M_X64)
+    return static_cast<int>(_mm_popcnt_u64(bb));
+#   else
+    return _mm_popcnt_u32(static_cast<uint32_t>(bb)) +
+           _mm_popcnt_u32(static_cast<uint32_t>(bb >> 32));
+#   endif
+#elif defined(__clang__) || defined(__GNUC__)
+    // GCC/Clang expose a builtin that maps to the appropriate instruction or
+    // an efficient library call depending on the target architecture.
+    return static_cast<int>(__builtin_popcountll(bb));
 #else
-    return __builtin_popcountll(bb);
+    // Generic fallback using the classic Kernighan loop. This will be used for
+    // any other compiler/architecture combination and avoids relying on
+    // non-standard intrinsics.
+    int count = 0;
+    while (bb) {
+        bb &= bb - 1;
+        ++count;
+    }
+    return count;
 #endif
 }
 
