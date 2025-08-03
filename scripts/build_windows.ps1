@@ -21,3 +21,15 @@ if ($sfmlDlls) {
         $sfmlDlls | Copy-Item -Destination build/Release -Force
     }
 }
+
+# Copy piece images into the build output so the executable can load them
+$pieceSrc = "cpp_chess_engine/piece_pngs"
+if (Test-Path $pieceSrc) {
+    Copy-Item $pieceSrc build -Recurse -Force
+    if (Test-Path build/Debug) {
+        Copy-Item $pieceSrc build/Debug -Recurse -Force
+    }
+    if (Test-Path build/Release) {
+        Copy-Item $pieceSrc build/Release -Recurse -Force
+    }
+}
