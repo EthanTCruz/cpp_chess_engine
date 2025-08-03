@@ -2,6 +2,7 @@
 #include "ChessBoard.hpp"
 #include "BitOps.hpp"
 #include <optional>
+#include <variant>
 
 GUIBoard::GUIBoard(ChessBoard& cb) : cb(cb) {
     initialize();  // Additional setup function
@@ -63,6 +64,7 @@ void GUIBoard::createSFMLWindow() {
 
     while (window.isOpen()) {
         // --- Event Handling ---
+
         // SFML 3 introduced a new event API that returns std::optional
         // and uses member functions for variant access.  SFML 2 kept the
         // classic pollEvent(Event&) interface with public members.
@@ -72,6 +74,7 @@ void GUIBoard::createSFMLWindow() {
             if (event.is<sf::Event::Closed>()) {
                 window.close();
             } else if (const auto* mb = event.getIf<sf::Event::MouseButtonPressed>()) {
+
                 int col = mb->position.x / cellSize;
                 int row = mb->position.y / cellSize;
 
