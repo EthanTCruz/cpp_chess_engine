@@ -674,10 +674,21 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
             Bitboard friendly_pieces = getFriendlyPieces();
             //changeTurn();
 			if (enemy_attacks & getFriendlyPieces() & getKingBitboards()) {
+
 				std::cout << "Checkmate!\n";
-			}
+
+                if (whiteToMove) {
+					std::cout << "Black wins!\n";
+                    //return -1
+                }
+                else {
+					std::cout << "White wins!\n";
+                    //return 1;
+                }
+            }
 			else {
 				std::cout << "Stalemate!\n";
+                //return 0;
 			}
 
 			ResetBoard();
