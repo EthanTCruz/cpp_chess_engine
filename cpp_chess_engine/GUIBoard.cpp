@@ -64,12 +64,17 @@ void GUIBoard::createSFMLWindow() {
 
     while (window.isOpen()) {
         // --- Event Handling ---
+
+        // SFML 3 introduced a new event API that returns std::optional
+        // and uses member functions for variant access.  SFML 2 kept the
+        // classic pollEvent(Event&) interface with public members.
 #if SFML_VERSION_MAJOR >= 3
         while (auto eventOpt = window.pollEvent()) {
             const sf::Event& event = *eventOpt;
-            if (std::holds_alternative<sf::Event::Closed>(event)) {
+            if (event.is<sf::Event::Closed>()) {
                 window.close();
-            } else if (const auto* mb = std::get_if<sf::Event::MouseButtonPressed>(&event)) {
+            } else if (const auto* mb = event.getIf<sf::Event::MouseButtonPressed>()) {
+
                 int col = mb->position.x / cellSize;
                 int row = mb->position.y / cellSize;
 
