@@ -22,3 +22,10 @@ sudo apt install libudev-dev
 ```powershell
 .\scripts\build_windows.ps1
 ```
+
+After building, ensure the SFML debug or release DLLs are next to the
+generated executable (e.g. copy the contents of `C:\SFML-3.0.0\bin`
+into your `x64/Debug` or `x64/Release` directory) or add that `bin`
+directory to your `PATH`. Without these runtime libraries, Windows will
+report missing `sfml-graphics-*-3.dll` files when launching the
+application.
