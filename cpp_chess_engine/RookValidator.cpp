@@ -80,7 +80,7 @@ Bitboard findMagic(int square, int relevantBits, bool isRook) {
         std::fill(used.begin(), used.end(), 0ULL);
         bool collision = false;
         for (size_t i = 0; i < occupancies.size(); i++) {
-            int magicIndex = (occupancies[i] * magicCandidate) >> (64 - relevantBits);
+            std::size_t magicIndex = static_cast<std::size_t>((occupancies[i] * magicCandidate) >> (64 - relevantBits));
             if (used[magicIndex] == 0ULL) {
                 used[magicIndex] = attacks[i];
             }
@@ -118,7 +118,7 @@ void RookValidator::initRookMagics() {
         m.magic = findMagic(square, relevantBits, true);
         for (int index = 0; index < occupancyVariations; index++) {
             Bitboard occupancy = setOccupancy(index, relevantBits, m.mask);
-            int magicIndex = (occupancy * m.magic) >> m.shift;
+            std::size_t magicIndex = static_cast<std::size_t>((occupancy * m.magic) >> m.shift);
             m.attacks[magicIndex] = rookAttacksOnTheFly(square, occupancy);
         }
     }
