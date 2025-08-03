@@ -153,7 +153,7 @@ Bitboard BishopValidator::getAttacks(int square, const ChessBoard& board) const 
 
 
 // Retrieves bishop attack bitboard from precomputed magic table.
-inline Bitboard BishopValidator::getBishopAttacks(int square, Bitboard occupancy) const {
+Bitboard BishopValidator::getBishopAttacks(int square, Bitboard occupancy) const {
     occupancy &= bishopMagics[square].mask;
     occupancy *= bishopMagics[square].magic;
     occupancy >>= bishopMagics[square].shift;
