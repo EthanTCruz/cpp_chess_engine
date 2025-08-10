@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /build/CMakeFiles
 /build/_deps
 /build
+!/build/piece_pngs/*

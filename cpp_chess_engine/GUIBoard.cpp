@@ -1,6 +1,8 @@
 #include "GUIBoard.hpp"
 #include "ChessBoard.hpp"
 #include "BitOps.hpp"
+#include <optional>
+#include <variant>
 
 GUIBoard::GUIBoard(ChessBoard& cb) : cb(cb) {
     initialize();  // Additional setup function
@@ -62,14 +64,17 @@ void GUIBoard::createSFMLWindow() {
 
     while (window.isOpen()) {
         // --- Event Handling ---
-        while (const std::optional<sf::Event> ev = window.pollEvent()) {
-            if (!ev.has_value()) break;
-            const sf::Event& event = *ev;
 
+        // SFML 3 introduced a new event API that returns std::optional
+        // and uses member functions for variant access.  SFML 2 kept the
+        // classic pollEvent(Event&) interface with public members.
+#if SFML_VERSION_MAJOR >= 3
+        while (auto eventOpt = window.pollEvent()) {
+            const sf::Event& event = *eventOpt;
             if (event.is<sf::Event::Closed>()) {
                 window.close();
-            }
-            else if (auto mb = event.getIf<sf::Event::MouseButtonPressed>()) {
+            } else if (const auto* mb = event.getIf<sf::Event::MouseButtonPressed>()) {
+
                 int col = mb->position.x / cellSize;
                 int row = mb->position.y / cellSize;
 
@@ -110,6 +115,54 @@ void GUIBoard::createSFMLWindow() {
                 }
             }
         }
+#else
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+            else if (event.type == sf::Event::MouseButtonPressed) {
+                int col = event.mouseButton.x / cellSize;
+                int row = event.mouseButton.y / cellSize;
+
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    // clear any attack highlights on a normal (left) click
+                    attackSourceSquare.reset();
+
+                    if (col >= 0 && col < 8 && row >= 0 && row < 8) {
+                        if (!selectedSquare) {
+                            // select piece if one exists
+                            if (getBoard()[row][col] != '.') {
+                                selectedSquare = { col, row };
+                            }
+                        }
+                        else {
+                            // attempt move
+                            int from_idx = (7 - selectedSquare->y) * 8 + selectedSquare->x;
+                            int to_idx = (7 - row) * 8 + col;
+                            if (cb.validateMove(from_idx, to_idx)) {
+                                cb.movePiece(selectedSquare->y, selectedSquare->x, row, col);
+                                cb.syncBoardWithBitboards();
+                            }
+                            selectedSquare.reset();
+                        }
+                    }
+                }
+                else if (event.mouseButton.button == sf::Mouse::Right) {
+                    sf::Vector2i clicked{ col, row };
+                    // toggle attack highlight on repeated right-click
+                    if (attackSourceSquare && *attackSourceSquare == clicked) {
+                        attackSourceSquare.reset();
+                    }
+                    else {
+                        attackSourceSquare = clicked;
+                    }
+                    // also clear any normal selection
+                    selectedSquare.reset();
+                }
+            }
+        }
+#endif
 
         // --- Rendering ---
         window.clear();
