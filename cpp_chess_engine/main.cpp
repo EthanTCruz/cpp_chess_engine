@@ -135,6 +135,15 @@ int main(int argc, char** argv) {
     cb.movePieceUCI("h3h6");
     cb.movePieceUCI("a5b4");
     cb.movePieceUCI("h6e6");
+    cb.movePieceUCI("d8e7");
+    cb.movePieceUCI("e6e7");
+    cb.movePieceUCI("e8f8");
+    cb.movePieceUCI("e7d7");
+    cb.movePieceUCI("a7a6");
+    cb.movePieceUCI("c1d2");
+    cb.movePieceUCI("a6a5");
+    cb.movePieceUCI("c3d5");
+    //cb.movePieceUCI("");
     //cb.movePieceUCI("");
     //cb.movePieceUCI("");
     //cb.movePieceUCI("");
