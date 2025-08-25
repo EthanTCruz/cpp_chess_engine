@@ -100,6 +100,10 @@ public:
     // Public helper to convert board coordinates to a bit index.
     int get_bitindex(int row, int col) ;
 
+    bool game_is_over = false;
+    bool white_wins = false;
+    bool black_wins = false;
+    bool stalemate = false;
 private:
 	std::string STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     std::string fen;

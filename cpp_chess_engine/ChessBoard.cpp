@@ -66,6 +66,26 @@ void printBitsetBoard(const std::bitset<64>& bitset) {
 }
 
 
+bool ChessBoard::game_is_over(){
+return game_is_over;
+}
+bool ChessBoard::white_wins(){
+return white_wins;
+}
+bool ChessBoard::black_wins(){
+return black_wins;
+}
+bool ChessBoard::stalemate(){
+return stalemate;
+}
+
+std::string ChessBoard::get_game_results(){
+if (!game_is_over) return '*';
+if (white_wins) return '1-0';
+if (black_wins) return '0-1';
+if (stalemate) return '1/2-1/2';
+}
+
 ChessBoard::ChessBoard(const std::string& fen) : fen(fen) {
     // Map piece characters to their corresponding bitboard index.
 
@@ -106,10 +126,12 @@ void ChessBoard::initialize() {
         for (int c = 0; c < 8; ++c)
             board[r][c] = '.';
 
+    game_is_over = false;
     // Reset bitboards.
     bitboards.fill(0ULL);
-
+    
     parseFEN();
+
 
 }
 
@@ -683,8 +705,8 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 				std::cout << "Stalemate!\n";
                 //return 0;
 			}
-
-			ResetBoard();
+            game_is_over = true;
+			// ResetBoard();
 		}
         
 
@@ -1323,7 +1345,7 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     // Ranks: '1'-'8' with row = 8 - (rank value) because row 0 is rank 8.
     int fromCol = (move[0] - 'a');
     int fromRow = '8' - move[1];
-    move.substr(0, 1);
+    // move.substr(0, 1);
     int toCol =  move[2] - 'a';
     int toRow = '8' - (move[3]);
 
