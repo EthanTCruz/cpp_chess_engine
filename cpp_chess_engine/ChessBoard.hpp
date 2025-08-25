@@ -100,10 +100,13 @@ public:
     // Public helper to convert board coordinates to a bit index.
     int get_bitindex(int row, int col) ;
 
-    bool game_is_over = false;
-    bool white_wins = false;
-    bool black_wins = false;
-    bool stalemate = false;
+
+    std::string get_game_results();
+    bool game_is_over();
+    bool white_wins();
+    bool black_wins();
+    bool stalemate();
+    
 private:
 	std::string STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     std::string fen;
@@ -116,6 +119,11 @@ private:
 	bool whiteCanCastleQueenside = true;
 	bool blackCanCastleKingside = true;
 	bool blackCanCastleQueenside = true;
+
+    bool game_is_over = false;
+    bool white_wins = false;
+    bool black_wins = false;
+    bool stalemate = false;
 
 	Bitboard friendlyPieces = 0ULL;
 	Bitboard enemyPieces = 0ULL;
