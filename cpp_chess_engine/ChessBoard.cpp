@@ -128,6 +128,9 @@ void ChessBoard::initialize() {
             board[r][c] = '.';
 
     is_game_over = false;
+    is_white_win = false;
+    is_black_win = false;
+    is_stalemate = false;
     // Reset bitboards.
     bitboards.fill(0ULL);
     
@@ -695,19 +698,22 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 
                 if (whiteToMove) {
 					std::cout << "Black wins!\n";
+                    is_white_win = true;
                     //return -1
                 }
                 else {
 					std::cout << "White wins!\n";
+                    is_black_win = true;
                     //return 1;
                 }
             }
 			else {
 				std::cout << "Stalemate!\n";
+                is_stalemate=true;
                 //return 0;
 			}
             is_game_over = true;
-			// ResetBoard();
+			ResetBoard();
 		}
         
 
@@ -1221,8 +1227,10 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unorder
 
        if (king_checkers & (king_checkers - 1)) {
             // create a new parsed moves hash map with only the king moves 
-           if (parsedMoves.find(friendly_king) == parsedMoves.end())
+           if (parsedMoves.find(friendly_king) == parsedMoves.end()){
 			   std::cout << "Checkmate \n";
+                is_game_over = true;
+           }
 		   std::unordered_map<Bitboard, Bitboard> king_moves;
 		   king_moves[friendly_king] = parsedMoves[friendly_king] & king_checkers; // Only keep moves that are valid for the king
 		   parsedMoves = king_moves; // Replace parsed moves with king moves

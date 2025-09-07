@@ -96,6 +96,7 @@ void GUIBoard::createSFMLWindow() {
                             if (cb.validateMove(from_idx, to_idx)) {
                                 cb.movePiece(selectedSquare->y, selectedSquare->x, row, col);
                                 cb.syncBoardWithBitboards();
+                                // std::cout << cb.get_game_results() << "\n";
                             }
                             selectedSquare.reset();
                         }
@@ -143,6 +144,7 @@ void GUIBoard::createSFMLWindow() {
                             if (cb.validateMove(from_idx, to_idx)) {
                                 cb.movePiece(selectedSquare->y, selectedSquare->x, row, col);
                                 cb.syncBoardWithBitboards();
+                                // std::cout << cb.get_game_results() << "\n";
                             }
                             selectedSquare.reset();
                         }
