@@ -66,24 +66,25 @@ void printBitsetBoard(const std::bitset<64>& bitset) {
 }
 
 
-bool ChessBoard::game_is_over(){
-return game_is_over;
+bool ChessBoard::get_is_game_over(){
+return is_game_over;
 }
-bool ChessBoard::white_wins(){
-return white_wins;
+bool ChessBoard::get_is_white_win(){
+return is_white_win;
 }
-bool ChessBoard::black_wins(){
-return black_wins;
+bool ChessBoard::get_is_black_win(){
+return is_black_win;
 }
-bool ChessBoard::stalemate(){
-return stalemate;
+bool ChessBoard::get_is_stalemate(){
+return is_stalemate;
 }
 
 std::string ChessBoard::get_game_results(){
-if (!game_is_over) return '*';
-if (white_wins) return '1-0';
-if (black_wins) return '0-1';
-if (stalemate) return '1/2-1/2';
+if (!is_game_over) return "*";
+if (is_white_win) return "1-0";
+if (is_black_win) return "0-1";
+if (is_stalemate) return "1/2-1/2";
+return "Error";
 }
 
 ChessBoard::ChessBoard(const std::string& fen) : fen(fen) {
@@ -126,7 +127,7 @@ void ChessBoard::initialize() {
         for (int c = 0; c < 8; ++c)
             board[r][c] = '.';
 
-    game_is_over = false;
+    is_game_over = false;
     // Reset bitboards.
     bitboards.fill(0ULL);
     
@@ -705,7 +706,7 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 				std::cout << "Stalemate!\n";
                 //return 0;
 			}
-            game_is_over = true;
+            is_game_over = true;
 			// ResetBoard();
 		}
         

@@ -102,10 +102,10 @@ public:
 
 
     std::string get_game_results();
-    bool game_is_over();
-    bool white_wins();
-    bool black_wins();
-    bool stalemate();
+    bool get_is_game_over();
+    bool get_is_white_win();
+    bool get_is_black_win();
+    bool get_is_stalemate();
     
 private:
 	std::string STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
@@ -120,10 +120,10 @@ private:
 	bool blackCanCastleKingside = true;
 	bool blackCanCastleQueenside = true;
 
-    bool game_is_over = false;
-    bool white_wins = false;
-    bool black_wins = false;
-    bool stalemate = false;
+    bool is_game_over = false;
+    bool is_white_win = false;
+    bool is_black_win = false;
+    bool is_stalemate = false;
 
 	Bitboard friendlyPieces = 0ULL;
 	Bitboard enemyPieces = 0ULL;
