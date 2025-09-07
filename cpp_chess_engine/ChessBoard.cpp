@@ -697,21 +697,22 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 				std::cout << "Checkmate!\n";
 
                 if (whiteToMove) {
-					std::cout << "Black wins!\n";
+					
                     is_white_win = true;
                     //return -1
                 }
                 else {
-					std::cout << "White wins!\n";
+					
                     is_black_win = true;
                     //return 1;
                 }
             }
 			else {
-				std::cout << "Stalemate!\n";
+				
                 is_stalemate=true;
                 //return 0;
 			}
+            std::cout << get_game_results() <<"\n";
             is_game_over = true;
 			ResetBoard();
 		}

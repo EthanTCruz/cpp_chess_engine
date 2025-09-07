@@ -137,12 +137,7 @@
     <ClCompile Include="ChessBoard.cpp" />
     <ClCompile Include="GUIBoard.cpp" />
     <ClCompile Include="KingValidator.cpp" />
-    <ClCompile Include="KnightValidator.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="KnightValidator.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="KnightValidator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="PawnValidator.cpp" />
@@ -156,6 +151,7 @@
     <ClInclude Include="Constants.hpp" />
     <ClInclude Include="GUIBoard.hpp" />
     <ClInclude Include="KingValidator.hpp" />
+    <ClCompile Include="KnightValidator.hpp" />
     <ClInclude Include="Move.hpp" />
     <ClInclude Include="MoveValidator.hpp" />
     <ClInclude Include="PawnValidator.hpp" />

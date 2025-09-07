@@ -11,6 +11,7 @@
 class KnightValidator : public MoveValidator {
 public:
     KnightValidator();
+
     bool validate(int from_idx, int to_idx, const ChessBoard& board) const override;
     bool validate(int from_idx, Bitboard target, const ChessBoard& board) const;
 

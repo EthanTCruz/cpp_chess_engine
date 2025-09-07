@@ -6,6 +6,7 @@ KnightValidator::KnightValidator() {
     initKnightMoves();
 }
 
+
 void KnightValidator::initKnightMoves() {
     // Precompute knight moves for each square using bitboards.
     for (int sq = 0; sq < 64; ++sq) {
