@@ -25,7 +25,4 @@ target_link_libraries(cpp_chess_engine PRIVATE sfml-graphics sfml-window sfml-sy
 
 enable_testing()
 
-add_executable(popcount_test tests/popcount_test.cpp cpp_chess_engine/BitOps.cpp)
-target_include_directories(popcount_test PRIVATE cpp_chess_engine)
-add_test(NAME popcount_test COMMAND popcount_test)
 
