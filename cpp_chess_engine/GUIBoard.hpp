@@ -11,7 +11,7 @@ class GUIBoard {
 private:
     ChessBoard& cb;
     std::map<char, sf::Texture> textures;
-
+    
 public:
     explicit GUIBoard(ChessBoard& cb);
 
