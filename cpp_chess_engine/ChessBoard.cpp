@@ -1139,10 +1139,10 @@ Bitboard ChessBoard::getRookPinLanes( const int& rook_idx, const Bitboard& targe
 
     // Check that exactly one non-king friendly piece lies on the lane.
     Bitboard friendly_pieces = getFriendlyPieces();
-    Bitboard lane_friendly = pin_lane & friendly_pieces & ~king_bb;
-    if (popcount(lane_friendly) != 1) {
-        return 0ULL;
-    }
+    // Bitboard lane_friendly = pin_lane & friendly_pieces & ~king_bb;
+    // if (popcount(lane_friendly) != 1) {
+    //     return 0ULL;
+    // }
 
     return pin_lane | rook_bb;
 }
@@ -1251,7 +1251,7 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unorder
            
            if (rook_checks | queen_checks) {
                int rook_idx = bitScanForward(rook_checks | queen_checks);
-
+                //should just return bitboard where pins are possible, is returning 0 which is an issue
                Bitboard pin_lane = getRookPinLanes(rook_idx, friendly_king_idx, getAllPieces());
                
                
