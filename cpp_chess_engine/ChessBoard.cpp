@@ -6,6 +6,9 @@
 #include "BishopValidator.hpp"
 #include "Constants.hpp"
 #include "BitOps.hpp"
+#include <fstream>
+#include <sstream>
+#include <vector>
 
 
 RookValidator rookValidator;
@@ -1386,6 +1389,153 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
 	if (promotion != '0') return movePiece(fromRow, fromCol, toRow, toCol, promotion);
 	else
     return movePiece(fromRow, fromCol, toRow, toCol);
+}
+
+bool ChessBoard::movePieceSAN(const std::string& sanMove) {
+    std::string move = sanMove;
+    syncBoardWithBitboards();
+    // Remove annotations like +, #, !, ?
+    while (!move.empty() && (move.back() == '+' || move.back() == '#' || move.back() == '!' || move.back() == '?')) {
+        move.pop_back();
+    }
+
+    // Handle castling
+    if (move == "O-O" || move == "0-0") {
+        return whiteToMove ? movePieceUCI("e1g1") : movePieceUCI("e8g8");
+    }
+    if (move == "O-O-O" || move == "0-0-0") {
+        return whiteToMove ? movePieceUCI("e1c1") : movePieceUCI("e8c8");
+    }
+
+    char promotion = '0';
+    size_t eqPos = move.find('=');
+    if (eqPos != std::string::npos && eqPos + 1 < move.size()) {
+        promotion = std::tolower(move[eqPos + 1]);
+        move = move.substr(0, eqPos);
+    }
+
+    size_t capturePos = move.find('x');
+    bool isCapture = capturePos != std::string::npos;
+
+    // Determine piece type
+    char piece = 'P';
+    size_t idx = 0;
+    if (!move.empty() && std::isupper(move[0]) && move[0] != 'O') {
+        piece = move[0];
+        idx = 1;
+    }
+
+    // Destination square (last two characters)
+    if (move.size() < 2) return false;
+    std::string dest = move.substr(move.size() - 2, 2);
+    int toCol = dest[0] - 'a';
+    int toRow = '8' - dest[1];
+    int destIndex = get_bitindex(toRow, toCol);
+    Bitboard destMask = 1ULL << destIndex;
+
+    // Disambiguation between piece char and destination/capture
+    size_t disambEnd = (isCapture ? capturePos : move.size() - 2);
+    std::string disamb = move.substr(idx, disambEnd - idx);
+
+    auto moves = getAllMoves();
+    Bitboard originCandidate = 0ULL;
+    int fromRow = 0, fromCol = 0;
+
+    for (const auto& kv : moves) {
+        Bitboard origin = kv.first;
+        Bitboard destinations = kv.second;
+        if (!(destinations & destMask)) continue;
+        int originIndex = bitScanForward(origin);
+        int row = 7 - (originIndex / 8);
+        int col = originIndex % 8;
+        char boardPiece = board[row][col];
+        char upperPiece = std::toupper(boardPiece);
+        if (piece == 'P') {
+            if (upperPiece != 'P') continue;
+        } else {
+            if (upperPiece != piece) continue;
+        }
+
+        bool match = true;
+        if (!disamb.empty()) {
+            if (disamb.size() == 2) {
+                if (col != disamb[0] - 'a' || row != '8' - disamb[1]) match = false;
+            } else if (std::isdigit(disamb[0])) {
+                if (row != '8' - disamb[0]) match = false;
+            } else {
+                if (col != disamb[0] - 'a') match = false;
+            }
+        }
+        if (!match) continue;
+
+        originCandidate = origin;
+        fromRow = row;
+        fromCol = col;
+        break; // Assume SAN uniquely identifies a move
+    }
+
+    if (originCandidate == 0ULL) {
+        std::cerr << "Failed to parse SAN move: " << sanMove << std::endl;
+        return false;
+    }
+
+    if (promotion != '0') return movePiece(fromRow, fromCol, toRow, toCol, promotion);
+    return movePiece(fromRow, fromCol, toRow, toCol);
+}
+
+bool ChessBoard::validatePGN(const std::string& pgnPath) {
+    std::ifstream file(pgnPath);
+    if (!file.is_open()) {
+        std::cerr << "Unable to open PGN file: " << pgnPath << std::endl;
+        return false;
+    }
+    bool allCorrect = true;
+    std::string line;
+    std::string expectedResult;
+    std::vector<std::string> moveTokens;
+
+    auto processGame = [&]() {
+        if (moveTokens.empty()) return;
+        ChessBoard game; // start from initial position
+        for (size_t i = 0; i < moveTokens.size(); ++i) {
+            std::string tok = moveTokens[i];
+            if (tok.find('.') != std::string::npos) continue; // skip move numbers
+            if (tok == "1-0" || tok == "0-1" || tok == "1/2-1/2" || tok == "*") continue;
+            if (tok.size() == 1 && i + 1 < moveTokens.size()) {
+                tok += moveTokens[++i];
+            }
+            game.movePieceSAN(tok);
+        }
+        std::string actual = game.get_game_results();
+        if (actual != expectedResult) {
+            allCorrect = false;
+        }
+        moveTokens.clear();
+        expectedResult.clear();
+    };
+
+    while (std::getline(file, line)) {
+        if (line.empty()) {
+            processGame();
+            continue;
+        }
+        if (line[0] == '[') {
+            if (line.rfind("[Result", 0) == 0) {
+                size_t first = line.find('"');
+                size_t second = line.find('"', first + 1);
+                if (first != std::string::npos && second != std::string::npos)
+                    expectedResult = line.substr(first + 1, second - first - 1);
+            }
+            continue;
+        }
+        std::stringstream ss(line);
+        std::string token;
+        while (ss >> token) {
+            moveTokens.push_back(token);
+        }
+    }
+    processGame();
+    return allCorrect;
 }
 
 
