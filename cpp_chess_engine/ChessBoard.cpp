@@ -1510,7 +1510,9 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
             if (!game.movePieceSAN(tok)) {
                 std::cerr << "Game " << currentGameId
                           << " failed at move " << moveIndex
-                          << " (" << tok << ")" << std::endl;
+                          << " (" << tok << ")"  
+                          << "FEN: " 
+                          << game.getString() << std::endl;
                 allCorrect = false;
                 break;
             }
