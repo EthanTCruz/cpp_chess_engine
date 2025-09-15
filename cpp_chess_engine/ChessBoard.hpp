@@ -96,6 +96,8 @@ public:
     void syncBoardWithBitboards();
     int BoardCoordToCellIndex(const std::string& coord) const;
     bool movePieceUCI(const std::string& move);
+    bool movePieceSAN(const std::string& sanMove);
+    bool validatePGN(const std::string& pgnPath);
 
     // Public helper to convert board coordinates to a bit index.
     int get_bitindex(int row, int col) ;

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <filesystem>
 
 // ANSI escape codes for colors.
 #define RESET "\033[0m"
@@ -86,10 +87,35 @@ void tests() {
     std::cout << "All tests executed." << std::endl;
 }
 
+// Run PGN validation on all sample PGN files before launching the GUI.
+void runPGNTests() {
+    namespace fs = std::filesystem;
+    bool allPassed = true;
+    for (const auto& entry : fs::directory_iterator("sample_pgns")) {
+        if (entry.path().extension() == ".pgn") {
+            ChessBoard validator;
+            bool ok = validator.validatePGN(entry.path().string());
+            std::cout << entry.path().filename().string() << ": "
+                      << (ok ? "passed" : "failed") << std::endl;
+            if (!ok) {
+                allPassed = false;
+            }
+        }
+    }
+    if (allPassed) {
+        std::cout << "All PGN tests passed." << std::endl;
+    } else {
+        std::cout << "Some PGN tests failed." << std::endl;
+    }
+}
+
 int main(int argc, char** argv) {
+    // Run PGN tests before showing the GUI board.
+    runPGNTests();
+
     // Initialize the FEN string for the standard starting position.
     //tests();
-    
+
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     //fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
     ChessBoard cb(fen);
