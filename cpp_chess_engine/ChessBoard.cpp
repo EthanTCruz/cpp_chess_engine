@@ -1492,11 +1492,13 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
     bool allCorrect = true;
     std::string line;
     std::string expectedResult;
+    std::string currentGameId;
     std::vector<std::string> moveTokens;
 
     auto processGame = [&]() {
         if (moveTokens.empty()) return;
         ChessBoard game; // start from initial position
+        size_t moveIndex = 0;
         for (size_t i = 0; i < moveTokens.size(); ++i) {
             std::string tok = moveTokens[i];
             if (tok.find('.') != std::string::npos) continue; // skip move numbers
@@ -1504,14 +1506,25 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
             if (tok.size() == 1 && i + 1 < moveTokens.size()) {
                 tok += moveTokens[++i];
             }
-            game.movePieceSAN(tok);
+            ++moveIndex;
+            if (!game.movePieceSAN(tok)) {
+                std::cerr << "Game " << currentGameId
+                          << " failed at move " << moveIndex
+                          << " (" << tok << ")" << std::endl;
+                allCorrect = false;
+                break;
+            }
         }
         std::string actual = game.get_game_results();
         if (actual != expectedResult) {
+            std::cerr << "Game " << currentGameId
+                      << " result mismatch: expected " << expectedResult
+                      << " but got " << actual << std::endl;
             allCorrect = false;
         }
         moveTokens.clear();
         expectedResult.clear();
+        currentGameId.clear();
     };
 
     while (std::getline(file, line)) {
@@ -1525,6 +1538,11 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
                 size_t second = line.find('"', first + 1);
                 if (first != std::string::npos && second != std::string::npos)
                     expectedResult = line.substr(first + 1, second - first - 1);
+            } else if (line.rfind("[GameId", 0) == 0) {
+                size_t first = line.find('"');
+                size_t second = line.find('"', first + 1);
+                if (first != std::string::npos && second != std::string::npos)
+                    currentGameId = line.substr(first + 1, second - first - 1);
             }
             continue;
         }
