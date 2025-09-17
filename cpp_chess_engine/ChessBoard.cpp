@@ -595,14 +595,16 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 
     std::string original_fen = getString();
     if (validateMove(from_idx, to_idx)) {
-        if (castleCheck(origin, destination)) {
+        if (castleCheck(origin, destination) ) {
             if (whiteToMove) {
+                
                 if (destination & w_king_castle) castleWhiteKingside(); else castleWhiteQueenside();
-
+                
             }
             else {
+                if (blackCanCastleKingside & blackCanCastleQueenside) {
                 if (destination & b_king_castle) castleBlackKingside(); else castleBlackQueenside();
-
+                }
             }
         }
         char piece = board[fromRow][fromCol];
@@ -786,16 +788,19 @@ void ChessBoard::castleBlackKingside() {
 bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
     Bitboard initial_position = InitialPositions::b_king;
     Bitboard target_position = b_king_castle | b_queen_castle;
-
+    bool has_kingside_castle_permissions = blackCanCastleKingside ;
+    bool has_queenside_castle_permissions = blackCanCastleQueenside;
     if (whiteToMove) {
         initial_position = InitialPositions::w_king;
         target_position = w_king_castle | w_queen_castle;
+        has_kingside_castle_permissions = whiteCanCastleKingside ;
+        has_queenside_castle_permissions = whiteCanCastleQueenside;
     }
-
+    bool has_castle_permissions = has_kingside_castle_permissions & has_queenside_castle_permissions;
     Bitboard validStart = from_bb & initial_position;
     Bitboard validEnd = to_bb & target_position;
     
-    return ((validStart != 0) && (validEnd != 0)) ;
+    return (((validStart != 0) && (validEnd != 0)) & has_castle_permissions);
 
 }
 
@@ -1500,21 +1505,33 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
         ChessBoard game; // start from initial position
         size_t moveIndex = 0;
         for (size_t i = 0; i < moveTokens.size(); ++i) {
+            std::string previous_fen = game.getString();
             std::string tok = moveTokens[i];
             if (tok.find('.') != std::string::npos) continue; // skip move numbers
             if (tok == "1-0" || tok == "0-1" || tok == "1/2-1/2" || tok == "*") continue;
             if (tok.size() == 1 && i + 1 < moveTokens.size()) {
                 tok += moveTokens[++i];
             }
+
             ++moveIndex;
+            // currently failing at move 60 in Nwyboxma
             if (!game.movePieceSAN(tok)) {
                 std::cerr << "Game " << currentGameId
+                          << " Initial FEN: " 
+                          << previous_fen << '\n'
                           << " failed at move " << moveIndex
                           << " (" << tok << ")"  
                           << "FEN: " 
                           << game.getString() << std::endl;
                 allCorrect = false;
                 break;
+            } else{
+
+            std::cerr 
+            << " move " << moveIndex
+            << " (" << tok << ")"  
+            << " Resulting FEN: " 
+            << game.getString() << std::endl;
             }
         }
         std::string actual = game.get_game_results();

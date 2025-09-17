@@ -91,7 +91,7 @@ void tests() {
 void runPGNTests() {
     namespace fs = std::filesystem;
     bool allPassed = true;
-    for (const auto& entry : fs::directory_iterator("sample_pgns")) {
+    for (const auto& entry : fs::directory_iterator("test_pgns")) {
         if (entry.path().extension() == ".pgn") {
             ChessBoard validator;
             bool ok = validator.validatePGN(entry.path().string());
@@ -118,8 +118,10 @@ int main(int argc, char** argv) {
 
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     //fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
+    fen = "4r1k1/1p4pp/6r1/3pPq2/p2RpB2/P3Q2P/1P3PP1/6K1 b - - 4 58";
+    
     ChessBoard cb(fen);
-
+    // cb.movePieceSAN("Rxd5");
 
     //cb.movePieceUCI("e2e4");
     //cb.movePieceUCI("d7d5");
@@ -145,30 +147,30 @@ int main(int argc, char** argv) {
     //cb.movePieceUCI("c1e3");
     //cb.movePieceUCI("a5b4");
 
-    cb.movePieceUCI("e2e4");
-    cb.movePieceUCI("e7e5");
-    cb.movePieceUCI("g1f3");
-    cb.movePieceUCI("d7d5");
-    cb.movePieceUCI("d2d3");
-    cb.movePieceUCI("c8g4");
-    cb.movePieceUCI("b8c6");
-    cb.movePieceUCI("b1c3");
-    cb.movePieceUCI("f8b4");
-    cb.movePieceUCI("h2h3");
-    cb.movePieceUCI("g4h3");
-    cb.movePieceUCI("h1h3");
-    cb.movePieceUCI("b4a5");
-    cb.movePieceUCI("h3h6");
-    cb.movePieceUCI("a5b4");
-    cb.movePieceUCI("h6e6");
-    cb.movePieceUCI("d8e7");
-    cb.movePieceUCI("e6e7");
-    cb.movePieceUCI("e8f8");
-    cb.movePieceUCI("e7d7");
-    cb.movePieceUCI("a7a6");
-    cb.movePieceUCI("c1d2");
-    cb.movePieceUCI("a6a5");
-    cb.movePieceUCI("c3d5");
+    // cb.movePieceUCI("e2e4");
+    // cb.movePieceUCI("e7e5");
+    // cb.movePieceUCI("g1f3");
+    // cb.movePieceUCI("d7d5");
+    // cb.movePieceUCI("d2d3");
+    // cb.movePieceUCI("c8g4");
+    // cb.movePieceUCI("b8c6");
+    // cb.movePieceUCI("b1c3");
+    // cb.movePieceUCI("f8b4");
+    // cb.movePieceUCI("h2h3");
+    // cb.movePieceUCI("g4h3");
+    // cb.movePieceUCI("h1h3");
+    // cb.movePieceUCI("b4a5");
+    // cb.movePieceUCI("h3h6");
+    // cb.movePieceUCI("a5b4");
+    // cb.movePieceUCI("h6e6");
+    // cb.movePieceUCI("d8e7");
+    // cb.movePieceUCI("e6e7");
+    // cb.movePieceUCI("e8f8");
+    // cb.movePieceUCI("e7d7");
+    // cb.movePieceUCI("a7a6");
+    // cb.movePieceUCI("c1d2");
+    // cb.movePieceUCI("a6a5");
+    // cb.movePieceUCI("c3d5");
     //cb.movePieceUCI("");
     //cb.movePieceUCI("");
     //cb.movePieceUCI("");
