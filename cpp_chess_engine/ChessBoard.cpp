@@ -719,7 +719,7 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
 			}
             std::cout << get_game_results() <<"\n";
             is_game_over = true;
-			ResetBoard();
+			// ResetBoard();
 		}
         
 
@@ -1544,6 +1544,7 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
         moveTokens.clear();
         expectedResult.clear();
         currentGameId.clear();
+        game.ResetBoard();
     };
 
     while (std::getline(file, line)) {
