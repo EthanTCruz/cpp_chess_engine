@@ -90,6 +90,31 @@ if (is_stalemate) return "1/2-1/2";
 return "Error";
 }
 
+void ChessBoard::resign(const std::string& resultToken) {
+    // Reset existing game result flags before applying the resignation outcome.
+    is_white_win = false;
+    is_black_win = false;
+    is_stalemate = false;
+    is_game_over = false;
+
+    if (resultToken == "1-0") {
+        is_white_win = true;
+        is_game_over = true;
+    }
+    else if (resultToken == "0-1") {
+        is_black_win = true;
+        is_game_over = true;
+    }
+    else if (resultToken == "1/2-1/2") {
+        is_stalemate = true;
+        is_game_over = true;
+    }
+    else {
+        // Unrecognized result tokens should not change the game state.
+        is_game_over = false;
+    }
+}
+
 ChessBoard::ChessBoard(const std::string& fen) : fen(fen) {
     // Map piece characters to their corresponding bitboard index.
 
@@ -1504,33 +1529,78 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
         if (moveTokens.empty()) return;
         ChessBoard game; // start from initial position
         size_t moveIndex = 0;
+
+        auto normalizeToken = [](std::string token) {
+            if (!token.empty() && token.back() == '\r') token.pop_back();
+            return token;
+        };
+
+        auto detectResultToken = [&](size_t idx, std::string& canonical) -> bool {
+            if (idx >= moveTokens.size()) return false;
+            std::string current = normalizeToken(moveTokens[idx]);
+            if (current == "*") {
+                canonical = current;
+                return true;
+            }
+            if (current == "1-0" || current == "0-1" || current == "1/2-1/2") {
+                canonical = current;
+                return true;
+            }
+
+            auto nextToken = [&](size_t offset) {
+                if (idx + offset < moveTokens.size()) {
+                    return normalizeToken(moveTokens[idx + offset]);
+                }
+                return std::string();
+            };
+
+            std::string combined = current;
+            for (size_t offset = 1; offset <= 2; ++offset) {
+                std::string next = nextToken(offset);
+                if (next.empty()) break;
+                combined += next;
+                if (combined == "1-0" || combined == "0-1" || combined == "1/2-1/2") {
+                    canonical = combined;
+                    return true;
+                }
+            }
+            return false;
+        };
+
         for (size_t i = 0; i < moveTokens.size(); ++i) {
+            std::string resultToken;
+            if (detectResultToken(i, resultToken)) {
+                if (resultToken != "*") {
+                    game.resign(resultToken);
+                }
+                break;
+            }
+
             std::string previous_fen = game.getString();
-            std::string tok = moveTokens[i];
+            std::string tok = normalizeToken(moveTokens[i]);
             if (tok.find('.') != std::string::npos) continue; // skip move numbers
-            if (tok == "1-0" || tok == "0-1" || tok == "1/2-1/2" || tok == "*") continue;
             if (tok.size() == 1 && i + 1 < moveTokens.size()) {
-                tok += moveTokens[++i];
+                tok += normalizeToken(moveTokens[++i]);
             }
 
             ++moveIndex;
             // currently failing at move 60 in Nwyboxma
             if (!game.movePieceSAN(tok)) {
                 std::cerr << "Game " << currentGameId
-                          << " Initial FEN: " 
+                          << " Initial FEN: "
                           << previous_fen << '\n'
                           << " failed at move " << moveIndex
-                          << " (" << tok << ")"  
-                          << "FEN: " 
+                          << " (" << tok << ")"
+                          << "FEN: "
                           << game.getString() << std::endl;
                 allCorrect = false;
                 break;
             } else{
 
-            std::cerr 
+            std::cerr
             << " move " << moveIndex
-            << " (" << tok << ")"  
-            << " Resulting FEN: " 
+            << " (" << tok << ")"
+            << " Resulting FEN: "
             << game.getString() << std::endl;
             }
         }

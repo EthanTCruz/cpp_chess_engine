@@ -1,0 +1,9 @@
+when:
+  event: [push, pull_request]
+
+steps:
+  pgn-tests:
+    image: alpine:3.20
+    commands:
+      - apk add --no-cache bash build-base cmake git
+      - bash scripts/run_pgn_tests.sh
