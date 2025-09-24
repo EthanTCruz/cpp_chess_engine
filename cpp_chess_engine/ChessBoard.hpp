@@ -98,6 +98,7 @@ public:
     bool movePieceUCI(const std::string& move);
     bool movePieceSAN(const std::string& sanMove);
     bool validatePGN(const std::string& pgnPath);
+    void resign(const std::string& resultToken);
 
     // Public helper to convert board coordinates to a bit index.
     int get_bitindex(int row, int col) ;

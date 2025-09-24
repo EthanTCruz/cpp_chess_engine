@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
-#include <filesystem>
+
+#include "ChessBoard.hpp"
+#include "GUIBoard.hpp"
+#include "PGNTestRunner.hpp"
 
 // ANSI escape codes for colors.
 #define RESET "\033[0m"
@@ -21,8 +24,6 @@ void checkTest(bool condition, const std::string& testName) {
     }
 }
 
-#include "ChessBoard.hpp"
-#include "GUIBoard.hpp"
 // Include any other necessary headers, e.g. "GetBitIndex.cpp"
 
 void tests() {
@@ -87,31 +88,29 @@ void tests() {
     std::cout << "All tests executed." << std::endl;
 }
 
-// Run PGN validation on all sample PGN files before launching the GUI.
-void runPGNTests() {
-    namespace fs = std::filesystem;
-    bool allPassed = true;
-    for (const auto& entry : fs::directory_iterator("test_pgns")) {
-        if (entry.path().extension() == ".pgn") {
-            ChessBoard validator;
-            bool ok = validator.validatePGN(entry.path().string());
-            std::cout << entry.path().filename().string() << ": "
-                      << (ok ? "passed" : "failed") << std::endl;
-            if (!ok) {
-                allPassed = false;
-            }
+int main(int argc, char** argv) {
+    bool runTestsOnly = false;
+    bool skipGui = false;
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--pgn-tests-only") {
+            runTestsOnly = true;
+        }
+        else if (arg == "--no-gui") {
+            skipGui = true;
         }
     }
-    if (allPassed) {
-        std::cout << "All PGN tests passed." << std::endl;
-    } else {
-        std::cout << "Some PGN tests failed." << std::endl;
-    }
-}
 
-int main(int argc, char** argv) {
     // Run PGN tests before showing the GUI board.
-    runPGNTests();
+    bool testsPassed = runPGNTests();
+
+    if (runTestsOnly) {
+        return testsPassed ? 0 : 1;
+    }
+
+    if (skipGui) {
+        return testsPassed ? 0 : 1;
+    }
 
     // Initialize the FEN string for the standard starting position.
     //tests();
