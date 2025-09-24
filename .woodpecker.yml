@@ -2,9 +2,8 @@ when:
   event: [push, pull_request]
 
 steps:
-  build:
+  pgn-tests:
     image: alpine:3.20
     commands:
-      - echo "Hello from Woodpecker 👋"
-      - uname -a
-      - cat /etc/os-release
+      - apk add --no-cache bash build-base cmake git
+      - bash scripts/run_pgn_tests.sh
