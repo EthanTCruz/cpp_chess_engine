@@ -1,0 +1,333 @@
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+ move 1 (e4) Resulting FEN: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 2 0
+ move 2 (g6) Resulting FEN: rnbqkbnr/pppppp1p/6p1/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 4 2
+ move 3 (Nf3) Resulting FEN: rnbqkbnr/pppppp1p/6p1/8/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 0 2
+ move 4 (Bg7) Resulting FEN: rnbqk1nr/ppppppbp/6p1/8/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 4
+ move 5 (Bc4) Resulting FEN: rnbqk1nr/ppppppbp/6p1/8/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 0 4
+ move 6 (e6) Resulting FEN: rnbqk1nr/pppp1pbp/4p1p1/8/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 6
+ move 7 (d4) Resulting FEN: rnbqk1nr/pppp1pbp/4p1p1/8/2BPP3/5N2/PPP2PPP/RNBQK2R b KQkq - 4 6
+ move 8 (c6) Resulting FEN: rnbqk1nr/pp1p1pbp/2p1p1p1/8/2BPP3/5N2/PPP2PPP/RNBQK2R w KQkq - 6 8
+ move 9 (Nc3) Resulting FEN: rnbqk1nr/pp1p1pbp/2p1p1p1/8/2BPP3/2N2N2/PPP2PPP/R1BQK2R b KQkq - 0 8
+ move 10 (d5) Resulting FEN: rnbqk1nr/pp3pbp/2p1p1p1/3p4/2BPP3/2N2N2/PPP2PPP/R1BQK2R w KQkq - 2 10
+ move 11 (Bb3) Resulting FEN: rnbqk1nr/pp3pbp/2p1p1p1/3p4/3PP3/1BN2N2/PPP2PPP/R1BQK2R b KQkq - 0 10
+ move 12 (Ne7) Resulting FEN: rnbqk2r/pp2npbp/2p1p1p1/3p4/3PP3/1BN2N2/PPP2PPP/R1BQK2R w KQkq - 0 12
+ move 13 (Bg5) Resulting FEN: rnbqk2r/pp2npbp/2p1p1p1/3p2B1/3PP3/1BN2N2/PPP2PPP/R2QK2R b KQkq - 0 12
+e8g8
+ move 14 (O-O) Resulting FEN: rnbq1rk1/pp2npbp/2p1p1p1/3p2B1/3PP3/1BN2N2/PPP2PPP/R2QK2R w KQ - 0 14
+ move 15 (e5) Resulting FEN: rnbq1rk1/pp2npbp/2p1p1p1/3pP1B1/3P4/1BN2N2/PPP2PPP/R2QK2R b KQ - 2 14
+ move 16 (f6) Resulting FEN: rnbq1rk1/pp2n1bp/2p1ppp1/3pP1B1/3P4/1BN2N2/PPP2PPP/R2QK2R w KQ - 4 16
+ move 17 (Bf4) Resulting FEN: rnbq1rk1/pp2n1bp/2p1ppp1/3pP3/3P1B2/1BN2N2/PPP2PPP/R2QK2R b KQ - 0 16
+ move 18 (fxe5) Resulting FEN: rnbq1rk1/pp2n1bp/2p1p1p1/3pp3/3P1B2/1BN2N2/PPP2PPP/R2QK2R w KQ - 2 18
+ move 19 (Bxe5) Resulting FEN: rnbq1rk1/pp2n1bp/2p1p1p1/3pB3/3P4/1BN2N2/PPP2PPP/R2QK2R b KQ - 4 18
+ move 20 (Bxe5) Resulting FEN: rnbq1rk1/pp2n2p/2p1p1p1/3pb3/3P4/1BN2N2/PPP2PPP/R2QK2R w KQ - 6 20
+ move 21 (Nxe5) Resulting FEN: rnbq1rk1/pp2n2p/2p1p1p1/3pN3/3P4/1BN5/PPP2PPP/R2QK2R b KQ - 8 20
+ move 22 (Nf5) Resulting FEN: rnbq1rk1/pp5p/2p1p1p1/3pNn2/3P4/1BN5/PPP2PPP/R2QK2R w KQ - 0 22
+ move 23 (Ne2) Resulting FEN: rnbq1rk1/pp5p/2p1p1p1/3pNn2/3P4/1B6/PPP1NPPP/R2QK2R b KQ - 0 22
+ move 24 (Qg5) Resulting FEN: rnb2rk1/pp5p/2p1p1p1/3pNnq1/3P4/1B6/PPP1NPPP/R2QK2R w KQ - 0 24
+e1g1
+ move 25 (O-O) Resulting FEN: rnb2rk1/pp5p/2p1p1p1/3pNnq1/3P4/1B6/PPP1NPPP/R2Q1RK1 b - - 0 24
+ move 26 (Nh4) Resulting FEN: rnb2rk1/pp5p/2p1p1p1/3pN1q1/3P3n/1B6/PPP1NPPP/R2Q1RK1 w - - 0 26
+ move 27 (Ng3) Resulting FEN: rnb2rk1/pp5p/2p1p1p1/3pN1q1/3P3n/1B4N1/PPP2PPP/R2Q1RK1 b - - 0 26
+ move 28 (Nd7) Resulting FEN: r1b2rk1/pp1n3p/2p1p1p1/3pN1q1/3P3n/1B4N1/PPP2PPP/R2Q1RK1 w - - 0 28
+ move 29 (Qe2) Resulting FEN: r1b2rk1/pp1n3p/2p1p1p1/3pN1q1/3P3n/1B4N1/PPP1QPPP/R4RK1 b - - 0 28
+ move 30 (Rf5) Resulting FEN: r1b3k1/pp1n3p/2p1p1p1/3pNrq1/3P3n/1B4N1/PPP1QPPP/R4RK1 w - - 0 30
+ move 31 (Nxd7) Resulting FEN: r1b3k1/pp1N3p/2p1p1p1/3p1rq1/3P3n/1B4N1/PPP1QPPP/R4RK1 b - - 2 30
+ move 32 (Bxd7) Resulting FEN: r5k1/pp1b3p/2p1p1p1/3p1rq1/3P3n/1B4N1/PPP1QPPP/R4RK1 w - - 4 32
+ move 33 (c3) Resulting FEN: r5k1/pp1b3p/2p1p1p1/3p1rq1/3P3n/1BP3N1/PP2QPPP/R4RK1 b - - 6 32
+ move 34 (Raf8) Resulting FEN: 5rk1/pp1b3p/2p1p1p1/3p1rq1/3P3n/1BP3N1/PP2QPPP/R4RK1 w - - 0 34
+ move 35 (Bc2) Resulting FEN: 5rk1/pp1b3p/2p1p1p1/3p1rq1/3P3n/2P3N1/PPB1QPPP/R4RK1 b - - 0 34
+ move 36 (R5f6) Resulting FEN: 5rk1/pp1b3p/2p1prp1/3p2q1/3P3n/2P3N1/PPB1QPPP/R4RK1 w - - 0 36
+ move 37 (Kh1) Resulting FEN: 5rk1/pp1b3p/2p1prp1/3p2q1/3P3n/2P3N1/PPB1QPPP/R4R1K b - - 0 36
+ move 38 (h5) Resulting FEN: 5rk1/pp1b4/2p1prp1/3p2qp/3P3n/2P3N1/PPB1QPPP/R4R1K w - - 2 38
+ move 39 (Rg1) Resulting FEN: 5rk1/pp1b4/2p1prp1/3p2qp/3P3n/2P3N1/PPB1QPPP/R5RK b - - 0 38
+ move 40 (Qf5) Resulting FEN: 5rk1/pp1b4/2p1prp1/3p1q1p/3P3n/2P3N1/PPB1QPPP/R5RK w - - 0 40
+ move 41 (Nxf5) Resulting FEN: 5rk1/pp1b4/2p1prp1/3p1N1p/3P3n/2P5/PPB1QPPP/R5RK b - - 2 40
+ move 42 (Nxf5) Resulting FEN: 5rk1/pp1b4/2p1prp1/3p1n1p/3P4/2P5/PPB1QPPP/R5RK w - - 4 42
+ move 43 (f3) Resulting FEN: 5rk1/pp1b4/2p1prp1/3p1n1p/3P4/2P2P2/PPB1Q1PP/R5RK b - - 6 42
+ move 44 (Nd6) Resulting FEN: 5rk1/pp1b4/2pnprp1/3p3p/3P4/2P2P2/PPB1Q1PP/R5RK w - - 0 44
+ move 45 (Qe5) Resulting FEN: 5rk1/pp1b4/2pnprp1/3pQ2p/3P4/2P2P2/PPB3PP/R5RK b - - 0 44
+ move 46 (Nc4) Resulting FEN: 5rk1/pp1b4/2p1prp1/3pQ2p/2nP4/2P2P2/PPB3PP/R5RK w - - 0 46
+ move 47 (Qc7) Resulting FEN: 5rk1/ppQb4/2p1prp1/3p3p/2nP4/2P2P2/PPB3PP/R5RK b - - 0 46
+ move 48 (Bc8) Resulting FEN: 2b2rk1/ppQ5/2p1prp1/3p3p/2nP4/2P2P2/PPB3PP/R5RK w - - 0 48
+ move 49 (Qg3) Resulting FEN: 2b2rk1/pp6/2p1prp1/3p3p/2nP4/2P2PQ1/PPB3PP/R5RK b - - 0 48
+ move 50 (Ne3) Resulting FEN: 2b2rk1/pp6/2p1prp1/3p3p/3P4/2P1nPQ1/PPB3PP/R5RK w - - 0 50
+ move 51 (Bxg6) Resulting FEN: 2b2rk1/pp6/2p1prB1/3p3p/3P4/2P1nPQ1/PP4PP/R5RK b - - 2 50
+ move 52 (Kg7) Resulting FEN: 2b2r2/pp4k1/2p1prB1/3p3p/3P4/2P1nPQ1/PP4PP/R5RK w - - 0 52
+ move 53 (Bxh5+) Resulting FEN: 2b2r2/pp4k1/2p1pr2/3p3B/3P4/2P1nPQ1/PP4PP/R5RK b - - 2 52
+ move 54 (Kh7) Resulting FEN: 2b2r2/pp5k/2p1pr2/3p3B/3P4/2P1nPQ1/PP4PP/R5RK w - - 0 54
+ move 55 (Rge1) Resulting FEN: 2b2r2/pp5k/2p1pr2/3p3B/3P4/2P1nPQ1/PP4PP/R3R2K b - - 0 54
+ move 56 (Nf5) Resulting FEN: 2b2r2/pp5k/2p1pr2/3p1n1B/3P4/2P2PQ1/PP4PP/R3R2K w - - 0 56
+ move 57 (Qc7+) Resulting FEN: 2b2r2/ppQ4k/2p1pr2/3p1n1B/3P4/2P2P2/PP4PP/R3R2K b - - 0 56
+ move 58 (Kh6) Resulting FEN: 2b2r2/ppQ5/2p1pr1k/3p1n1B/3P4/2P2P2/PP4PP/R3R2K w - - 0 58
+ move 59 (Bg4) Resulting FEN: 2b2r2/ppQ5/2p1pr1k/3p1n2/3P2B1/2P2P2/PP4PP/R3R2K b - - 0 58
+ move 60 (Ng7) Resulting FEN: 2b2r2/ppQ3n1/2p1pr1k/3p4/3P2B1/2P2P2/PP4PP/R3R2K w - - 0 60
+ move 61 (Re5) Resulting FEN: 2b2r2/ppQ3n1/2p1pr1k/3pR3/3P2B1/2P2P2/PP4PP/R6K b - - 0 60
+ move 62 (R6f7) Resulting FEN: 2b2r2/ppQ2rn1/2p1p2k/3pR3/3P2B1/2P2P2/PP4PP/R6K w - - 0 62
+ move 63 (Qa5) Resulting FEN: 2b2r2/pp3rn1/2p1p2k/Q2pR3/3P2B1/2P2P2/PP4PP/R6K b - - 0 62
+ move 64 (a6) Resulting FEN: 2b2r2/1p3rn1/p1p1p2k/Q2pR3/3P2B1/2P2P2/PP4PP/R6K w - - 2 64
+ move 65 (Rae1) Resulting FEN: 2b2r2/1p3rn1/p1p1p2k/Q2pR3/3P2B1/2P2P2/PP4PP/4R2K b - - 0 64
+ move 66 (Rf6) Resulting FEN: 2b2r2/1p4n1/p1p1pr1k/Q2pR3/3P2B1/2P2P2/PP4PP/4R2K w - - 0 66
+ move 67 (Qc7) Resulting FEN: 2b2r2/1pQ3n1/p1p1pr1k/3pR3/3P2B1/2P2P2/PP4PP/4R2K b - - 0 66
+ move 68 (R6f7) Resulting FEN: 2b2r2/1pQ2rn1/p1p1p2k/3pR3/3P2B1/2P2P2/PP4PP/4R2K w - - 0 68
+ move 69 (Qd6) Resulting FEN: 2b2r2/1p3rn1/p1pQp2k/3pR3/3P2B1/2P2P2/PP4PP/4R2K b - - 0 68
+ move 70 (Rd7) Resulting FEN: 2b2r2/1p1r2n1/p1pQp2k/3pR3/3P2B1/2P2P2/PP4PP/4R2K w - - 0 70
+ move 71 (Qxf8) Resulting FEN: 2b2Q2/1p1r2n1/p1p1p2k/3pR3/3P2B1/2P2P2/PP4PP/4R2K b - - 2 70
+Game igFFrBXO result mismatch: expected 1-0 but got *
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+ move 1 (e4) Resulting FEN: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 2 0
+ move 2 (e5) Resulting FEN: rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 4 2
+ move 3 (Nf3) Resulting FEN: rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 0 2
+ move 4 (d6) Resulting FEN: rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 4
+ move 5 (h3) Resulting FEN: rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N1P/PPPP1PP1/RNBQKB1R b KQkq - 4 4
+ move 6 (Nc6) Resulting FEN: r1bqkbnr/ppp2ppp/2np4/4p3/4P3/5N1P/PPPP1PP1/RNBQKB1R w KQkq - 0 6
+ move 7 (Bb5) Resulting FEN: r1bqkbnr/ppp2ppp/2np4/1B2p3/4P3/5N1P/PPPP1PP1/RNBQK2R b KQkq - 0 6
+ move 8 (Bd7) Resulting FEN: r2qkbnr/pppb1ppp/2np4/1B2p3/4P3/5N1P/PPPP1PP1/RNBQK2R w KQkq - 0 8
+ move 9 (Nc3) Resulting FEN: r2qkbnr/pppb1ppp/2np4/1B2p3/4P3/2N2N1P/PPPP1PP1/R1BQK2R b KQkq - 0 8
+ move 10 (a6) Resulting FEN: r2qkbnr/1ppb1ppp/p1np4/1B2p3/4P3/2N2N1P/PPPP1PP1/R1BQK2R w KQkq - 2 10
+ move 11 (Ba4) Resulting FEN: r2qkbnr/1ppb1ppp/p1np4/4p3/B3P3/2N2N1P/PPPP1PP1/R1BQK2R b KQkq - 0 10
+ move 12 (Nb8) Resulting FEN: rn1qkbnr/1ppb1ppp/p2p4/4p3/B3P3/2N2N1P/PPPP1PP1/R1BQK2R w KQkq - 0 12
+ move 13 (Bxd7+) Resulting FEN: rn1qkbnr/1ppB1ppp/p2p4/4p3/4P3/2N2N1P/PPPP1PP1/R1BQK2R b KQkq - 2 12
+ move 14 (Qxd7) Resulting FEN: rn2kbnr/1ppq1ppp/p2p4/4p3/4P3/2N2N1P/PPPP1PP1/R1BQK2R w KQkq - 4 14
+ move 15 (d4) Resulting FEN: rn2kbnr/1ppq1ppp/p2p4/4p3/3PP3/2N2N1P/PPP2PP1/R1BQK2R b KQkq - 6 14
+ move 16 (exd4) Resulting FEN: rn2kbnr/1ppq1ppp/p2p4/8/3pP3/2N2N1P/PPP2PP1/R1BQK2R w KQkq - 8 16
+ move 17 (Qxd4) Resulting FEN: rn2kbnr/1ppq1ppp/p2p4/8/3QP3/2N2N1P/PPP2PP1/R1B1K2R b KQkq - 10 16
+ move 18 (Nc6) Resulting FEN: r3kbnr/1ppq1ppp/p1np4/8/3QP3/2N2N1P/PPP2PP1/R1B1K2R w KQkq - 0 18
+ move 19 (Qd1) Resulting FEN: r3kbnr/1ppq1ppp/p1np4/8/4P3/2N2N1P/PPP2PP1/R1BQK2R b KQkq - 0 18
+e8c8
+ move 20 (O-O-O) Resulting FEN: 2kr1bnr/1ppq1ppp/p1np4/8/4P3/2N2N1P/PPP2PP1/R1BQK2R w KQ - 0 20
+ move 21 (Bf4) Resulting FEN: 2kr1bnr/1ppq1ppp/p1np4/8/4PB2/2N2N1P/PPP2PP1/R2QK2R b KQ - 0 20
+ move 22 (f5) Resulting FEN: 2kr1bnr/1ppq2pp/p1np4/5p2/4PB2/2N2N1P/PPP2PP1/R2QK2R w KQ - 2 22
+e1g1
+ move 23 (O-O) Resulting FEN: 2kr1bnr/1ppq2pp/p1np4/5p2/4PB2/2N2N1P/PPP2PP1/R2Q1RK1 b - - 0 22
+ move 24 (fxe4) Resulting FEN: 2kr1bnr/1ppq2pp/p1np4/8/4pB2/2N2N1P/PPP2PP1/R2Q1RK1 w - - 2 24
+ move 25 (Nxe4) Resulting FEN: 2kr1bnr/1ppq2pp/p1np4/8/4NB2/5N1P/PPP2PP1/R2Q1RK1 b - - 4 24
+ move 26 (Nf6) Resulting FEN: 2kr1b1r/1ppq2pp/p1np1n2/8/4NB2/5N1P/PPP2PP1/R2Q1RK1 w - - 0 26
+ move 27 (Re1) Resulting FEN: 2kr1b1r/1ppq2pp/p1np1n2/8/4NB2/5N1P/PPP2PP1/R2QR1K1 b - - 0 26
+ move 28 (Nxe4) Resulting FEN: 2kr1b1r/1ppq2pp/p1np4/8/4nB2/5N1P/PPP2PP1/R2QR1K1 w - - 2 28
+ move 29 (Rxe4) Resulting FEN: 2kr1b1r/1ppq2pp/p1np4/8/4RB2/5N1P/PPP2PP1/R2Q2K1 b - - 4 28
+ move 30 (h6) Resulting FEN: 2kr1b1r/1ppq2p1/p1np3p/8/4RB2/5N1P/PPP2PP1/R2Q2K1 w - - 6 30
+ move 31 (Qd5) Resulting FEN: 2kr1b1r/1ppq2p1/p1np3p/3Q4/4RB2/5N1P/PPP2PP1/R5K1 b - - 0 30
+ move 32 (Kb8) Resulting FEN: 1k1r1b1r/1ppq2p1/p1np3p/3Q4/4RB2/5N1P/PPP2PP1/R5K1 w - - 0 32
+ move 33 (Rae1) Resulting FEN: 1k1r1b1r/1ppq2p1/p1np3p/3Q4/4RB2/5N1P/PPP2PP1/4R1K1 b - - 0 32
+ move 34 (g5) Resulting FEN: 1k1r1b1r/1ppq4/p1np3p/3Q2p1/4RB2/5N1P/PPP2PP1/4R1K1 w - - 2 34
+ move 35 (Be3) Resulting FEN: 1k1r1b1r/1ppq4/p1np3p/3Q2p1/4R3/4BN1P/PPP2PP1/4R1K1 b - - 0 34
+ move 36 (Bg7) Resulting FEN: 1k1r3r/1ppq2b1/p1np3p/3Q2p1/4R3/4BN1P/PPP2PP1/4R1K1 w - - 0 36
+ move 37 (c3) Resulting FEN: 1k1r3r/1ppq2b1/p1np3p/3Q2p1/4R3/2P1BN1P/PP3PP1/4R1K1 b - - 2 36
+ move 38 (Ne7) Resulting FEN: 1k1r3r/1ppqn1b1/p2p3p/3Q2p1/4R3/2P1BN1P/PP3PP1/4R1K1 w - - 0 38
+ move 39 (Rxe7) Resulting FEN: 1k1r3r/1ppqR1b1/p2p3p/3Q2p1/8/2P1BN1P/PP3PP1/4R1K1 b - - 2 38
+Game n2fKn6Ts result mismatch: expected 1-0 but got *
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+ move 1 (e4) Resulting FEN: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 2 0
+ move 2 (e5) Resulting FEN: rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 4 2
+ move 3 (Nf3) Resulting FEN: rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 0 2
+ move 4 (d6) Resulting FEN: rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 4
+ move 5 (d4) Resulting FEN: rnbqkbnr/ppp2ppp/3p4/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 4 4
+ move 6 (f6) Resulting FEN: rnbqkbnr/ppp3pp/3p1p2/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R w KQkq - 6 6
+ move 7 (Nc3) Resulting FEN: rnbqkbnr/ppp3pp/3p1p2/4p3/3PP3/2N2N2/PPP2PPP/R1BQKB1R b KQkq - 0 6
+ move 8 (c6) Resulting FEN: rnbqkbnr/pp4pp/2pp1p2/4p3/3PP3/2N2N2/PPP2PPP/R1BQKB1R w KQkq - 2 8
+ move 9 (b3) Resulting FEN: rnbqkbnr/pp4pp/2pp1p2/4p3/3PP3/1PN2N2/P1P2PPP/R1BQKB1R b KQkq - 4 8
+ move 10 (Bg4) Resulting FEN: rn1qkbnr/pp4pp/2pp1p2/4p3/3PP1b1/1PN2N2/P1P2PPP/R1BQKB1R w KQkq - 0 10
+ move 11 (Be2) Resulting FEN: rn1qkbnr/pp4pp/2pp1p2/4p3/3PP1b1/1PN2N2/P1P1BPPP/R1BQK2R b KQkq - 0 10
+ move 12 (Na6) Resulting FEN: r2qkbnr/pp4pp/n1pp1p2/4p3/3PP1b1/1PN2N2/P1P1BPPP/R1BQK2R w KQkq - 0 12
+ move 13 (Bxa6) Resulting FEN: r2qkbnr/pp4pp/B1pp1p2/4p3/3PP1b1/1PN2N2/P1P2PPP/R1BQK2R b KQkq - 2 12
+ move 14 (bxa6) Resulting FEN: r2qkbnr/p5pp/p1pp1p2/4p3/3PP1b1/1PN2N2/P1P2PPP/R1BQK2R w KQkq - 4 14
+ move 15 (h3) Resulting FEN: r2qkbnr/p5pp/p1pp1p2/4p3/3PP1b1/1PN2N1P/P1P2PP1/R1BQK2R b KQkq - 6 14
+ move 16 (Bh5) Resulting FEN: r2qkbnr/p5pp/p1pp1p2/4p2b/3PP3/1PN2N1P/P1P2PP1/R1BQK2R w KQkq - 0 16
+ move 17 (Qd3) Resulting FEN: r2qkbnr/p5pp/p1pp1p2/4p2b/3PP3/1PNQ1N1P/P1P2PP1/R1B1K2R b KQkq - 0 16
+ move 18 (Bxf3) Resulting FEN: r2qkbnr/p5pp/p1pp1p2/4p3/3PP3/1PNQ1b1P/P1P2PP1/R1B1K2R w KQkq - 2 18
+ move 19 (Qxf3) Resulting FEN: r2qkbnr/p5pp/p1pp1p2/4p3/3PP3/1PN2Q1P/P1P2PP1/R1B1K2R b KQkq - 4 18
+ move 20 (Ne7) Resulting FEN: r2qkb1r/p3n1pp/p1pp1p2/4p3/3PP3/1PN2Q1P/P1P2PP1/R1B1K2R w KQkq - 0 20
+ move 21 (Be3) Resulting FEN: r2qkb1r/p3n1pp/p1pp1p2/4p3/3PP3/1PN1BQ1P/P1P2PP1/R3K2R b KQkq - 0 20
+ move 22 (Qa5) Resulting FEN: r3kb1r/p3n1pp/p1pp1p2/q3p3/3PP3/1PN1BQ1P/P1P2PP1/R3K2R w KQkq - 0 22
+ move 23 (Bd2) Resulting FEN: r3kb1r/p3n1pp/p1pp1p2/q3p3/3PP3/1PN2Q1P/P1PB1PP1/R3K2R b KQkq - 0 22
+ move 24 (Qb6) Resulting FEN: r3kb1r/p3n1pp/pqpp1p2/4p3/3PP3/1PN2Q1P/P1PB1PP1/R3K2R w KQkq - 0 24
+ move 25 (Na4) Resulting FEN: r3kb1r/p3n1pp/pqpp1p2/4p3/N2PP3/1P3Q1P/P1PB1PP1/R3K2R b KQkq - 0 24
+ move 26 (Qxd4) Resulting FEN: r3kb1r/p3n1pp/p1pp1p2/4p3/N2qP3/1P3Q1P/P1PB1PP1/R3K2R w KQkq - 2 26
+e1c1
+ move 27 (O-O-O) Resulting FEN: r3kb1r/p3n1pp/p1pp1p2/4p3/N2qP3/1P3Q1P/P1PB1PP1/2KR3R b kq - 0 26
+No legal moves available for the opponent.
+*
+ move 28 (Qa1#) Resulting FEN: r3kb1r/p3n1pp/p1pp1p2/4p3/N3P3/1P3Q1P/P1PB1PP1/q1KR3R w kq - 0 28
+Game vvj8DJhe result mismatch: expected 0-1 but got 1/2-1/2
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+ move 1 (d4) Resulting FEN: rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 2 0
+ move 2 (d5) Resulting FEN: rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 4 2
+ move 3 (c4) Resulting FEN: rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 6 2
+ move 4 (c6) Resulting FEN: rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 8 4
+ move 5 (Nc3) Resulting FEN: rnbqkbnr/pp2pppp/2p5/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 0 4
+ move 6 (Bf5) Resulting FEN: rn1qkbnr/pp2pppp/2p5/3p1b2/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 6
+ move 7 (e3) Resulting FEN: rn1qkbnr/pp2pppp/2p5/3p1b2/2PP4/2N1P3/PP3PPP/R1BQKBNR b KQkq - 2 6
+ move 8 (Nf6) Resulting FEN: rn1qkb1r/pp2pppp/2p2n2/3p1b2/2PP4/2N1P3/PP3PPP/R1BQKBNR w KQkq - 0 8
+ move 9 (h3) Resulting FEN: rn1qkb1r/pp2pppp/2p2n2/3p1b2/2PP4/2N1P2P/PP3PP1/R1BQKBNR b KQkq - 2 8
+ move 10 (e6) Resulting FEN: rn1qkb1r/pp3ppp/2p1pn2/3p1b2/2PP4/2N1P2P/PP3PP1/R1BQKBNR w KQkq - 4 10
+ move 11 (a3) Resulting FEN: rn1qkb1r/pp3ppp/2p1pn2/3p1b2/2PP4/P1N1P2P/1P3PP1/R1BQKBNR b KQkq - 6 10
+ move 12 (a5) Resulting FEN: rn1qkb1r/1p3ppp/2p1pn2/p2p1b2/2PP4/P1N1P2P/1P3PP1/R1BQKBNR w KQkq - 8 12
+ move 13 (Nf3) Resulting FEN: rn1qkb1r/1p3ppp/2p1pn2/p2p1b2/2PP4/P1N1PN1P/1P3PP1/R1BQKB1R b KQkq - 0 12
+ move 14 (Bd6) Resulting FEN: rn1qk2r/1p3ppp/2pbpn2/p2p1b2/2PP4/P1N1PN1P/1P3PP1/R1BQKB1R w KQkq - 0 14
+ move 15 (cxd5) Resulting FEN: rn1qk2r/1p3ppp/2pbpn2/p2P1b2/3P4/P1N1PN1P/1P3PP1/R1BQKB1R b KQkq - 2 14
+ move 16 (exd5) Resulting FEN: rn1qk2r/1p3ppp/2pb1n2/p2p1b2/3P4/P1N1PN1P/1P3PP1/R1BQKB1R w KQkq - 4 16
+ move 17 (Be2) Resulting FEN: rn1qk2r/1p3ppp/2pb1n2/p2p1b2/3P4/P1N1PN1P/1P2BPP1/R1BQK2R b KQkq - 0 16
+e8g8
+ move 18 (O-O) Resulting FEN: rn1q1rk1/1p3ppp/2pb1n2/p2p1b2/3P4/P1N1PN1P/1P2BPP1/R1BQK2R w KQ - 0 18
+e1g1
+ move 19 (O-O) Resulting FEN: rn1q1rk1/1p3ppp/2pb1n2/p2p1b2/3P4/P1N1PN1P/1P2BPP1/R1BQ1RK1 b - - 0 18
+ move 20 (Re8) Resulting FEN: rn1qr1k1/1p3ppp/2pb1n2/p2p1b2/3P4/P1N1PN1P/1P2BPP1/R1BQ1RK1 w - - 0 20
+ move 21 (Re1) Resulting FEN: rn1qr1k1/1p3ppp/2pb1n2/p2p1b2/3P4/P1N1PN1P/1P2BPP1/R1BQR1K1 b - - 0 20
+ move 22 (Ne4) Resulting FEN: rn1qr1k1/1p3ppp/2pb4/p2p1b2/3Pn3/P1N1PN1P/1P2BPP1/R1BQR1K1 w - - 0 22
+ move 23 (Bd3) Resulting FEN: rn1qr1k1/1p3ppp/2pb4/p2p1b2/3Pn3/P1NBPN1P/1P3PP1/R1BQR1K1 b - - 0 22
+ move 24 (Nd7) Resulting FEN: r2qr1k1/1p1n1ppp/2pb4/p2p1b2/3Pn3/P1NBPN1P/1P3PP1/R1BQR1K1 w - - 0 24
+ move 25 (Qb3) Resulting FEN: r2qr1k1/1p1n1ppp/2pb4/p2p1b2/3Pn3/PQNBPN1P/1P3PP1/R1B1R1K1 b - - 0 24
+ move 26 (Qc7) Resulting FEN: r3r1k1/1pqn1ppp/2pb4/p2p1b2/3Pn3/PQNBPN1P/1P3PP1/R1B1R1K1 w - - 0 26
+ move 27 (Ne2) Resulting FEN: r3r1k1/1pqn1ppp/2pb4/p2p1b2/3Pn3/PQ1BPN1P/1P2NPP1/R1B1R1K1 b - - 0 26
+ move 28 (Nb6) Resulting FEN: r3r1k1/1pq2ppp/1npb4/p2p1b2/3Pn3/PQ1BPN1P/1P2NPP1/R1B1R1K1 w - - 0 28
+ move 29 (Nf4) Resulting FEN: r3r1k1/1pq2ppp/1npb4/p2p1b2/3PnN2/PQ1BPN1P/1P3PP1/R1B1R1K1 b - - 0 28
+ move 30 (Bxf4) Resulting FEN: r3r1k1/1pq2ppp/1np5/p2p1b2/3Pnb2/PQ1BPN1P/1P3PP1/R1B1R1K1 w - - 2 30
+ move 31 (exf4) Resulting FEN: r3r1k1/1pq2ppp/1np5/p2p1b2/3PnP2/PQ1B1N1P/1P3PP1/R1B1R1K1 b - - 4 30
+ move 32 (a4) Resulting FEN: r3r1k1/1pq2ppp/1np5/3p1b2/p2PnP2/PQ1B1N1P/1P3PP1/R1B1R1K1 w - - 6 32
+ move 33 (Qc2) Resulting FEN: r3r1k1/1pq2ppp/1np5/3p1b2/p2PnP2/P2B1N1P/1PQ2PP1/R1B1R1K1 b - - 0 32
+ move 34 (Re6) Resulting FEN: r5k1/1pq2ppp/1np1r3/3p1b2/p2PnP2/P2B1N1P/1PQ2PP1/R1B1R1K1 w - - 0 34
+ move 35 (Ne5) Resulting FEN: r5k1/1pq2ppp/1np1r3/3pNb2/p2PnP2/P2B3P/1PQ2PP1/R1B1R1K1 b - - 0 34
+ move 36 (Rae8) Resulting FEN: 4r1k1/1pq2ppp/1np1r3/3pNb2/p2PnP2/P2B3P/1PQ2PP1/R1B1R1K1 w - - 0 36
+ move 37 (Bxe4) Resulting FEN: 4r1k1/1pq2ppp/1np1r3/3pNb2/p2PBP2/P6P/1PQ2PP1/R1B1R1K1 b - - 2 36
+ move 38 (Bxe4) Resulting FEN: 4r1k1/1pq2ppp/1np1r3/3pN3/p2PbP2/P6P/1PQ2PP1/R1B1R1K1 w - - 4 38
+ move 39 (Qd2) Resulting FEN: 4r1k1/1pq2ppp/1np1r3/3pN3/p2PbP2/P6P/1P1Q1PP1/R1B1R1K1 b - - 0 38
+ move 40 (f6) Resulting FEN: 4r1k1/1pq3pp/1np1rp2/3pN3/p2PbP2/P6P/1P1Q1PP1/R1B1R1K1 w - - 2 40
+ move 41 (Ng4) Resulting FEN: 4r1k1/1pq3pp/1np1rp2/3p4/p2PbPN1/P6P/1P1Q1PP1/R1B1R1K1 b - - 0 40
+ move 42 (Nc4) Resulting FEN: 4r1k1/1pq3pp/2p1rp2/3p4/p1nPbPN1/P6P/1P1Q1PP1/R1B1R1K1 w - - 0 42
+ move 43 (Qb4) Resulting FEN: 4r1k1/1pq3pp/2p1rp2/3p4/pQnPbPN1/P6P/1P3PP1/R1B1R1K1 b - - 0 42
+ move 44 (f5) Resulting FEN: 4r1k1/1pq3pp/2p1r3/3p1p2/pQnPbPN1/P6P/1P3PP1/R1B1R1K1 w - - 2 44
+ move 45 (Ne5) Resulting FEN: 4r1k1/1pq3pp/2p1r3/3pNp2/pQnPbP2/P6P/1P3PP1/R1B1R1K1 b - - 0 44
+ move 46 (Nxe5) Resulting FEN: 4r1k1/1pq3pp/2p1r3/3pnp2/pQ1PbP2/P6P/1P3PP1/R1B1R1K1 w - - 2 46
+ move 47 (fxe5) Resulting FEN: 4r1k1/1pq3pp/2p1r3/3pPp2/pQ1Pb3/P6P/1P3PP1/R1B1R1K1 b - - 4 46
+ move 48 (Rg6) Resulting FEN: 4r1k1/1pq3pp/2p3r1/3pPp2/pQ1Pb3/P6P/1P3PP1/R1B1R1K1 w - - 0 48
+ move 49 (Rxe4) Resulting FEN: 4r1k1/1pq3pp/2p3r1/3pPp2/pQ1PR3/P6P/1P3PP1/R1B3K1 b - - 2 48
+ move 50 (fxe4) Resulting FEN: 4r1k1/1pq3pp/2p3r1/3pP3/pQ1Pp3/P6P/1P3PP1/R1B3K1 w - - 4 50
+ move 51 (Bf4) Resulting FEN: 4r1k1/1pq3pp/2p3r1/3pP3/pQ1PpB2/P6P/1P3PP1/R5K1 b - - 0 50
+ move 52 (Qd7) Resulting FEN: 4r1k1/1p1q2pp/2p3r1/3pP3/pQ1PpB2/P6P/1P3PP1/R5K1 w - - 0 52
+ move 53 (Qc3) Resulting FEN: 4r1k1/1p1q2pp/2p3r1/3pP3/p2PpB2/P1Q4P/1P3PP1/R5K1 b - - 0 52
+ move 54 (Qf5) Resulting FEN: 4r1k1/1p4pp/2p3r1/3pPq2/p2PpB2/P1Q4P/1P3PP1/R5K1 w - - 0 54
+ move 55 (Qe3) Resulting FEN: 4r1k1/1p4pp/2p3r1/3pPq2/p2PpB2/P3Q2P/1P3PP1/R5K1 b - - 0 54
+ move 56 (c5) Resulting FEN: 4r1k1/1p4pp/6r1/2ppPq2/p2PpB2/P3Q2P/1P3PP1/R5K1 w - - 2 56
+ move 57 (Rd1) Resulting FEN: 4r1k1/1p4pp/6r1/2ppPq2/p2PpB2/P3Q2P/1P3PP1/3R2K1 b - - 0 56
+ move 58 (cxd4) Resulting FEN: 4r1k1/1p4pp/6r1/3pPq2/p2ppB2/P3Q2P/1P3PP1/3R2K1 w - - 2 58
+ move 59 (Rxd4) Resulting FEN: 4r1k1/1p4pp/6r1/3pPq2/p2RpB2/P3Q2P/1P3PP1/6K1 b - - 4 58
+ move 60 (Rc8) Resulting FEN: 2r3k1/1p4pp/6r1/3pPq2/p2RpB2/P3Q2P/1P3PP1/6K1 w - - 0 60
+ move 61 (Rxd5) Resulting FEN: 2r3k1/1p4pp/6r1/3RPq2/p3pB2/P3Q2P/1P3PP1/6K1 b - - 2 60
+ move 62 (Rc2) Resulting FEN: 6k1/1p4pp/6r1/3RPq2/p3pB2/P3Q2P/1Pr2PP1/6K1 w - - 0 62
+ move 63 (Rb5) Resulting FEN: 6k1/1p4pp/6r1/1R2Pq2/p3pB2/P3Q2P/1Pr2PP1/6K1 b - - 0 62
+ move 64 (Rgc6) Resulting FEN: 6k1/1p4pp/2r5/1R2Pq2/p3pB2/P3Q2P/1Pr2PP1/6K1 w - - 0 64
+ move 65 (Rxb7) Resulting FEN: 6k1/1R4pp/2r5/4Pq2/p3pB2/P3Q2P/1Pr2PP1/6K1 b - - 2 64
+ move 66 (Rc1+) Resulting FEN: 6k1/1R4pp/2r5/4Pq2/p3pB2/P3Q2P/1P3PP1/2r3K1 w - - 0 66
+ move 67 (Kh2) Resulting FEN: 6k1/1R4pp/2r5/4Pq2/p3pB2/P3Q2P/1P3PPK/2r5 b - - 0 66
+ move 68 (h6) Resulting FEN: 6k1/1R4p1/2r4p/4Pq2/p3pB2/P3Q2P/1P3PPK/2r5 w - - 2 68
+ move 69 (Rb8+) Resulting FEN: 1R4k1/6p1/2r4p/4Pq2/p3pB2/P3Q2P/1P3PPK/2r5 b - - 0 68
+ move 70 (Kh7) Resulting FEN: 1R6/6pk/2r4p/4Pq2/p3pB2/P3Q2P/1P3PPK/2r5 w - - 0 70
+ move 71 (Rb7) Resulting FEN: 8/1R4pk/2r4p/4Pq2/p3pB2/P3Q2P/1P3PPK/2r5 b - - 0 70
+ move 72 (Rd1) Resulting FEN: 8/1R4pk/2r4p/4Pq2/p3pB2/P3Q2P/1P3PPK/3r4 w - - 0 72
+ move 73 (Qg3) Resulting FEN: 8/1R4pk/2r4p/4Pq2/p3pB2/P5QP/1P3PPK/3r4 b - - 0 72
+ move 74 (Rg6) Resulting FEN: 8/1R4pk/6rp/4Pq2/p3pB2/P5QP/1P3PPK/3r4 w - - 0 74
+ move 75 (Qh4) Resulting FEN: 8/1R4pk/6rp/4Pq2/p3pB1Q/P6P/1P3PPK/3r4 b - - 0 74
+ move 76 (Rd4) Resulting FEN: 8/1R4pk/6rp/4Pq2/p2rpB1Q/P6P/1P3PPK/8 w - - 0 76
+ move 77 (g4) Resulting FEN: 8/1R4pk/6rp/4Pq2/p2rpBPQ/P6P/1P3P1K/8 b - - 2 76
+ move 78 (Qxf4+) Resulting FEN: 8/1R4pk/6rp/4P3/p2rpqPQ/P6P/1P3P1K/8 w - - 4 78
+ move 79 (Kg1) Resulting FEN: 8/1R4pk/6rp/4P3/p2rpqPQ/P6P/1P3P2/6K1 b - - 0 78
+ move 80 (Rd1+) Resulting FEN: 8/1R4pk/6rp/4P3/p3pqPQ/P6P/1P3P2/3r2K1 w - - 0 80
+ move 81 (Kg2) Resulting FEN: 8/1R4pk/6rp/4P3/p3pqPQ/P6P/1P3PK1/3r4 b - - 0 80
+ move 82 (Qf3+) Resulting FEN: 8/1R4pk/6rp/4P3/p3p1PQ/P4q1P/1P3PK1/3r4 w - - 0 82
+Game Nwyboxma result mismatch: expected 0-1 but got *
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+ move 1 (d4) Resulting FEN: rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 2 0
+ move 2 (d5) Resulting FEN: rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 4 2
+ move 3 (c4) Resulting FEN: rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 6 2
+ move 4 (c6) Resulting FEN: rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 8 4
+ move 5 (Nc3) Resulting FEN: rnbqkbnr/pp2pppp/2p5/3p4/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 0 4
+ move 6 (Bf5) Resulting FEN: rn1qkbnr/pp2pppp/2p5/3p1b2/2PP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 6
+ move 7 (Nf3) Resulting FEN: rn1qkbnr/pp2pppp/2p5/3p1b2/2PP4/2N2N2/PP2PPPP/R1BQKB1R b KQkq - 0 6
+ move 8 (Nf6) Resulting FEN: rn1qkb1r/pp2pppp/2p2n2/3p1b2/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 0 8
+ move 9 (Bg5) Resulting FEN: rn1qkb1r/pp2pppp/2p2n2/3p1bB1/2PP4/2N2N2/PP2PPPP/R2QKB1R b KQkq - 0 8
+ move 10 (e6) Resulting FEN: rn1qkb1r/pp3ppp/2p1pn2/3p1bB1/2PP4/2N2N2/PP2PPPP/R2QKB1R w KQkq - 2 10
+ move 11 (e3) Resulting FEN: rn1qkb1r/pp3ppp/2p1pn2/3p1bB1/2PP4/2N1PN2/PP3PPP/R2QKB1R b KQkq - 4 10
+ move 12 (Be7) Resulting FEN: rn1qk2r/pp2bppp/2p1pn2/3p1bB1/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQkq - 0 12
+ move 13 (Bf4) Resulting FEN: rn1qk2r/pp2bppp/2p1pn2/3p1b2/2PP1B2/2N1PN2/PP3PPP/R2QKB1R b KQkq - 0 12
+ move 14 (Nh5) Resulting FEN: rn1qk2r/pp2bppp/2p1p3/3p1b1n/2PP1B2/2N1PN2/PP3PPP/R2QKB1R w KQkq - 0 14
+ move 15 (Be5) Resulting FEN: rn1qk2r/pp2bppp/2p1p3/3pBb1n/2PP4/2N1PN2/PP3PPP/R2QKB1R b KQkq - 0 14
+ move 16 (f6) Resulting FEN: rn1qk2r/pp2b1pp/2p1pp2/3pBb1n/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQkq - 2 16
+ move 17 (Bxb8) Resulting FEN: rB1qk2r/pp2b1pp/2p1pp2/3p1b1n/2PP4/2N1PN2/PP3PPP/R2QKB1R b KQkq - 4 16
+ move 18 (Rxb8) Resulting FEN: 1r1qk2r/pp2b1pp/2p1pp2/3p1b1n/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQk - 6 18
+ move 19 (Nh4) Resulting FEN: 1r1qk2r/pp2b1pp/2p1pp2/3p1b1n/2PP3N/2N1P3/PP3PPP/R2QKB1R b KQk - 0 18
+ move 20 (Bg6) Resulting FEN: 1r1qk2r/pp2b1pp/2p1ppb1/3p3n/2PP3N/2N1P3/PP3PPP/R2QKB1R w KQk - 0 20
+ move 21 (Nxg6) Resulting FEN: 1r1qk2r/pp2b1pp/2p1ppN1/3p3n/2PP4/2N1P3/PP3PPP/R2QKB1R b KQk - 2 20
+ move 22 (hxg6) Resulting FEN: 1r1qk2r/pp2b1p1/2p1ppp1/3p3n/2PP4/2N1P3/PP3PPP/R2QKB1R w KQk - 4 22
+ move 23 (Bd3) Resulting FEN: 1r1qk2r/pp2b1p1/2p1ppp1/3p3n/2PP4/2NBP3/PP3PPP/R2QK2R b KQk - 0 22
+ move 24 (f5) Resulting FEN: 1r1qk2r/pp2b1p1/2p1p1p1/3p1p1n/2PP4/2NBP3/PP3PPP/R2QK2R w KQk - 2 24
+ move 25 (cxd5) Resulting FEN: 1r1qk2r/pp2b1p1/2p1p1p1/3P1p1n/3P4/2NBP3/PP3PPP/R2QK2R b KQk - 4 24
+ move 26 (exd5) Resulting FEN: 1r1qk2r/pp2b1p1/2p3p1/3p1p1n/3P4/2NBP3/PP3PPP/R2QK2R w KQk - 6 26
+e1g1
+ move 27 (O-O) Resulting FEN: 1r1qk2r/pp2b1p1/2p3p1/3p1p1n/3P4/2NBP3/PP3PPP/R2Q1RK1 b k - 0 26
+ move 28 (Qd6) Resulting FEN: 1r2k2r/pp2b1p1/2pq2p1/3p1p1n/3P4/2NBP3/PP3PPP/R2Q1RK1 w k - 0 28
+ move 29 (Qa4) Resulting FEN: 1r2k2r/pp2b1p1/2pq2p1/3p1p1n/Q2P4/2NBP3/PP3PPP/R4RK1 b k - 0 28
+ move 30 (Nf6) Resulting FEN: 1r2k2r/pp2b1p1/2pq1np1/3p1p2/Q2P4/2NBP3/PP3PPP/R4RK1 w k - 0 30
+ move 31 (h3) Resulting FEN: 1r2k2r/pp2b1p1/2pq1np1/3p1p2/Q2P4/2NBP2P/PP3PP1/R4RK1 b k - 2 30
+ move 32 (Kf7) Resulting FEN: 1r5r/pp2bkp1/2pq1np1/3p1p2/Q2P4/2NBP2P/PP3PP1/R4RK1 w - - 0 32
+ move 33 (Qxa7) Resulting FEN: 1r5r/Qp2bkp1/2pq1np1/3p1p2/3P4/2NBP2P/PP3PP1/R4RK1 b - - 2 32
+ move 34 (Rxh3) Resulting FEN: 1r6/Qp2bkp1/2pq1np1/3p1p2/3P4/2NBP2r/PP3PP1/R4RK1 w - - 4 34
+ move 35 (gxh3) Resulting FEN: 1r6/Qp2bkp1/2pq1np1/3p1p2/3P4/2NBP2P/PP3P2/R4RK1 b - - 6 34
+ move 36 (Rh8) Resulting FEN: 7r/Qp2bkp1/2pq1np1/3p1p2/3P4/2NBP2P/PP3P2/R4RK1 w - - 0 36
+ move 37 (Kg2) Resulting FEN: 7r/Qp2bkp1/2pq1np1/3p1p2/3P4/2NBP2P/PP3PK1/R4R2 b - - 0 36
+ move 38 (Ng4) Resulting FEN: 7r/Qp2bkp1/2pq2p1/3p1p2/3P2n1/2NBP2P/PP3PK1/R4R2 w - - 0 38
+ move 39 (Rh1) Resulting FEN: 7r/Qp2bkp1/2pq2p1/3p1p2/3P2n1/2NBP2P/PP3PK1/R6R b - - 0 38
+ move 40 (Nxf2) Resulting FEN: 7r/Qp2bkp1/2pq2p1/3p1p2/3P4/2NBP2P/PP3nK1/R6R w - - 2 40
+ move 41 (Kxf2) Resulting FEN: 7r/Qp2bkp1/2pq2p1/3p1p2/3P4/2NBP2P/PP3K2/R6R b - - 4 40
+ move 42 (Bh4+) Resulting FEN: 7r/Qp3kp1/2pq2p1/3p1p2/3P3b/2NBP2P/PP3K2/R6R w - - 0 42
+ move 43 (Ke2) Resulting FEN: 7r/Qp3kp1/2pq2p1/3p1p2/3P3b/2NBP2P/PP2K3/R6R b - - 0 42
+ move 44 (Qg3) Resulting FEN: 7r/Qp3kp1/2p3p1/3p1p2/3P3b/2NBP1qP/PP2K3/R6R w - - 0 44
+ move 45 (Qxb7+) Resulting FEN: 7r/1Q3kp1/2p3p1/3p1p2/3P3b/2NBP1qP/PP2K3/R6R b - - 2 44
+ move 46 (Kg8) Resulting FEN: 6kr/1Q4p1/2p3p1/3p1p2/3P3b/2NBP1qP/PP2K3/R6R w - - 0 46
+ move 47 (Qc8+) Resulting FEN: 2Q3kr/6p1/2p3p1/3p1p2/3P3b/2NBP1qP/PP2K3/R6R b - - 0 46
+ move 48 (Kh7) Resulting FEN: 2Q4r/6pk/2p3p1/3p1p2/3P3b/2NBP1qP/PP2K3/R6R w - - 0 48
+ move 49 (Raf1) Resulting FEN: 2Q4r/6pk/2p3p1/3p1p2/3P3b/2NBP1qP/PP2K3/5R1R b - - 0 48
+ move 50 (Qg2+) Resulting FEN: 2Q4r/6pk/2p3p1/3p1p2/3P3b/2NBP2P/PP2K1q1/5R1R w - - 0 50
+ move 51 (Kd1) Resulting FEN: 2Q4r/6pk/2p3p1/3p1p2/3P3b/2NBP2P/PP4q1/3K1R1R b - - 0 50
+ move 52 (Bg5) Resulting FEN: 2Q4r/6pk/2p3p1/3p1pb1/3P4/2NBP2P/PP4q1/3K1R1R w - - 0 52
+ move 53 (Rhg1) Resulting FEN: 2Q4r/6pk/2p3p1/3p1pb1/3P4/2NBP2P/PP4q1/3K1RR1 b - - 0 52
+ move 54 (Qxh3) Resulting FEN: 2Q4r/6pk/2p3p1/3p1pb1/3P4/2NBP2q/PP6/3K1RR1 w - - 2 54
+ move 55 (Qxc6) Resulting FEN: 7r/6pk/2Q3p1/3p1pb1/3P4/2NBP2q/PP6/3K1RR1 b - - 4 54
+ move 56 (Qh5+) Resulting FEN: 7r/6pk/2Q3p1/3p1pbq/3P4/2NBP3/PP6/3K1RR1 w - - 0 56
+ move 57 (Kc2) Resulting FEN: 7r/6pk/2Q3p1/3p1pbq/3P4/2NBP3/PPK5/5RR1 b - - 0 56
+ move 58 (Bxe3) Resulting FEN: 7r/6pk/2Q3p1/3p1p1q/3P4/2NBb3/PPK5/5RR1 w - - 2 58
+ move 59 (Rh1) Resulting FEN: 7r/6pk/2Q3p1/3p1p1q/3P4/2NBb3/PPK5/5R1R b - - 0 58
+Game cUTVFcoS result mismatch: expected 1-0 but got *
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+lichess_GoonterYM_2025-08-25.pgn: failed
+Some PGN tests failed.
+fen:  4r1k1/1p4pp/6r1/3pPq2/p2RpB2/P3Q2P/1P3PP1/6K1 b - - 4 58
+hm: 4
+fm: 58
+Initialization logic executed.
