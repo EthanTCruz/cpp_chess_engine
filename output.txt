@@ -1,3 +1,36 @@
+ move 23 (cxb6) Resulting FEN: r1b1k1nr/p4ppp/1Pn1p3/3pP3/8/3BBN2/q2N1PPP/3QK2R b Kkq - 4 22
+ move 24 (Nb4) Resulting FEN: r1b1k1nr/p4ppp/1P2p3/3pP3/1n6/3BBN2/q2N1PPP/3QK2R w Kkq - 0 24
+ move 25 (Bb5+) Resulting FEN: r1b1k1nr/p4ppp/1P2p3/1B1pP3/1n6/4BN2/q2N1PPP/3QK2R b Kkq - 0 24
+ move 26 (Ke7) Resulting FEN: r1b3nr/p3kppp/1P2p3/1B1pP3/1n6/4BN2/q2N1PPP/3QK2R w K - 0 26
+ move 27 (Bc5+) Resulting FEN: r1b3nr/p3kppp/1P2p3/1BBpP3/1n6/5N2/q2N1PPP/3QK2R b K - 0 26
+ move 28 (Kd8) Resulting FEN: r1bk2nr/p4ppp/1P2p3/1BBpP3/1n6/5N2/q2N1PPP/3QK2R w K - 0 28
+ move 29 (Bxb4) Resulting FEN: r1bk2nr/p4ppp/1P2p3/1B1pP3/1B6/5N2/q2N1PPP/3QK2R b K - 2 28
+ move 30 (axb6) Resulting FEN: r1bk2nr/5ppp/1p2p3/1B1pP3/1B6/5N2/q2N1PPP/3QK2R w K - 4 30
+e1g1
+ move 31 (O-O) Resulting FEN: r1bk2nr/5ppp/1p2p3/1B1pP3/1B6/5N2/q2N1PPP/3Q2KR b - - 0 30
+ move 32 (Ne7) Resulting FEN: r1bk3r/4nppp/1p2p3/1B1pP3/1B6/5N2/q2N1PPP/3Q2KR w - - 0 32
+ move 33 (Ng5) Resulting FEN: r1bk3r/4nppp/1p2p3/1B1pP1N1/1B6/8/q2N1PPP/3Q2KR b - - 0 32
+ move 34 (f6) Resulting FEN: r1bk3r/4n1pp/1p2pp2/1B1pP1N1/1B6/8/q2N1PPP/3Q2KR w - - 2 34
+ move 35 (Nf7+) Resulting FEN: r1bk3r/4nNpp/1p2pp2/1B1pP3/1B6/8/q2N1PPP/3Q2KR b - - 0 34
+ move 36 (Kc7) Resulting FEN: r1b4r/2k1nNpp/1p2pp2/1B1pP3/1B6/8/q2N1PPP/3Q2KR w - - 0 36
+ move 37 (Nxh8) Resulting FEN: r1b4N/2k1n1pp/1p2pp2/1B1pP3/1B6/8/q2N1PPP/3Q2KR b - - 2 36
+ move 38 (fxe5) Resulting FEN: r1b4N/2k1n1pp/1p2p3/1B1pp3/1B6/8/q2N1PPP/3Q2KR w - - 4 38
+ move 39 (Qb1) Resulting FEN: r1b4N/2k1n1pp/1p2p3/1B1pp3/1B6/8/q2N1PPP/1Q4KR b - - 0 38
+ move 40 (Nf5) Resulting FEN: r1b4N/2k3pp/1p2p3/1B1ppn2/1B6/8/q2N1PPP/1Q4KR w - - 0 40
+ move 41 (Qxa2) Resulting FEN: r1b4N/2k3pp/1p2p3/1B1ppn2/1B6/8/Q2N1PPP/6KR b - - 2 40
+ move 42 (Rxa2) Resulting FEN: 2b4N/2k3pp/1p2p3/1B1ppn2/1B6/8/r2N1PPP/6KR w - - 4 42
+ move 43 (g3) Resulting FEN: 2b4N/2k3pp/1p2p3/1B1ppn2/1B6/6P1/r2N1P1P/6KR b - - 6 42
+ move 44 (Nd4) Resulting FEN: 2b4N/2k3pp/1p2p3/1B1pp3/1B1n4/6P1/r2N1P1P/6KR w - - 0 44
+Failed to parse SAN move: Rc1+
+Game CceKGr3p Initial FEN: 2b4N/2k3pp/1p2p3/1B1pp3/1B1n4/6P1/r2N1P1P/6KR w - - 0 44
+ failed at move 45 (Rc1+)FEN: 2b4N/2k3pp/1p2p3/1B1pp3/1B1n4/6P1/r2N1P1P/6KR w - - 0 44
+Game CceKGr3p result mismatch: expected 1-0 but got *
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
+fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
+hm: 0
+fm: 0
  move 1 (d4) Resulting FEN: rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 2 0
  move 2 (Nc6) Resulting FEN: r1bqkbnr/pppppppp/2n5/8/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2
  move 3 (c4) Resulting FEN: r1bqkbnr/pppppppp/2n5/8/2PP4/8/PP2PPPP/RNBQKBNR b KQkq - 2 2
@@ -61,7 +94,6 @@ e8g8
  move 59 (Qc5+) Resulting FEN: 3r4/1pb2p2/1k2b3/p1Q5/6P1/BP2PP2/P3KP2/7R b - - 0 58
  move 60 (Ka6) Resulting FEN: 3r4/1pb2p2/k3b3/p1Q5/6P1/BP2PP2/P3KP2/7R w - - 0 60
  move 61 (Qxc7) Resulting FEN: 3r4/1pQ2p2/k3b3/p7/6P1/BP2PP2/P3KP2/7R b - - 2 60
-Game 8eDagtxn result mismatch: expected 1-0 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -117,7 +149,6 @@ e1g1
  move 45 (Qxd5) Resulting FEN: r1bq1rk1/1p1nRp1p/6p1/p2Q4/8/6P1/PPP2PBP/4R1K1 b - - 8 44
  move 46 (b6) Resulting FEN: r1bq1rk1/3nRp1p/1p4p1/p2Q4/8/6P1/PPP2PBP/4R1K1 w - - 10 46
  move 47 (Qxa8) Resulting FEN: Q1bq1rk1/3nRp1p/1p4p1/p7/8/6P1/PPP2PBP/4R1K1 b - - 12 46
-Game rTIKmujY result mismatch: expected 1-0 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -182,7 +213,6 @@ e8g8
  move 54 (Qh3) Resulting FEN: r1r3k1/p3ppbp/Pp4p1/8/1P1PN1n1/7q/4KP2/RQ4R1 w - - 0 54
  move 55 (Rg3) Resulting FEN: r1r3k1/p3ppbp/Pp4p1/8/1P1PN1n1/6Rq/4KP2/RQ6 b - - 0 54
  move 56 (Qh5) Resulting FEN: r1r3k1/p3ppbp/Pp4p1/7q/1P1PN1n1/6R1/4KP2/RQ6 w - - 0 56
-Game VJvE9aL6 result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -228,7 +258,6 @@ e8g8
  move 36 (Nfg4) Resulting FEN: r4rk1/5ppp/p3p3/1b1pn3/p5n1/R1P1q3/1P2N1PP/1B1Q1KR1 w - - 0 36
  move 37 (Qe1) Resulting FEN: r4rk1/5ppp/p3p3/1b1pn3/p5n1/R1P1q3/1P2N1PP/1B2QKR1 b - - 0 36
  move 38 (Nxh2#) Resulting FEN: r4rk1/5ppp/p3p3/1b1pn3/p7/R1P1q3/1P2N1Pn/1B2QKR1 w - - 2 38
-Game BQnFrFto result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -289,7 +318,6 @@ e1g1
  move 50 (Qxc1+) Resulting FEN: 5rk1/p4pbp/2Q2np1/1pB5/8/2pB3P/5PP1/2q3K1 w - - 2 50
  move 51 (Kh2) Resulting FEN: 5rk1/p4pbp/2Q2np1/1pB5/8/2pB3P/5PPK/2q5 b - - 0 50
  move 52 (Rd8) Resulting FEN: 3r2k1/p4pbp/2Q2np1/1pB5/8/2pB3P/5PPK/2q5 w - - 0 52
-Game o3hfDWKm result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -342,7 +370,6 @@ e1c1
 No legal moves available for the opponent.
 *
  move 42 (Qb2#) Resulting FEN: 3R1rk1/ppp2pbp/6p1/8/4Q2P/8/PqP2PP1/1K5R w - - 0 42
-Game 3d0MR9HZ result mismatch: expected 0-1 but got 1/2-1/2
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -385,7 +412,6 @@ e8g8
  move 32 (Rxc5) Resulting FEN: 3q1rk1/4ppbp/n1p2np1/2rp4/Pp6/4PN2/2Q2PPP/R1B1R1K1 w - - 4 32
  move 33 (Ng5) Resulting FEN: 3q1rk1/4ppbp/n1p2np1/2rp2N1/Pp6/4P3/2Q2PPP/R1B1R1K1 b - - 0 32
  move 34 (Rxc2) Resulting FEN: 3q1rk1/4ppbp/n1p2np1/3p2N1/Pp6/4P3/2r2PPP/R1B1R1K1 w - - 2 34
-Game OyUyOOO9 result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -428,7 +454,6 @@ e1g1
  move 33 (Nb6+) Resulting FEN: 7r/3k1ppp/QNnb4/1p3q2/2P1p3/4P3/PP3PPP/R1B2RK1 b - - 0 32
  move 34 (Kc7) Resulting FEN: 7r/2k2ppp/QNnb4/1p3q2/2P1p3/4P3/PP3PPP/R1B2RK1 w - - 0 34
  move 35 (cxb5) Resulting FEN: 7r/2k2ppp/QNnb4/1P3q2/4p3/4P3/PP3PPP/R1B2RK1 b - - 2 34
-Game 9HEhFTB5 result mismatch: expected 1-0 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -453,7 +478,6 @@ fm: 0
  move 16 (Bb7) Resulting FEN: rn2kb1r/pb2pppp/q4n2/1pP5/2p5/1PN1P1P1/P4PBP/R1BQK1NR w KQkq - 0 16
  move 17 (Bxb7) Resulting FEN: rn2kb1r/pB2pppp/q4n2/1pP5/2p5/1PN1P1P1/P4P1P/R1BQK1NR b KQkq - 2 16
  move 18 (Qxb7) Resulting FEN: rn2kb1r/pq2pppp/5n2/1pP5/2p5/1PN1P1P1/P4P1P/R1BQK1NR w KQkq - 4 18
-Game 2A9kGg0L result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -555,7 +579,6 @@ eraesed: 1 6
  move 90 (b1=Q) Resulting FEN: 8/8/4pkp1/1R6/P2Pq3/4P3/5K2/1q6 w - - 2 90
  move 91 (Rxb1) Resulting FEN: 8/8/4pkp1/8/P2Pq3/4P3/5K2/1R6 b - - 4 90
  move 92 (Qxb1) Resulting FEN: 8/8/4pkp1/8/P2P4/4P3/5K2/1q6 w - - 6 92
-Game 0bhYeY3I result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -597,7 +620,6 @@ e8g8
  move 31 (Nbd4) Resulting FEN: Q1bqr1k1/p4ppp/3b4/8/2pN4/5N2/PPn1BPPP/1RB2RK1 b - - 0 30
  move 32 (Bc5) Resulting FEN: Q1bqr1k1/p4ppp/8/2b5/2pN4/5N2/PPn1BPPP/1RB2RK1 w - - 0 32
  move 33 (Nxc2) Resulting FEN: Q1bqr1k1/p4ppp/8/2b5/2p5/5N2/PPN1BPPP/1RB2RK1 b - - 2 32
-Game DaJXHxEu result mismatch: expected 1-0 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -611,7 +633,6 @@ fm: 0
  move 5 (exd5) Resulting FEN: rnbqkbnr/ppp2ppp/4p3/3P4/8/5N2/PPPP1PPP/RNBQKB1R b KQkq - 4 4
  move 6 (exd5) Resulting FEN: rnbqkbnr/ppp2ppp/8/3p4/8/5N2/PPPP1PPP/RNBQKB1R w KQkq - 6 6
  move 7 (Bb5+) Resulting FEN: rnbqkbnr/ppp2ppp/8/1B1p4/8/5N2/PPPP1PPP/RNBQK2R b KQkq - 0 6
-Game KrCOZBsC result mismatch: expected 1-0 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -680,7 +701,6 @@ e8g8
  move 58 (Qxc4) Resulting FEN: 5Q2/2p2ppk/7p/4Pp2/1nq5/8/1P3PPP/6K1 w - - 2 58
  move 59 (Qxf7) Resulting FEN: 8/2p2Qpk/7p/4Pp2/1nq5/8/1P3PPP/6K1 b - - 4 58
  move 60 (Qc1#) Resulting FEN: 8/2p2Qpk/7p/4Pp2/1n6/8/1P3PPP/2q3K1 w - - 0 60
-Game twyXgwpP result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -730,7 +750,6 @@ e1c1
  move 40 (f4) Resulting FEN: r1b1q3/ppB4k/7p/6r1/3R1p2/Q1N5/PP3PP1/2KR4 w - - 2 40
  move 41 (Rd7+) Resulting FEN: r1b1q3/ppBR3k/7p/6r1/5p2/Q1N5/PP3PP1/2KR4 b - - 0 40
  move 42 (Bxd7) Resulting FEN: r3q3/ppBb3k/7p/6r1/5p2/Q1N5/PP3PP1/2KR4 w - - 2 42
-Game sXcBdhv6 result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -791,7 +810,6 @@ e1g1
  move 50 (Qxe7) Resulting FEN: 5r1k/3bqpbp/5np1/8/8/P2B1Q1P/5PPK/8 w - - 2 50
  move 51 (a4) Resulting FEN: 5r1k/3bqpbp/5np1/8/P7/3B1Q1P/5PPK/8 b - - 4 50
  move 52 (Bxa4) Resulting FEN: 5r1k/4qpbp/5np1/8/b7/3B1Q1P/5PPK/8 w - - 6 52
-Game zR3wUvtP result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -842,7 +860,6 @@ e1g1
  move 40 (c2) Resulting FEN: 1n3rk1/5pbp/3N2p1/q2P4/5P2/Pb1B1N2/2p2P1P/R1B2RK1 w - - 8 40
  move 41 (Nd4) Resulting FEN: 1n3rk1/5pbp/3N2p1/q2P4/3N1P2/Pb1B4/2p2P1P/R1B2RK1 b - - 0 40
  move 42 (Bxd4) Resulting FEN: 1n3rk1/5p1p/3N2p1/q2P4/3b1P2/Pb1B4/2p2P1P/R1B2RK1 w - - 2 42
-Game C7hlSbX2 result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -938,7 +955,6 @@ e8g8
  move 29 (Ng5) Resulting FEN: r4r2/pbqnp1kp/2p3p1/1p1pNpN1/3P4/1QPBP3/PP3PPP/R3K2R b KQ - 0 28
  move 30 (Nxe5) Resulting FEN: r4r2/pbq1p1kp/2p3p1/1p1pnpN1/3P4/1QPBP3/PP3PPP/R3K2R w KQ - 2 30
  move 31 (Ne6+) Resulting FEN: r4r2/pbq1p1kp/2p1N1p1/1p1pnp2/3P4/1QPBP3/PP3PPP/R3K2R b KQ - 0 30
-Game qUL6q8WP result mismatch: expected 1-0 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
@@ -991,13 +1007,9 @@ e1g1
  move 42 (cxd5) Resulting FEN: r4rk1/1Q3pp1/5q1p/3p4/5P2/5N2/P4PPP/4R1K1 w - - 12 42
  move 43 (Qxd5) Resulting FEN: r4rk1/5pp1/5q1p/3Q4/5P2/5N2/P4PPP/4R1K1 b - - 14 42
  move 44 (Rfd8) Resulting FEN: r2r2k1/5pp1/5q1p/3Q4/5P2/5N2/P4PPP/4R1K1 w - - 0 44
-Game Kg4BSV17 result mismatch: expected 0-1 but got *
 fen:  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0
 hm: 0
 fm: 0
 lichess_GoonterYM_2025-10-11.pgn: failed
 Some PGN tests failed.
-fen:  4r1k1/1p4pp/6r1/3pPq2/p2RpB2/P3Q2P/1P3PP1/6K1 b - - 4 58
-hm: 4
-fm: 58
-Initialization logic executed.
+PGN validation failed.
