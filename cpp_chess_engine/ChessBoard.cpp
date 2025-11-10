@@ -622,14 +622,12 @@ bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& ne
     if (validateMove(from_idx, to_idx)) {
         if (castleCheck(origin, destination) ) {
             if (whiteToMove) {
-                
+
                 if (destination & w_king_castle) castleWhiteKingside(); else castleWhiteQueenside();
-                
+
             }
             else {
-                if (blackCanCastleKingside & blackCanCastleQueenside) {
                 if (destination & b_king_castle) castleBlackKingside(); else castleBlackQueenside();
-                }
             }
         }
         char piece = board[fromRow][fromCol];
@@ -788,45 +786,62 @@ void ChessBoard::castleWhiteKingside() {
     Bitboard initial_rook_position = 1ULL << 7;
     Bitboard new_rook_position = 1ULL << 5;
     bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
+    board[7][7] = '.';
+    board[7][5] = 'R';
 }
 void ChessBoard::castleWhiteQueenside() {
     bitboards[w_king_idx] = bitboards[w_king_idx] >> 2;
     Bitboard initial_rook_position = 1ULL << 0;
     Bitboard new_rook_position = 1ULL << 3;
     bitboards[w_rook_idx] = (bitboards[w_rook_idx] & ~initial_rook_position) | new_rook_position;
+    board[7][0] = '.';
+    board[7][3] = 'R';
 }
 void ChessBoard::castleBlackQueenside() {
     bitboards[b_king_idx] = bitboards[b_king_idx] >> 2;
     Bitboard initial_rook_position = 1ULL << 56;
     Bitboard new_rook_position = 1ULL << 59;
     bitboards[b_rook_idx] = (bitboards[b_rook_idx] & ~initial_rook_position) | new_rook_position;
+    board[0][0] = '.';
+    board[0][3] = 'r';
 }
 void ChessBoard::castleBlackKingside() {
     bitboards[b_king_idx] = bitboards[b_king_idx] << 2;
     Bitboard initial_rook_position = 1ULL << 63;
     Bitboard new_rook_position = 1ULL << 61;
     bitboards[b_rook_idx] = (bitboards[b_rook_idx] & ~initial_rook_position) | new_rook_position;
+    board[0][7] = '.';
+    board[0][5] = 'r';
 }
 
 
 
 bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
     Bitboard initial_position = InitialPositions::b_king;
-    Bitboard target_position = b_king_castle | b_queen_castle;
-    bool has_kingside_castle_permissions = blackCanCastleKingside ;
+    Bitboard kingside_target = b_king_castle;
+    Bitboard queenside_target = b_queen_castle;
+    bool has_kingside_castle_permissions = blackCanCastleKingside;
     bool has_queenside_castle_permissions = blackCanCastleQueenside;
+
     if (whiteToMove) {
         initial_position = InitialPositions::w_king;
-        target_position = w_king_castle | w_queen_castle;
-        has_kingside_castle_permissions = whiteCanCastleKingside ;
+        kingside_target = w_king_castle;
+        queenside_target = w_queen_castle;
+        has_kingside_castle_permissions = whiteCanCastleKingside;
         has_queenside_castle_permissions = whiteCanCastleQueenside;
     }
-    bool has_castle_permissions = has_kingside_castle_permissions & has_queenside_castle_permissions;
-    Bitboard validStart = from_bb & initial_position;
-    Bitboard validEnd = to_bb & target_position;
-    
-    return (((validStart != 0) && (validEnd != 0)) & has_castle_permissions);
 
+    Bitboard validStart = from_bb & initial_position;
+    if (!validStart) return false;
+
+    bool isKingside = (to_bb & kingside_target) != 0ULL;
+    bool isQueenside = (to_bb & queenside_target) != 0ULL;
+    if (!isKingside && !isQueenside) return false;
+
+    if (isKingside && !has_kingside_castle_permissions) return false;
+    if (isQueenside && !has_queenside_castle_permissions) return false;
+
+    return true;
 }
 
 // goal is to get ~w_king_castle then & with king moves
