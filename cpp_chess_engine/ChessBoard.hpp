@@ -28,8 +28,8 @@ public:
     Bitboard getEnemyAttacks();
     Bitboard getEnemyAttacksIgnoringKing();
 
-    Bitboard getRookPinLanes(const int& rook_idx, const Bitboard& target_idx, const Bitboard& occupancy);
-    Bitboard getBishopPinLanes(const int& bishop_idx, const Bitboard& target_idx, const Bitboard& occupancy);
+    Bitboard getRookPinLanes(int rook_idx, int target_idx, Bitboard occupancy);
+    Bitboard getBishopPinLanes(int bishop_idx, int target_idx, Bitboard occupancy);
     
     std::unordered_map<Bitboard, Bitboard> removeBishopPins(const std::unordered_map<Bitboard, Bitboard>& allMoves);
     std::unordered_map<Bitboard, Bitboard> removeRookPins(const std::unordered_map<Bitboard, Bitboard>& allMoves);
