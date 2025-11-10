@@ -109,27 +109,33 @@ public:
     bool get_is_white_win();
     bool get_is_black_win();
     bool get_is_stalemate();
-    
+
 private:
-	std::string STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
+    bool movePieceUnchecked(const int& fromRow, const int& fromCol,
+                            const int& newRow, const int& newCol, char promote);
+    bool movePieceInternal(const int& fromRow, const int& fromCol,
+                           const int& newRow, const int& newCol, char promote,
+                           bool validateMoveFlag);
+
+    std::string STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     std::string fen;
     bool whiteToMove = true;
-	int halfmoveClock = 0;
-	int fullmoveNumber = 1;
-	Bitboard enPassant = 0ULL;
+    int halfmoveClock = 0;
+    int fullmoveNumber = 1;
+    Bitboard enPassant = 0ULL;
     std::string castlingRights;
-	bool whiteCanCastleKingside = true;
-	bool whiteCanCastleQueenside = true;
-	bool blackCanCastleKingside = true;
-	bool blackCanCastleQueenside = true;
+    bool whiteCanCastleKingside = true;
+    bool whiteCanCastleQueenside = true;
+    bool blackCanCastleKingside = true;
+    bool blackCanCastleQueenside = true;
 
     bool is_game_over = false;
     bool is_white_win = false;
     bool is_black_win = false;
     bool is_stalemate = false;
 
-	Bitboard friendlyPieces = 0ULL;
-	Bitboard enemyPieces = 0ULL;
+    Bitboard friendlyPieces = 0ULL;
+    Bitboard enemyPieces = 0ULL;
 
     //Bitboard w_king_castle = 1ULL << 62;
     //Bitboard w_queen_castle = 1ULL << 58;
