@@ -949,14 +949,13 @@ Bitboard ChessBoard::getMoves(const int& from_idx) {
 }
 
 std::unordered_map<Bitboard, Bitboard> ChessBoard::getAllMoves()  {
-	std::unordered_map<Bitboard, Bitboard> allMoves;
-	Bitboard friendly_pieces = getFriendlyPieces();
+        std::unordered_map<Bitboard, Bitboard> allMoves;
+        Bitboard friendly_pieces = getFriendlyPieces();
 
-   
     while (friendly_pieces) {
         int index = bitScanForward(friendly_pieces);  // Index of least significant '1' bit
         Bitboard isolatedBit = 1ULL << index;
-		Bitboard attacks = getMoves(index);
+                Bitboard attacks = getMoves(index);
         if (isolatedBit & (getKingBitboards() & friendly_pieces)) attacks |= getCastlingRights();
 
 		allMoves[isolatedBit] = attacks;
@@ -1124,60 +1123,120 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::removeBishopPins(const std::u
 	return parsedMoves;
 }
 
-Bitboard ChessBoard::getBishopPinLanes(const int& bishop_idx, const Bitboard& target_idx, const Bitboard& occupancy) {
+Bitboard ChessBoard::getBishopPinLanes(int bishop_idx, int target_idx, Bitboard occupancy) {
     Bitboard bishop_bb = 1ULL << bishop_idx;
     Bitboard king_bb = 1ULL << target_idx;
 
-    // First ensure the bishop and target are aligned on a diagonal. We compute
-    // attacks for the bishop on an empty board; if the king's square is not on
-    // that ray, the pieces are not colinear and no pin is possible.
-    Bitboard bishop_ray = bishopValidator.getBishopAttacks(bishop_idx, 0ULL);
-    if ((bishop_ray & king_bb) == 0ULL)
+    int bishop_rank = bishop_idx / 8;
+    int bishop_file = bishop_idx % 8;
+    int king_rank = target_idx / 8;
+    int king_file = target_idx % 8;
+
+    int rank_diff = bishop_rank - king_rank;
+    int file_diff = bishop_file - king_file;
+    int abs_rank_diff = rank_diff < 0 ? -rank_diff : rank_diff;
+    int abs_file_diff = file_diff < 0 ? -file_diff : file_diff;
+
+    if (abs_rank_diff != abs_file_diff || abs_rank_diff == 0)
         return 0ULL;
 
-    // With alignment confirmed, intersect the bishop's and king's attack rays
-    // using the actual occupancy to obtain the potential pin lane.
-    Bitboard king_threats = bishopValidator.getBishopAttacks(target_idx, occupancy);
-    Bitboard bishop_attacks = bishopValidator.getBishopAttacks(bishop_idx, occupancy);
-    Bitboard pin_lane = bishop_attacks & king_threats;
+    int step_rank = (rank_diff > 0) ? 1 : -1;
+    int step_file = (file_diff > 0) ? 1 : -1;
 
-    // Validate that exactly one friendly (non-king) piece lies on the lane.
-    Bitboard friendly_on_lane = pin_lane & getFriendlyPieces();
-    if (!hasPinnedPiece(friendly_on_lane) || (friendly_on_lane & king_bb))
-        return 0ULL;
+    Bitboard friendly_mask = getFriendlyPieces() & ~king_bb;
+    Bitboard lane = 0ULL;
+    Bitboard friendly_on_lane = 0ULL;
 
-    pin_lane = bishop_attacks & king_threats | bishop_bb;
-    // Include the attacking bishop square for downstream pin handling.
-    pin_lane |= bishop_bb;
+    int cur_rank = king_rank + step_rank;
+    int cur_file = king_file + step_file;
 
-    return pin_lane;
-}
+    while (cur_rank >= 0 && cur_rank < 8 && cur_file >= 0 && cur_file < 8) {
+        int cur_idx = cur_rank * 8 + cur_file;
+        Bitboard cur_bb = 1ULL << cur_idx;
 
-Bitboard ChessBoard::getRookPinLanes( const int& rook_idx, const Bitboard& target_idx, const Bitboard& occupancy) {
-    Bitboard rook_bb = 1ULL << rook_idx;
-    int king_idx = static_cast<int>(target_idx);
-    Bitboard king_bb = 1ULL << king_idx;
+        lane |= cur_bb;
 
+        if (cur_idx == bishop_idx) {
+            break;
+        }
 
-    // Ensure rook and king are aligned along a rank or file.
-    Bitboard rook_ray_empty = rookValidator.getRookAttacks(rook_idx, 0ULL);
-    if ((rook_ray_empty & king_bb) == 0ULL) {
-        return 0ULL;
+        if (occupancy & cur_bb) {
+            if (friendly_mask & cur_bb) {
+                friendly_on_lane |= cur_bb;
+            }
+            else {
+                return 0ULL;
+            }
+        }
+
+        cur_rank += step_rank;
+        cur_file += step_file;
     }
 
-    // Compute attack rays with current occupancy and intersect them.
-    Bitboard king_threats = rookValidator.getRookAttacks(king_idx, occupancy);
-    Bitboard rook_attacks = rookValidator.getRookAttacks(rook_idx, occupancy);
-    Bitboard pin_lane = rook_attacks & king_threats;
+    if ((lane & bishop_bb) == 0ULL)
+        return 0ULL;
 
-    // Check that exactly one non-king friendly piece lies on the lane.
-    Bitboard friendly_pieces = getFriendlyPieces();
-    // Bitboard lane_friendly = pin_lane & friendly_pieces & ~king_bb;
-    // if (popcount(lane_friendly) != 1) {
-    //     return 0ULL;
-    // }
+    if (!hasPinnedPiece(friendly_on_lane))
+        return 0ULL;
 
-    return pin_lane | rook_bb;
+    return lane;
+}
+
+Bitboard ChessBoard::getRookPinLanes(int rook_idx, int target_idx, Bitboard occupancy) {
+    Bitboard rook_bb = 1ULL << rook_idx;
+    Bitboard king_bb = 1ULL << target_idx;
+
+    int rook_rank = rook_idx / 8;
+    int rook_file = rook_idx % 8;
+    int king_rank = target_idx / 8;
+    int king_file = target_idx % 8;
+
+    int rank_diff = rook_rank - king_rank;
+    int file_diff = rook_file - king_file;
+
+    if (rank_diff != 0 && file_diff != 0)
+        return 0ULL;
+
+    int step_rank = (rank_diff > 0) ? 1 : (rank_diff < 0 ? -1 : 0);
+    int step_file = (file_diff > 0) ? 1 : (file_diff < 0 ? -1 : 0);
+
+    Bitboard friendly_mask = getFriendlyPieces() & ~king_bb;
+    Bitboard lane = 0ULL;
+    Bitboard friendly_on_lane = 0ULL;
+
+    int cur_rank = king_rank + step_rank;
+    int cur_file = king_file + step_file;
+
+    while (cur_rank >= 0 && cur_rank < 8 && cur_file >= 0 && cur_file < 8) {
+        int cur_idx = cur_rank * 8 + cur_file;
+        Bitboard cur_bb = 1ULL << cur_idx;
+
+        lane |= cur_bb;
+
+        if (cur_idx == rook_idx) {
+            break;
+        }
+
+        if (occupancy & cur_bb) {
+            if (friendly_mask & cur_bb) {
+                friendly_on_lane |= cur_bb;
+            }
+            else {
+                return 0ULL;
+            }
+        }
+
+        cur_rank += step_rank;
+        cur_file += step_file;
+    }
+
+    if ((lane & rook_bb) == 0ULL)
+        return 0ULL;
+
+    if (!hasPinnedPiece(friendly_on_lane))
+        return 0ULL;
+
+    return lane;
 }
 
 std::unordered_map<Bitboard, Bitboard> ChessBoard::removeRookPins(const std::unordered_map<Bitboard, Bitboard>& allMoves) {
