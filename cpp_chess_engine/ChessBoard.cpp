@@ -330,8 +330,6 @@ void ChessBoard::parseFEN() {
         enPassant = 0;
     }
 
-    std::cout << "fen:  " << fen << "\n" << "hm: " << halfmoveClockStr << "\n" << "fm: " << fullmoveNumberStr << "\n";
-
     // Set the halfmove clock.
     halfmoveClock = std::stoi(halfmoveClockStr);
 
@@ -558,209 +556,169 @@ std::string ChessBoard::getString() const {
     return fenString;
 }
 
-bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol, const char& promote) {
-	if (movePiece(fromRow, fromCol, newRow, newCol)) {
-		// Handle promotion if necessary.
-
-        int to_idx = get_bitindex(newRow, newCol);
-
-		char promote_value = !whiteToMove ? std::toupper(promote) : std::tolower(promote);
-		int pawn_idx = !whiteToMove ? w_pawn_idx : b_pawn_idx;
-
-        bitboards[pawn_idx] &= ~(1ULL << to_idx);
-        bitboards[piece_to_idx[promote_value]] |= (1ULL << to_idx);
-        board[newRow][newCol] = promote_value;
-		return true;
-	}
-    return false;
+bool ChessBoard::movePiece(const int& fromRow, const int& fromCol,
+                           const int& newRow, const int& newCol,
+                           const char& promote) {
+    return movePieceInternal(fromRow, fromCol, newRow, newCol, promote, true);
 }
 
 void ChessBoard::changeTurn() {
-	whiteToMove = !whiteToMove;
-	if (whiteToMove) {
-		fullmoveNumber += 1;
-	}
-	halfmoveClock += 1; // Increment halfmove clock on turn change.
+    whiteToMove = !whiteToMove;
 
-	if (whiteToMove) {
-		friendlyPieces = getWhitePieces();
-		enemyPieces = getBlackPieces();
-	}
-	else {
-		friendlyPieces = getBlackPieces();
-		enemyPieces = getWhitePieces();
-	}
-
+    if (whiteToMove) {
+        friendlyPieces = getWhitePieces();
+        enemyPieces = getBlackPieces();
+    } else {
+        friendlyPieces = getBlackPieces();
+        enemyPieces = getWhitePieces();
+    }
 }
 
 void ChessBoard::switchTurn() {
-	// Switch the turn without incrementing the halfmove clock or fullmove number.
-	whiteToMove = !whiteToMove;
+    // Switch the turn without modifying clocks or move counters.
+    whiteToMove = !whiteToMove;
 
-	Bitboard tmp_pieces = getFriendlyPieces();
-	friendlyPieces = getEnemyPieces();
-    enemyPieces = tmp_pieces;
-
-    //if (whiteToMove) {
-    //    friendlyPieces = getWhitePieces();
-    //    enemyPieces = getBlackPieces();
-    //}
-    //else {
-    //    friendlyPieces = getBlackPieces();
-    //    enemyPieces = getWhitePieces();
-    //}
+    if (whiteToMove) {
+        friendlyPieces = getWhitePieces();
+        enemyPieces = getBlackPieces();
+    } else {
+        friendlyPieces = getBlackPieces();
+        enemyPieces = getWhitePieces();
+    }
 }
 
 
-bool ChessBoard::movePiece(const int& fromRow, const int& fromCol, const int& newRow, const int& newCol) {
+bool ChessBoard::movePiece(const int& fromRow, const int& fromCol,
+                           const int& newRow, const int& newCol) {
+    return movePieceInternal(fromRow, fromCol, newRow, newCol, '0', true);
+}
+
+bool ChessBoard::movePieceUnchecked(const int& fromRow, const int& fromCol,
+                                    const int& newRow, const int& newCol,
+                                    char promote) {
+    return movePieceInternal(fromRow, fromCol, newRow, newCol, promote, false);
+}
+
+bool ChessBoard::movePieceInternal(const int& fromRow, const int& fromCol,
+                                   const int& newRow, const int& newCol,
+                                   char promote, bool validateMoveFlag) {
     int from_idx = get_bitindex(fromRow, fromCol);
     int to_idx = get_bitindex(newRow, newCol);
     Bitboard origin = 1ULL << from_idx;
     Bitboard destination = 1ULL << to_idx;
 
-    std::string original_fen = getString();
-    if (validateMove(from_idx, to_idx)) {
-        if (castleCheck(origin, destination) ) {
-            if (whiteToMove) {
-
-                if (destination & w_king_castle) castleWhiteKingside(); else castleWhiteQueenside();
-
-            }
-            else {
-                if (destination & b_king_castle) castleBlackKingside(); else castleBlackQueenside();
-            }
-        }
-        char piece = board[fromRow][fromCol];
-        char occupying_piece = board[newRow][newCol];
-        board[fromRow][fromCol] = '.';
-        board[newRow][newCol] = piece;
-		bool isPawn = (piece == 'P' || piece == 'p');
-        int rankEPAdjustment = whiteToMove ? -1 : 1;
-        Bitboard proposed_ep = 1ULL << to_idx;
-
-        //sets en passant
-
-        if (origin & InitialPositions::wk_rook) 
-			whiteCanCastleKingside = false;
-		if (origin & InitialPositions::wq_rook)
-			whiteCanCastleQueenside = false;
-		if (origin & InitialPositions::bk_rook)
-			blackCanCastleKingside = false;
-		if (origin & InitialPositions::bq_rook)
-			blackCanCastleQueenside = false;
-
-		if (origin & InitialPositions::w_king) {
-			whiteCanCastleKingside = false;
-			whiteCanCastleQueenside = false;
-		}
-		if (origin & InitialPositions::b_king) {
-			blackCanCastleKingside = false;
-			blackCanCastleQueenside = false;
-		}
-
-        // en passant capture
-        // std::cout << "propos ep: " << std::bitset<64>(proposed_ep) << "\n" << "actual ep: " << std::bitset<64>(enPassant) << "\n";
-       // std::cout << "from col: " << fromCol << "\n" << "newCol: " << newCol << "\n" << "from row: " << fromRow << "\n" << "newRow: " << newRow << "\n" << "rankEPAdjustment: " << rankEPAdjustment << "\n";
-        if (isPawn && ((fromRow + (rankEPAdjustment * 2)) == newRow)) {
-
-            int epIndex = get_bitindex(newRow - rankEPAdjustment, newCol);
-            // std::cout << "Ep RESEt: \n ep row : " << newRow - rankEPAdjustment << "\n" << "ep col: " << newCol << "\n";
-            setEnPassant(epIndex);
-        }
-        else
-        if (isPawn && ((proposed_ep & enPassant) != 0)) {      
-            // Remove the captured pawn from the square behind the en passant target.     
-            board[newRow - rankEPAdjustment][newCol] = '.';       
-			std::cout << "eraesed: " << newRow + rankEPAdjustment << " " << newCol << "\n";
-            // For bitboards, use the opponents pawn index:       
-            int oppPawnIdx = whiteToMove ? b_pawn_idx : w_pawn_idx;       
-            int capture_idx = get_bitindex(newRow - rankEPAdjustment, newCol);       
-            bitboards[oppPawnIdx] &= ~(1ULL << capture_idx);   
-            
-			enPassant = 0ULL;
-            
-        }
-            
-        else  {
-            enPassant = 0ULL;
-        }
-          
-            // Update the moving pawns bitboard normally.       
-            //printBitboardBoard(bitboards[piece_to_idx[piece]]);
-            if (occupying_piece != '.') bitboards[piece_to_idx[occupying_piece]] &= ~(1ULL << to_idx);
-
-            bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);       
-            bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);
-
-            if (isPawn && ((fromRow + (rankEPAdjustment * 2)) != newRow)) {
-                enPassant = 0ULL;
-            }
-
-            //printBitboardBoard(bitboards[piece_to_idx[piece]]);
-
-
-
-
-        // Change turn.    
-        changeTurn();
-        
-
-        if (piece == 'p' || piece == 'P' || occupying_piece != '.') halfmoveClock += 1;
-        else halfmoveClock = 0;
-        
-        if (whiteToMove) fullmoveNumber += 1;
-
-		std::unordered_map<Bitboard, Bitboard> all_moves = getAllMoves();
-		if (all_moves.empty()) {
-			std::cout << "No legal moves available for the opponent.\n";
-			// Handle checkmate or stalemate here.
-            // problems occur here
-            // checkmate occurs if friendly pieces create mate
-            //changeTurn();
-            Bitboard enemy_attacks = getEnemyAttacks();
-            Bitboard friendly_pieces = getFriendlyPieces();
-            //changeTurn();
-			if (enemy_attacks & getFriendlyPieces() & getKingBitboards()) {
-
-				std::cout << "Checkmate!\n";
-
-                if (whiteToMove) {
-					
-                    is_white_win = true;
-                    //return -1
-                }
-                else {
-					
-                    is_black_win = true;
-                    //return 1;
-                }
-            }
-			else {
-				
-                is_stalemate=true;
-                //return 0;
-			}
-            std::cout << get_game_results() <<"\n";
-            is_game_over = true;
-			// ResetBoard();
-		}
-        
-
-
-        //std::string fen = getString();
-        //std::cout << "original fen: " << original_fen << "\n";
-        //std::cout << "fromRow = " << fromRow << ";" << "\n";
-        //std::cout << "fromCol = " << fromCol << ";" << "\n";
-        //std::cout << "newRow = " << newRow << ";" << "\n";
-        //std::cout << "newCol = " << newCol << ";" << "\n";
-        //std::cout << "fen: " << fen << "\n";
-        return true;
-    }
-    else {
-        std::cout << "Invalid move\n";
+    if (validateMoveFlag && !validateMove(from_idx, to_idx)) {
         return false;
     }
+
+    bool movingWhite = whiteToMove;
+
+    if (castleCheck(origin, destination)) {
+        if (whiteToMove) {
+            if (destination & w_king_castle) {
+                castleWhiteKingside();
+            } else {
+                castleWhiteQueenside();
+            }
+        } else {
+            if (destination & b_king_castle) {
+                castleBlackKingside();
+            } else {
+                castleBlackQueenside();
+            }
+        }
+    }
+
+    char piece = board[fromRow][fromCol];
+    char occupying_piece = board[newRow][newCol];
+    board[fromRow][fromCol] = '.';
+    board[newRow][newCol] = piece;
+
+    bool isPawn = (piece == 'P' || piece == 'p');
+    int rankEPAdjustment = whiteToMove ? -1 : 1;
+    Bitboard proposed_ep = destination;
+
+    if (origin & InitialPositions::wk_rook) whiteCanCastleKingside = false;
+    if (origin & InitialPositions::wq_rook) whiteCanCastleQueenside = false;
+    if (origin & InitialPositions::bk_rook) blackCanCastleKingside = false;
+    if (origin & InitialPositions::bq_rook) blackCanCastleQueenside = false;
+
+    if (origin & InitialPositions::w_king) {
+        whiteCanCastleKingside = false;
+        whiteCanCastleQueenside = false;
+    }
+    if (origin & InitialPositions::b_king) {
+        blackCanCastleKingside = false;
+        blackCanCastleQueenside = false;
+    }
+
+    if (isPawn && ((fromRow + (rankEPAdjustment * 2)) == newRow)) {
+        int epIndex = get_bitindex(newRow - rankEPAdjustment, newCol);
+        setEnPassant(epIndex);
+    } else if (isPawn && ((proposed_ep & enPassant) != 0)) {
+        board[newRow - rankEPAdjustment][newCol] = '.';
+        int oppPawnIdx = whiteToMove ? b_pawn_idx : w_pawn_idx;
+        int capture_idx = get_bitindex(newRow - rankEPAdjustment, newCol);
+        bitboards[oppPawnIdx] &= ~(1ULL << capture_idx);
+        enPassant = 0ULL;
+    } else {
+        enPassant = 0ULL;
+    }
+
+    if (occupying_piece != '.') {
+        if (destination & InitialPositions::wk_rook) whiteCanCastleKingside = false;
+        if (destination & InitialPositions::wq_rook) whiteCanCastleQueenside = false;
+        if (destination & InitialPositions::bk_rook) blackCanCastleKingside = false;
+        if (destination & InitialPositions::bq_rook) blackCanCastleQueenside = false;
+
+        bitboards[piece_to_idx[occupying_piece]] &= ~(1ULL << to_idx);
+    }
+
+    bitboards[piece_to_idx[piece]] &= ~(1ULL << from_idx);
+    bitboards[piece_to_idx[piece]] |= (1ULL << to_idx);
+
+    if (isPawn && ((fromRow + (rankEPAdjustment * 2)) != newRow)) {
+        enPassant = 0ULL;
+    }
+
+    if (promote != '0') {
+        char promote_value = movingWhite ? std::toupper(promote) : std::tolower(promote);
+        int pawn_idx = movingWhite ? w_pawn_idx : b_pawn_idx;
+        bitboards[pawn_idx] &= ~(1ULL << to_idx);
+        bitboards[piece_to_idx[promote_value]] |= (1ULL << to_idx);
+        board[newRow][newCol] = promote_value;
+    }
+
+    if (piece == 'p' || piece == 'P' || occupying_piece != '.') {
+        halfmoveClock = 0;
+    } else {
+        halfmoveClock += 1;
+    }
+
+    if (!movingWhite) {
+        fullmoveNumber += 1;
+    }
+
+    changeTurn();
+
+    std::unordered_map<Bitboard, Bitboard> all_moves = getAllMoves();
+    if (all_moves.empty()) {
+        Bitboard enemy_attacks = getEnemyAttacks();
+        if (enemy_attacks & getFriendlyPieces() & getKingBitboards()) {
+            if (whiteToMove) {
+                is_white_win = true;
+            } else {
+                is_black_win = true;
+            }
+        } else {
+            is_stalemate = true;
+        }
+        is_game_over = true;
+    }
+
+    return true;
 }
+
 int const RankToRow(const char& rank)  {
 	return  ('8' - rank);
 }
@@ -1456,7 +1414,6 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
         std::cerr << "Invalid UCI move format: " << move << std::endl;
         return false;
     }
-    std::cout << move << '\n';
     // Parse source and destination from the UCI string.
     // Files: 'a' -> 0, 'b' -> 1, ... 'h' -> 7.
     // Ranks: '1'-'8' with row = 8 - (rank value) because row 0 is rank 8.
@@ -1498,12 +1455,12 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
 bool ChessBoard::movePieceSAN(const std::string& sanMove) {
     std::string move = sanMove;
     syncBoardWithBitboards();
-    // Remove annotations like +, #, !, ?
-    while (!move.empty() && (move.back() == '+' || move.back() == '#' || move.back() == '!' || move.back() == '?')) {
+
+    while (!move.empty() && (move.back() == '+' || move.back() == '#' ||
+                             move.back() == '!' || move.back() == '?')) {
         move.pop_back();
     }
 
-    // Handle castling
     if (move == "O-O" || move == "0-0") {
         return whiteToMove ? movePieceUCI("e1g1") : movePieceUCI("e8g8");
     }
@@ -1514,77 +1471,125 @@ bool ChessBoard::movePieceSAN(const std::string& sanMove) {
     char promotion = '0';
     size_t eqPos = move.find('=');
     if (eqPos != std::string::npos && eqPos + 1 < move.size()) {
-        promotion = std::tolower(move[eqPos + 1]);
+        promotion = static_cast<char>(std::tolower(move[eqPos + 1]));
         move = move.substr(0, eqPos);
     }
 
     size_t capturePos = move.find('x');
     bool isCapture = capturePos != std::string::npos;
 
-    // Determine piece type
-    char piece = 'P';
+    char pieceChar = 'P';
     size_t idx = 0;
     if (!move.empty() && std::isupper(move[0]) && move[0] != 'O') {
-        piece = move[0];
+        pieceChar = move[0];
         idx = 1;
     }
 
-    // Destination square (last two characters)
-    if (move.size() < 2) return false;
-    std::string dest = move.substr(move.size() - 2, 2);
-    int toCol = dest[0] - 'a';
-    int toRow = '8' - dest[1];
-    int destIndex = get_bitindex(toRow, toCol);
-    Bitboard destMask = 1ULL << destIndex;
-
-    // Disambiguation between piece char and destination/capture
-    size_t disambEnd = (isCapture ? capturePos : move.size() - 2);
-    std::string disamb = move.substr(idx, disambEnd - idx);
-
-    auto moves = getAllMoves();
-    Bitboard originCandidate = 0ULL;
-    int fromRow = 0, fromCol = 0;
-
-    for (const auto& kv : moves) {
-        Bitboard origin = kv.first;
-        Bitboard destinations = kv.second;
-        if (!(destinations & destMask)) continue;
-        int originIndex = bitScanForward(origin);
-        int row = 7 - (originIndex / 8);
-        int col = originIndex % 8;
-        char boardPiece = board[row][col];
-        char upperPiece = std::toupper(boardPiece);
-        if (piece == 'P') {
-            if (upperPiece != 'P') continue;
-        } else {
-            if (upperPiece != piece) continue;
-        }
-
-        bool match = true;
-        if (!disamb.empty()) {
-            if (disamb.size() == 2) {
-                if (col != disamb[0] - 'a' || row != '8' - disamb[1]) match = false;
-            } else if (std::isdigit(disamb[0])) {
-                if (row != '8' - disamb[0]) match = false;
-            } else {
-                if (col != disamb[0] - 'a') match = false;
-            }
-        }
-        if (!match) continue;
-
-        originCandidate = origin;
-        fromRow = row;
-        fromCol = col;
-        break; // Assume SAN uniquely identifies a move
-    }
-
-    if (originCandidate == 0ULL) {
-        std::cerr << "Failed to parse SAN move: " << sanMove << std::endl;
+    if (move.size() < 2) {
         return false;
     }
 
-    if (promotion != '0') return movePiece(fromRow, fromCol, toRow, toCol, promotion);
-    return movePiece(fromRow, fromCol, toRow, toCol);
+    std::string dest = move.substr(move.size() - 2, 2);
+    int toCol = dest[0] - 'a';
+    int toRow = '8' - dest[1];
+    if (toCol < 0 || toCol >= 8 || toRow < 0 || toRow >= 8) {
+        return false;
+    }
+
+    int destIndex = get_bitindex(toRow, toCol);
+    Bitboard destMask = 1ULL << destIndex;
+
+    size_t disambEnd = (isCapture ? capturePos : move.size() - 2);
+    std::string disamb = move.substr(idx, disambEnd - idx);
+
+    auto matchesDisambiguation = [&](int row, int col) {
+        if (disamb.empty()) return true;
+        if (disamb.size() == 2) {
+            return col == disamb[0] - 'a' && row == ('8' - disamb[1]);
+        }
+        if (std::isdigit(disamb[0])) {
+            return row == ('8' - disamb[0]);
+        }
+        return col == disamb[0] - 'a';
+    };
+
+    auto canReach = [&](int row, int col) {
+        char boardPiece = board[row][col];
+        bool isWhitePiece = std::isupper(boardPiece);
+        char targetPiece = board[toRow][toCol];
+
+        if (isCapture) {
+            if (targetPiece == '.') {
+                if (pieceChar != 'P') {
+                    if ((enPassant & destMask) == 0ULL) return false;
+                } else if ((enPassant & destMask) == 0ULL) {
+                    return false;
+                }
+            } else if ((std::isupper(targetPiece) && isWhitePiece) ||
+                       (std::islower(targetPiece) && !isWhitePiece)) {
+                return false;
+            }
+        } else {
+            if (targetPiece != '.') {
+                return false;
+            }
+        }
+
+        int fromIdx = get_bitindex(row, col);
+
+        switch (pieceChar) {
+            case 'P':
+                return pawnValidator.validate(1ULL << fromIdx, destMask, *this);
+            case 'N':
+                return knightValidator.validate(fromIdx, destIndex, *this);
+            case 'B':
+                return bishopValidator.validate(fromIdx, destMask, *this);
+            case 'R':
+                return rookValidator.validate(fromIdx, destMask, *this);
+            case 'Q':
+                return bishopValidator.validate(fromIdx, destMask, *this) ||
+                       rookValidator.validate(fromIdx, destMask, *this);
+            case 'K':
+                return kingValidator.validate(fromIdx, destIndex, *this);
+            default:
+                return false;
+        }
+    };
+
+    char requiredPiece = (pieceChar == 'P') ? 'P' : pieceChar;
+    bool movingWhite = whiteToMove;
+
+    for (int row = 0; row < 8; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            char boardPiece = board[row][col];
+            if (boardPiece == '.') continue;
+            bool isWhitePiece = std::isupper(boardPiece);
+            if (isWhitePiece != whiteToMove) continue;
+            if (std::toupper(boardPiece) != requiredPiece) continue;
+
+            if (!matchesDisambiguation(row, col)) continue;
+            if (!canReach(row, col)) continue;
+
+            ChessBoard trial = *this;
+            if (!trial.movePieceInternal(row, col, toRow, toCol, promotion, false)) {
+                continue;
+            }
+
+            trial.switchTurn();
+            Bitboard opponentAttacks = trial.getEnemyAttacks();
+            trial.switchTurn();
+
+            Bitboard kingBB = movingWhite ? trial.bitboards[w_king_idx] : trial.bitboards[b_king_idx];
+            if (opponentAttacks & kingBB) {
+                continue;
+            }
+
+            *this = trial;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool ChessBoard::validatePGN(const std::string& pgnPath) {
@@ -1658,7 +1663,6 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
             }
 
             ++moveIndex;
-            // currently failing at move 60 in Nwyboxma
             if (!game.movePieceSAN(tok)) {
                 std::cerr << "Game " << currentGameId
                           << " Initial FEN: "
@@ -1669,13 +1673,6 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
                           << game.getString() << std::endl;
                 allCorrect = false;
                 break;
-            } else{
-
-            std::cerr
-            << " move " << moveIndex
-            << " (" << tok << ")"
-            << " Resulting FEN: "
-            << game.getString() << std::endl;
             }
         }
         std::string actual = game.get_game_results();
