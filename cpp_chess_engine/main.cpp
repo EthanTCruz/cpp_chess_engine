@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     //fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
-    fen = "3rq1k1/1p3r1p/p5p1/3Q4/2n5/1NP5/PP4PP/R2K2R1 w - - 0 46";
+    fen = "2b4N/2k3pp/1p2p3/1B1pp3/1B1n4/6P1/r2N1P1P/6KR w - - 0 44";
     
     ChessBoard cb(fen);
     // cb.movePieceSAN("Rxd5");

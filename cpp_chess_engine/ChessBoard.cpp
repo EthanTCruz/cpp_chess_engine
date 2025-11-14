@@ -1210,6 +1210,7 @@ Bitboard ChessBoard::getRookPinLanes(int rook_idx, int target_idx, Bitboard occu
         return 0ULL;
 
     return lane;
+    // return 0ULL;
 }
 
 std::unordered_map<Bitboard, Bitboard> ChessBoard::removeRookPins(const std::unordered_map<Bitboard, Bitboard>& allMoves) {
