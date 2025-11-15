@@ -1159,6 +1159,7 @@ Bitboard ChessBoard::getRookPinLanes(int rook_idx, int target_idx, Bitboard occu
     Bitboard rook_bb = 1ULL << rook_idx;
     Bitboard king_bb = 1ULL << target_idx;
 
+
     int rook_rank = rook_idx / 8;
     int rook_file = rook_idx % 8;
     int king_rank = target_idx / 8;
