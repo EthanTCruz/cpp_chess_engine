@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <iostream>
 
+#include "FENTestRunner.hpp"
 #include "PGNTestRunner.hpp"
 
 int main(int argc, char** argv)
@@ -10,10 +11,15 @@ int main(int argc, char** argv)
         directory = argv[1];
     }
 
-    bool passed = runPGNTests(directory);
-    if (!passed) {
+    bool pgnPassed = runPGNTests(directory);
+    if (!pgnPassed) {
         std::cerr << "PGN validation failed." << std::endl;
     }
 
-    return passed ? 0 : 1;
+    bool fenPassed = runFENTests();
+    if (!fenPassed) {
+        std::cerr << "FEN move validation failed." << std::endl;
+    }
+
+    return (pgnPassed && fenPassed) ? 0 : 1;
 }
