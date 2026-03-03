@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
-#include <filesystem>
+
+#include "ChessBoard.hpp"
+#include "GUIBoard.hpp"
+#include "PGNTestRunner.hpp"
 
 // ANSI escape codes for colors.
 #define RESET "\033[0m"
@@ -21,8 +24,6 @@ void checkTest(bool condition, const std::string& testName) {
     }
 }
 
-#include "ChessBoard.hpp"
-#include "GUIBoard.hpp"
 // Include any other necessary headers, e.g. "GetBitIndex.cpp"
 
 void tests() {
@@ -87,39 +88,39 @@ void tests() {
     std::cout << "All tests executed." << std::endl;
 }
 
-// Run PGN validation on all sample PGN files before launching the GUI.
-void runPGNTests() {
-    namespace fs = std::filesystem;
-    bool allPassed = true;
-    for (const auto& entry : fs::directory_iterator("sample_pgns")) {
-        if (entry.path().extension() == ".pgn") {
-            ChessBoard validator;
-            bool ok = validator.validatePGN(entry.path().string());
-            std::cout << entry.path().filename().string() << ": "
-                      << (ok ? "passed" : "failed") << std::endl;
-            if (!ok) {
-                allPassed = false;
-            }
+int main(int argc, char** argv) {
+    bool runTestsOnly = false;
+    bool skipGui = false;
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--pgn-tests-only") {
+            runTestsOnly = true;
+        }
+        else if (arg == "--no-gui") {
+            skipGui = true;
         }
     }
-    if (allPassed) {
-        std::cout << "All PGN tests passed." << std::endl;
-    } else {
-        std::cout << "Some PGN tests failed." << std::endl;
-    }
-}
 
-int main(int argc, char** argv) {
     // Run PGN tests before showing the GUI board.
-    runPGNTests();
+    bool testsPassed = runPGNTests();
+
+    if (runTestsOnly) {
+        return testsPassed ? 0 : 1;
+    }
+
+    if (skipGui) {
+        return testsPassed ? 0 : 1;
+    }
 
     // Initialize the FEN string for the standard starting position.
     //tests();
 
     std::string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     //fen = "rn1qk2r/pppPpppp/6bn/2b5/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 5";
+    fen = "2b4N/2k3pp/1p2p3/1B1pp3/1B1n4/6P1/r2N1P1P/6KR w - - 0 44";
+    
     ChessBoard cb(fen);
-
+    // cb.movePieceSAN("Rxd5");
 
     //cb.movePieceUCI("e2e4");
     //cb.movePieceUCI("d7d5");
@@ -145,30 +146,30 @@ int main(int argc, char** argv) {
     //cb.movePieceUCI("c1e3");
     //cb.movePieceUCI("a5b4");
 
-    cb.movePieceUCI("e2e4");
-    cb.movePieceUCI("e7e5");
-    cb.movePieceUCI("g1f3");
-    cb.movePieceUCI("d7d5");
-    cb.movePieceUCI("d2d3");
-    cb.movePieceUCI("c8g4");
-    cb.movePieceUCI("b8c6");
-    cb.movePieceUCI("b1c3");
-    cb.movePieceUCI("f8b4");
-    cb.movePieceUCI("h2h3");
-    cb.movePieceUCI("g4h3");
-    cb.movePieceUCI("h1h3");
-    cb.movePieceUCI("b4a5");
-    cb.movePieceUCI("h3h6");
-    cb.movePieceUCI("a5b4");
-    cb.movePieceUCI("h6e6");
-    cb.movePieceUCI("d8e7");
-    cb.movePieceUCI("e6e7");
-    cb.movePieceUCI("e8f8");
-    cb.movePieceUCI("e7d7");
-    cb.movePieceUCI("a7a6");
-    cb.movePieceUCI("c1d2");
-    cb.movePieceUCI("a6a5");
-    cb.movePieceUCI("c3d5");
+    // cb.movePieceUCI("e2e4");
+    // cb.movePieceUCI("e7e5");
+    // cb.movePieceUCI("g1f3");
+    // cb.movePieceUCI("d7d5");
+    // cb.movePieceUCI("d2d3");
+    // cb.movePieceUCI("c8g4");
+    // cb.movePieceUCI("b8c6");
+    // cb.movePieceUCI("b1c3");
+    // cb.movePieceUCI("f8b4");
+    // cb.movePieceUCI("h2h3");
+    // cb.movePieceUCI("g4h3");
+    // cb.movePieceUCI("h1h3");
+    // cb.movePieceUCI("b4a5");
+    // cb.movePieceUCI("h3h6");
+    // cb.movePieceUCI("a5b4");
+    // cb.movePieceUCI("h6e6");
+    // cb.movePieceUCI("d8e7");
+    // cb.movePieceUCI("e6e7");
+    // cb.movePieceUCI("e8f8");
+    // cb.movePieceUCI("e7d7");
+    // cb.movePieceUCI("a7a6");
+    // cb.movePieceUCI("c1d2");
+    // cb.movePieceUCI("a6a5");
+    // cb.movePieceUCI("c3d5");
     //cb.movePieceUCI("");
     //cb.movePieceUCI("");
     //cb.movePieceUCI("");
