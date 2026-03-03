@@ -1,35 +1,63 @@
+$ErrorActionPreference = 'Stop'
+
 cmake -S . -B build
 cmake --build build
 
-# Copy SFML runtime libraries next to the built executable(s)
+function Copy-ToExistingDirs {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string[]]$Destinations,
+        [Parameter(Mandatory=$true)]
+        [scriptblock]$CopyAction
+    )
+
+    foreach ($destination in $Destinations) {
+        if (Test-Path $destination) {
+            & $CopyAction $destination
+        }
+    }
+}
+
+# Copy SFML runtime libraries next to executable output directories.
 $sfmlRoot = "build/_deps/sfml-build"
 $sfmlBin = Join-Path $sfmlRoot "bin"
 $sfmlLib = Join-Path $sfmlRoot "lib"
+$sfmlDlls = @()
 
 if (Test-Path $sfmlBin) {
     $sfmlDlls = Get-ChildItem -Path $sfmlBin -Filter '*.dll' -Recurse
-} elseif (Test-Path $sfmlLib) {
+}
+
+if ($sfmlDlls.Count -eq 0 -and (Test-Path $sfmlLib)) {
     $sfmlDlls = Get-ChildItem -Path $sfmlLib -Filter '*.dll' -Recurse
 }
 
-if ($sfmlDlls) {
-    $sfmlDlls | Copy-Item -Destination build -Force
-    if (Test-Path build/Debug) {
-        $sfmlDlls | Copy-Item -Destination build/Debug -Force
+$outputDirs = @(
+    'build',
+    'build/Debug',
+    'build/Release',
+    'out/build/x64-Debug',
+    'out/build/x64-Release',
+    'x64/Debug',
+    'x64/Release'
+)
+
+if ($sfmlDlls.Count -gt 0) {
+    Copy-ToExistingDirs -Destinations $outputDirs -CopyAction {
+        param($destination)
+        $sfmlDlls | Copy-Item -Destination $destination -Force
     }
-    if (Test-Path build/Release) {
-        $sfmlDlls | Copy-Item -Destination build/Release -Force
-    }
+} else {
+    Write-Warning "No SFML DLLs were found under '$sfmlBin' or '$sfmlLib'."
 }
 
-# Copy piece images into the build output so the executable can load them
+# Copy piece images into executable output directories.
 $pieceSrc = "cpp_chess_engine/piece_pngs"
 if (Test-Path $pieceSrc) {
-    Copy-Item $pieceSrc build -Recurse -Force
-    if (Test-Path build/Debug) {
-        Copy-Item $pieceSrc build/Debug -Recurse -Force
+    Copy-ToExistingDirs -Destinations $outputDirs -CopyAction {
+        param($destination)
+        Copy-Item $pieceSrc $destination -Recurse -Force
     }
-    if (Test-Path build/Release) {
-        Copy-Item $pieceSrc build/Release -Recurse -Force
-    }
+} else {
+    Write-Warning "Piece image directory '$pieceSrc' was not found."
 }

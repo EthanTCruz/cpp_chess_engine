@@ -23,12 +23,13 @@ sudo apt install libudev-dev
 .\scripts\build_windows.ps1
 ```
 
-After building, ensure the SFML debug or release DLLs are next to the
-generated executable (e.g. copy the contents of `C:\SFML-3.0.0\bin`
-into your `x64/Debug` or `x64/Release` directory) or add that `bin`
-directory to your `PATH`. Without these runtime libraries, Windows will
-report missing `sfml-graphics-*-3.dll` files when launching the
-application.
+The build script also copies SFML runtime DLLs and piece images into common
+output directories (`build`, `out/build/x64-*`, and `x64/*`) so the executable
+can be launched from Visual Studio CMake mode or legacy solution mode.
+
+If Windows still reports a missing `sfml-graphics-*.dll` file, verify your
+startup target points at one of those output directories, or add the SFML
+runtime folder to your `PATH`.
 
 ## Running PGN validation without the GUI
 
