@@ -31,30 +31,54 @@ If Windows still reports a missing `sfml-graphics-*.dll` file, verify your
 startup target points at one of those output directories, or add the SFML
 runtime folder to your `PATH`.
 
-## Running PGN validation without the GUI
+## Running the centralized testing module (no GUI / no SFML)
 
-If you only need to exercise the PGN validator (for example on a
-headless server) you can build and run the dedicated command line test
-runner. This target does not download SFML:
+A dedicated executable, `cpp_chess_engine_tests`, now centralizes test execution for:
+
+- PGN validation (`PGNTestRunner`)
+- FEN+move validation (`FenMoveTester`)
+
+It is intentionally headless and can be run/debugged independently from `cpp_chess_engine.exe`.
+
+### Linux/macOS
 
 ```bash
 ./scripts/run_pgn_tests.sh
 ```
 
-Any argument passed to the script is treated as the directory that
-contains the PGNs to validate (defaults to `test_pgns`).
-
-The main executable also validates every PGN file in the `test_pgns`
-directory before launching the SFML interface. To skip the GUI after
-validation, pass:
+You can pass a PGN directory (defaults to `test_pgns`):
 
 ```bash
-./cpp_chess_engine --no-gui
+./scripts/run_pgn_tests.sh custom_pgns
 ```
 
-To exclusively run the PGN validation from the GUI build and return a
-non-zero exit code when any PGN fails, use:
+### Windows PowerShell
 
-```bash
-./cpp_chess_engine --pgn-tests-only
+Use the new script to build and run tests without SFML:
+
+```powershell
+.\scripts\run_tests_windows.ps1
 ```
+
+Optional parameters:
+
+```powershell
+.\scripts\run_tests_windows.ps1 -PgnDirectory test_pgns -BuildDir build-tests
+```
+
+### Debugging in Visual Studio
+
+1. Configure with CMake options: `-DBUILD_GUI=OFF -DBUILD_TESTING_MODULE=ON`
+2. Set startup item to `cpp_chess_engine_tests.exe`
+3. Set command arguments to the PGN directory if needed (for example `test_pgns`)
+
+### Suggested best-practice test format
+
+For FEN move tests, each case should contain:
+
+1. Full FEN (including side-to-move and rights)
+2. SAN move to attempt
+3. Expected outcome (`shouldSucceed` true/false)
+4. Short purpose/description
+
+This keeps tests data-driven and easier to extend as new move rules are added.
