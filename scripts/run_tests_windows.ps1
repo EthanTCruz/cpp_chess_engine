@@ -1,9 +1,9 @@
-$ErrorActionPreference = 'Stop'
-
 param(
     [string]$PgnDirectory = 'test_pgns',
     [string]$BuildDir = 'build-tests'
 )
+
+$ErrorActionPreference = 'Stop'
 
 Write-Host 'Configuring headless test build (GUI disabled, SFML not required)...'
 cmake -S . -B $BuildDir -DBUILD_GUI=OFF -DBUILD_TESTING_MODULE=ON
