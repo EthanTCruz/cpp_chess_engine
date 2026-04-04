@@ -84,3 +84,10 @@ For FEN move tests, add one or more CSV files under `test_fens/` with rows:
 - `description`: optional explanatory text
 
 Lines beginning with `#` are treated as comments, and files are loaded in filename order for deterministic runs.
+To regenerate the default comprehensive CSV suite with Python:
+
+```bash
+python scripts/generate_fen_tests.py
+```
+
+
