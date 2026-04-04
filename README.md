@@ -36,7 +36,7 @@ runtime folder to your `PATH`.
 A dedicated executable, `cpp_chess_engine_tests`, now centralizes test execution for:
 
 - PGN validation (`PGNTestRunner`)
-- FEN+move validation (`FenMoveTester`)
+- FEN+move validation (`FenMoveTester`) loaded from CSV files in `test_fens`
 
 It is intentionally headless and can be run/debugged independently from `cpp_chess_engine.exe`.
 
@@ -49,7 +49,7 @@ It is intentionally headless and can be run/debugged independently from `cpp_che
 You can pass a PGN directory (defaults to `test_pgns`):
 
 ```bash
-./scripts/run_pgn_tests.sh custom_pgns
+./scripts/run_pgn_tests.sh custom_pgns custom_fens
 ```
 
 ### Windows PowerShell
@@ -63,22 +63,24 @@ Use the new script to build and run tests without SFML:
 Optional parameters:
 
 ```powershell
-.\scripts\run_tests_windows.ps1 -PgnDirectory test_pgns -BuildDir build-tests
+.\scripts\run_tests_windows.ps1 -PgnDirectory test_pgns -FenDirectory test_fens -BuildDir build-tests
 ```
 
 ### Debugging in Visual Studio
 
 1. Configure with CMake options: `-DBUILD_GUI=OFF -DBUILD_TESTING_MODULE=ON`
 2. Set startup item to `cpp_chess_engine_tests.exe`
-3. Set command arguments to the PGN directory if needed (for example `test_pgns`)
+3. Set command arguments to `test_pgns test_fens` (or custom directories)
 
 ### Suggested best-practice test format
 
-For FEN move tests, each case should contain:
+For FEN move tests, add one or more CSV files under `test_fens/` with rows:
 
-1. Full FEN (including side-to-move and rights)
-2. SAN move to attempt
-3. Expected outcome (`shouldSucceed` true/false)
-4. Short purpose/description
+`fen,san_move,should_succeed,description`
 
-This keeps tests data-driven and easier to extend as new move rules are added.
+- `fen`: full FEN (including side-to-move/castling/en-passant fields)
+- `san_move`: SAN move to attempt
+- `should_succeed`: `true/false`, `1/0`, `pass/fail`, or `success/failure`
+- `description`: optional explanatory text
+
+Lines beginning with `#` are treated as comments, and files are loaded in filename order for deterministic runs.

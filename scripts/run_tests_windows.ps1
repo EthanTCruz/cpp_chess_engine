@@ -1,5 +1,6 @@
 param(
     [string]$PgnDirectory = 'test_pgns',
+    [string]$FenDirectory = 'test_fens',
     [string]$BuildDir = 'build-tests'
 )
 
@@ -28,8 +29,15 @@ if ([System.IO.Path]::IsPathRooted($PgnDirectory)) {
     $resolvedPgnDirectory = Join-Path (Get-Location) $PgnDirectory
 }
 
+if ([System.IO.Path]::IsPathRooted($FenDirectory)) {
+    $resolvedFenDirectory = $FenDirectory
+} else {
+    $resolvedFenDirectory = Join-Path (Get-Location) $FenDirectory
+}
+
 Write-Host "Running test module: $testExe"
 Write-Host "PGN input directory: $resolvedPgnDirectory"
+Write-Host "FEN input directory: $resolvedFenDirectory"
 
-& $testExe $resolvedPgnDirectory
+& $testExe $resolvedPgnDirectory $resolvedFenDirectory
 exit $LASTEXITCODE
