@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(BUILD_GUI "Build the SFML-powered GUI application" ON)
-option(BUILD_PGN_TEST_RUNNER "Build the command line PGN test runner" ON)
+option(BUILD_TESTING_MODULE "Build the command line testing module (PGN + FEN move tests)" ON)
 
 file(GLOB ENGINE_SOURCES "cpp_chess_engine/*.cpp")
 
@@ -14,6 +14,7 @@ list(REMOVE_ITEM ENGINE_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cpp_chess_engine/GUIBoard.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cpp_chess_engine/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cpp_chess_engine/pgn_tester_main.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cpp_chess_engine/testing_main.cpp"
 )
 
 if(BUILD_GUI)
@@ -38,13 +39,13 @@ if(BUILD_GUI)
     target_link_libraries(cpp_chess_engine PRIVATE sfml-graphics sfml-window sfml-system)
 endif()
 
-if(BUILD_PGN_TEST_RUNNER)
-    add_executable(pgn_tester
+if(BUILD_TESTING_MODULE)
+    add_executable(cpp_chess_engine_tests
         ${ENGINE_SOURCES}
-        cpp_chess_engine/pgn_tester_main.cpp
+        cpp_chess_engine/testing_main.cpp
     )
 
-    target_include_directories(pgn_tester PRIVATE cpp_chess_engine)
+    target_include_directories(cpp_chess_engine_tests PRIVATE cpp_chess_engine)
 endif()
 
 enable_testing()

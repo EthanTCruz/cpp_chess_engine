@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+"""Generate a comprehensive CSV suite for FenMoveTester."""
+
+from __future__ import annotations
+
+import csv
+from pathlib import Path
+
+OUTPUT = Path("test_fens/default_fen_move_tests.csv")
+
+# (fen, san_move, should_succeed, description)
+TESTS = [
+    # Opening / pawn fundamentals
+    ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "e4", True, "White pawn two-step from initial square"),
+    ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "e3", True, "White pawn one-step from initial square"),
+    ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "e5", False, "Pawn cannot move three squares"),
+    ("4k3/8/8/8/4p3/4P3/8/4K3 w - - 0 1", "e4", False, "Pawn cannot advance into occupied square"),
+    ("4k3/8/8/3p4/4P3/8/8/4K3 w - - 0 1", "exd5", True, "Pawn diagonal capture"),
+    ("4k3/8/8/3p4/4P3/8/8/4K3 w - - 0 1", "e5", True, "Pawn forward push from non-start rank"),
+    ("4k3/8/8/3p4/4P3/8/8/4K3 w - - 0 1", "exd6", False, "Pawn cannot capture empty diagonal square"),
+    ("4k3/8/8/8/8/8/4P3/4K3 w - - 0 1", "e1", False, "Pawn cannot move backward"),
+
+    # En passant
+    ("4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", "exd6", True, "Legal en passant capture"),
+    ("4k3/8/8/3pP3/8/8/8/4K3 w - - 0 1", "exd6", False, "En passant illegal without ep target"),
+
+    # Promotion
+    ("k7/4P3/8/8/8/8/8/4K3 w - - 0 1", "e8=Q", True, "Pawn promotion to queen"),
+    ("k7/4P3/8/8/8/8/8/4K3 w - - 0 1", "e8=N", True, "Pawn underpromotion to knight"),
+    ("k7/8/8/8/8/8/4p1K1/8 b - - 0 1", "e1=Q", True, "Black pawn promotion"),
+
+    # Knight movement
+    ("4k3/8/8/8/8/8/6N1/4K3 w - - 0 1", "Nf4", True, "Knight L-move"),
+    ("4k3/8/8/8/8/8/6N1/4K3 w - - 0 1", "Ng3", False, "Knight cannot move one square straight"),
+    ("4k3/8/8/8/8/8/6N1/4K3 w - - 0 1", "Nxh4", False, "Knight cannot capture empty square"),
+
+    # Bishop movement
+    ("4k3/8/8/8/8/8/3B4/4K3 w - - 0 1", "Be3", True, "Bishop diagonal move"),
+    ("4k3/8/8/8/8/8/3B4/4K3 w - - 0 1", "Bd3", False, "Bishop cannot move straight"),
+    ("4k3/8/8/8/8/4P3/3B4/4K3 w - - 0 1", "Bh6", False, "Bishop cannot jump over own piece"),
+
+    # Rook movement
+    ("4k3/8/8/8/8/8/4R3/4K3 w - - 0 1", "Re5", True, "Rook vertical move"),
+    ("4k3/8/8/8/8/8/4R3/4K3 w - - 0 1", "Rf2", True, "Rook horizontal move"),
+    ("4k3/8/8/8/8/8/4R3/4K3 w - - 0 1", "Rf4", False, "Rook cannot move diagonally"),
+    ("4k3/8/8/8/8/8/4R3/4K3 w - - 0 1", "Rxe4", False, "Rook cannot capture empty square"),
+
+    # Queen movement
+    ("4k3/8/8/8/8/8/3Q4/4K3 w - - 0 1", "Qd5", True, "Queen vertical move"),
+    ("4k3/8/8/8/8/8/3Q4/4K3 w - - 0 1", "Qg5", True, "Queen diagonal move"),
+    ("4k3/8/8/8/8/8/3Q4/4K3 w - - 0 1", "Qe3", True, "Queen horizontal move"),
+
+    # King movement and legality under check
+    ("4k3/8/8/8/8/8/8/4K3 w - - 0 1", "Kd2", True, "King one-square move"),
+    ("4r1k1/8/8/8/8/8/8/4K3 w - - 0 1", "Ke2", False, "King cannot move into check by rook"),
+    ("4r1k1/8/8/8/8/8/8/4K3 w - - 0 1", "Kd1", True, "King can step out of rook line"),
+
+    # Castling
+    ("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", "O-O", True, "White king-side castling legal"),
+    ("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", "O-O-O", True, "White queen-side castling legal"),
+    ("r3k2r/8/8/8/8/8/4r3/R3K2R w KQkq - 0 1", "O-O", False, "Cannot castle through check"),
+    ("r3k2r/8/8/8/8/8/8/R3K2R w - - 0 1", "O-O", False, "Castling illegal without castling rights"),
+
+    # Check / pin style constraints
+    ("4k3/8/8/8/8/8/4r3/4K3 w - - 0 1", "Kxe2", True, "King may capture checking piece if destination safe"),
+    ("4k3/8/8/8/8/8/4p3/4R1K1 w - - 0 1", "Rxe2", True, "Rook capture"),
+    ("4k3/8/8/8/8/8/4p3/3Q2K1 w - - 0 1", "Qxe2", True, "Queen capture"),
+    ("4k3/8/8/8/8/8/4r3/3QK3 w - - 0 1", "Qe3", False, "Cannot ignore check with unrelated move"),
+
+    # Side to move / SAN validation
+    ("4k3/8/8/8/8/8/4P3/4K3 b - - 0 1", "e4", False, "Wrong side to move"),
+    ("4k3/8/8/8/8/8/4P3/4K3 w - - 0 1", "NotAMove", False, "Invalid SAN string should fail"),
+]
+
+
+def main() -> None:
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    with OUTPUT.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["fen", "san_move", "should_succeed", "description"])
+        writer.writerows(TESTS)
+
+    print(f"Wrote {len(TESTS)} test cases to {OUTPUT}")
+
+
+if __name__ == "__main__":
+    main()

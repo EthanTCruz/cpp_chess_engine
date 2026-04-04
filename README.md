@@ -31,30 +31,63 @@ If Windows still reports a missing `sfml-graphics-*.dll` file, verify your
 startup target points at one of those output directories, or add the SFML
 runtime folder to your `PATH`.
 
-## Running PGN validation without the GUI
+## Running the centralized testing module (no GUI / no SFML)
 
-If you only need to exercise the PGN validator (for example on a
-headless server) you can build and run the dedicated command line test
-runner. This target does not download SFML:
+A dedicated executable, `cpp_chess_engine_tests`, now centralizes test execution for:
+
+- PGN validation (`PGNTestRunner`)
+- FEN+move validation (`FenMoveTester`) loaded from CSV files in `test_fens`
+
+It is intentionally headless and can be run/debugged independently from `cpp_chess_engine.exe`.
+
+### Linux/macOS
 
 ```bash
 ./scripts/run_pgn_tests.sh
 ```
 
-Any argument passed to the script is treated as the directory that
-contains the PGNs to validate (defaults to `test_pgns`).
-
-The main executable also validates every PGN file in the `test_pgns`
-directory before launching the SFML interface. To skip the GUI after
-validation, pass:
+You can pass a PGN directory (defaults to `test_pgns`):
 
 ```bash
-./cpp_chess_engine --no-gui
+./scripts/run_pgn_tests.sh custom_pgns custom_fens
 ```
 
-To exclusively run the PGN validation from the GUI build and return a
-non-zero exit code when any PGN fails, use:
+### Windows PowerShell
+
+Use the new script to build and run tests without SFML:
+
+```powershell
+.\scripts\run_tests_windows.ps1
+```
+
+Optional parameters:
+
+```powershell
+.\scripts\run_tests_windows.ps1 -PgnDirectory test_pgns -FenDirectory test_fens -BuildDir build-tests
+```
+
+### Debugging in Visual Studio
+
+1. Configure with CMake options: `-DBUILD_GUI=OFF -DBUILD_TESTING_MODULE=ON`
+2. Set startup item to `cpp_chess_engine_tests.exe`
+3. Set command arguments to `test_pgns test_fens` (or custom directories)
+
+### Suggested best-practice test format
+
+For FEN move tests, add one or more CSV files under `test_fens/` with rows:
+
+`fen,san_move,should_succeed,description`
+
+- `fen`: full FEN (including side-to-move/castling/en-passant fields)
+- `san_move`: SAN move to attempt
+- `should_succeed`: `true/false`, `1/0`, `pass/fail`, or `success/failure`
+- `description`: optional explanatory text
+
+Lines beginning with `#` are treated as comments, and files are loaded in filename order for deterministic runs.
+To regenerate the default comprehensive CSV suite with Python:
 
 ```bash
-./cpp_chess_engine --pgn-tests-only
+python scripts/generate_fen_tests.py
 ```
+
+
