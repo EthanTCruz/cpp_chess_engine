@@ -15,6 +15,7 @@ cmake --build "$BUILD_DIR" --target cpp_chess_engine_tests
 
 PGN_DIR="${1:-test_pgns}"
 FEN_DIR="${2:-test_fens}"
+PERFT_DIR="${3:-test_perft}"
 
 if [[ "$PGN_DIR" = /* ]]; then
   PGN_PATH="$PGN_DIR"
@@ -28,4 +29,10 @@ else
   FEN_PATH="$SCRIPT_DIR/$FEN_DIR"
 fi
 
-"$BUILD_DIR/cpp_chess_engine_tests" "$PGN_PATH" "$FEN_PATH"
+if [[ "$PERFT_DIR" = /* ]]; then
+  PERFT_PATH="$PERFT_DIR"
+else
+  PERFT_PATH="$SCRIPT_DIR/$PERFT_DIR"
+fi
+
+"$BUILD_DIR/cpp_chess_engine_tests" "$PGN_PATH" "$FEN_PATH" "$PERFT_PATH"

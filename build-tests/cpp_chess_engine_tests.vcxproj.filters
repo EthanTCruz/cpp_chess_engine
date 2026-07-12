@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\BishopValidator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\BitOps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\ChessBoard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\DataTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\FENTestRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\FenMoveTester.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\KingValidator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\KnightMoves.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\KnightValidator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\Move.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\MoveValidator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\PGNTestRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\PawnValidator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\PerftTester.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\RookValidator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan\source\repos\cpp_chess_engine\cpp_chess_engine\testing_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\ethan\source\repos\cpp_chess_engine\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{3979174F-A4DB-305C-B2A5-E140DF837DEB}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

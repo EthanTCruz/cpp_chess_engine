@@ -1,0 +1,4 @@
+C:/Users/ethan/source/repos/cpp_chess_engine/build-tests/CMakeFiles/cpp_chess_engine_tests.dir
+C:/Users/ethan/source/repos/cpp_chess_engine/build-tests/CMakeFiles/RUN_TESTS.dir
+C:/Users/ethan/source/repos/cpp_chess_engine/build-tests/CMakeFiles/ALL_BUILD.dir
+C:/Users/ethan/source/repos/cpp_chess_engine/build-tests/CMakeFiles/ZERO_CHECK.dir

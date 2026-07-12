@@ -40,6 +40,10 @@ A dedicated executable, `cpp_chess_engine_tests`, now centralizes test execution
 
 It is intentionally headless and can be run/debugged independently from `cpp_chess_engine.exe`.
 
+## Engine documentation
+
+See [`docs/ENGINE.md`](docs/ENGINE.md) for the module map, move-generation pipeline, and bitboard algorithms used by each move type.
+
 ### Linux/macOS
 
 ```bash

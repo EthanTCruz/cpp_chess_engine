@@ -841,6 +841,8 @@ Bitboard ChessBoard::getCastlingRights()  {
 
     Bitboard k_castle_condition = b_king_castle_conditions;
     Bitboard q_castle_condition = b_queen_castle_conditions;
+    Bitboard k_castle_attack_condition = b_king_castle_conditions;
+    Bitboard q_castle_attack_condition = b_queen_castle | (b_queen_castle << 1);
 
 	bool can_castle_kingside = blackCanCastleKingside;
 	bool can_castle_queenside = blackCanCastleQueenside;
@@ -858,6 +860,8 @@ Bitboard ChessBoard::getCastlingRights()  {
 
         k_castle_condition = w_king_castle_conditions;
         q_castle_condition = w_queen_castle_conditions;
+        k_castle_attack_condition = w_king_castle_conditions;
+        q_castle_attack_condition = w_queen_castle | (w_queen_castle << 1);
     }
 
     Bitboard validStart = king_position & initial_position;
@@ -865,12 +869,12 @@ Bitboard ChessBoard::getCastlingRights()  {
 
 	Bitboard enemy_pieces = getEnemyPieces();
     Bitboard attacks = getEnemyAttacks();
-    Bitboard friendly_pieces = getFriendlyPieces();
+    Bitboard all_pieces = getAllPieces();
 
-	if (((attacks | friendly_pieces) & k_castle_condition) || !can_castle_kingside) {
+	if (((attacks & k_castle_attack_condition) || (all_pieces & k_castle_condition)) || !can_castle_kingside) {
 		castling_rights &= ~k_castle;
 	}
-	if (((attacks | friendly_pieces) & q_castle_condition) || !can_castle_queenside) {
+	if (((attacks & q_castle_attack_condition) || (all_pieces & q_castle_condition)) || !can_castle_queenside) {
         
 		castling_rights &= ~q_castle;
 	}
@@ -980,11 +984,14 @@ Bitboard ChessBoard::getEnemyAttacksIgnoringKing()  {
         if (isolatedBit & (bitboards[w_king_idx] | bitboards[b_king_idx])) {
             enemy_attacks |= kingValidator.getAttacks(index, *this);
         }
-        else if (isolatedBit & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
+        else if (isolatedBit & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx])) {
             enemy_attacks |= bishopValidator.getAttacks(index, *this);
         }
-        else if (isolatedBit & (bitboards[w_rook_idx] | bitboards[b_rook_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
+        else if (isolatedBit & (bitboards[w_rook_idx] | bitboards[b_rook_idx])) {
             enemy_attacks |= rookValidator.getAttacks(index, *this);
+        }
+        else if (isolatedBit & (bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
+            enemy_attacks |= bishopValidator.getAttacks(index, *this) | rookValidator.getAttacks(index, *this);
         }
         else if (isolatedBit & (bitboards[w_knight_idx] | bitboards[b_knight_idx])) {
             enemy_attacks |= knightValidator.getAttacks(index, *this);
@@ -1025,11 +1032,14 @@ Bitboard ChessBoard::getEnemyAttacks() {
         if (isolatedBit & (bitboards[w_king_idx] | bitboards[b_king_idx])) {
             enemy_attacks |= kingValidator.getAttacks(index, *this);
         }
-        else if (isolatedBit & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
+        else if (isolatedBit & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx])) {
             enemy_attacks |= bishopValidator.getAttacks(index, *this);
         }
-        else if (isolatedBit & (bitboards[w_rook_idx] | bitboards[b_rook_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
+        else if (isolatedBit & (bitboards[w_rook_idx] | bitboards[b_rook_idx])) {
             enemy_attacks |= rookValidator.getAttacks(index, *this);
+        }
+        else if (isolatedBit & (bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
+            enemy_attacks |= bishopValidator.getAttacks(index, *this) | rookValidator.getAttacks(index, *this);
         }
         else if (isolatedBit & (bitboards[w_knight_idx] | bitboards[b_knight_idx])) {
             enemy_attacks |= knightValidator.getAttacks(index, *this);
@@ -1149,10 +1159,10 @@ Bitboard ChessBoard::getBishopPinLanes(int bishop_idx, int target_idx, Bitboard 
     if ((lane & bishop_bb) == 0ULL)
         return 0ULL;
 
-    if (!hasPinnedPiece(friendly_on_lane))
-        return 0ULL;
+    if (friendly_on_lane == 0ULL || hasPinnedPiece(friendly_on_lane))
+        return lane;
 
-    return lane;
+    return 0ULL;
 }
 
 Bitboard ChessBoard::getRookPinLanes(int rook_idx, int target_idx, Bitboard occupancy) {
@@ -1207,10 +1217,10 @@ Bitboard ChessBoard::getRookPinLanes(int rook_idx, int target_idx, Bitboard occu
     if ((lane & rook_bb) == 0ULL)
         return 0ULL;
 
-    if (!hasPinnedPiece(friendly_on_lane))
-        return 0ULL;
+    if (friendly_on_lane == 0ULL || hasPinnedPiece(friendly_on_lane))
+        return lane;
 
-    return lane;
+    return 0ULL;
     // return 0ULL;
 }
 
@@ -1315,6 +1325,21 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unorder
            Bitboard queen_checks = king_checkers & enemy_pieces & getQueenBitboards();
 		   //Bitboard friendly_pieces = getFriendlyPieces();
            friendly_pieces = getFriendlyPieces();
+
+           if (knight_checks | pawn_checks) {
+               Bitboard checker = knight_checks | pawn_checks;
+               while (friendly_pieces) {
+                   int index = bitScanForward(friendly_pieces);
+                   Bitboard isolatedBit = 1ULL << index;
+                   if (index != friendly_king_idx && parsedMoves.find(isolatedBit) != parsedMoves.end()) {
+                       parsedMoves[isolatedBit] &= checker;
+                       if (parsedMoves[isolatedBit] == 0ULL) {
+                           parsedMoves.erase(isolatedBit);
+                       }
+                   }
+                   friendly_pieces &= friendly_pieces - 1;
+               }
+           }
            
            if (rook_checks | queen_checks) {
                int rook_idx = bitScanForward(rook_checks | queen_checks);
@@ -1365,7 +1390,7 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unorder
                            Bitboard isolatedBit = 1ULL << index;
                            if (index != friendly_king_idx) {
                                if (parsedMoves.find(isolatedBit) != parsedMoves.end()) {
-                                   parsedMoves[isolatedBit] &= pin_lane | bishop_checks;  // Restrict moves to the pin lane
+                                   parsedMoves[isolatedBit] &= pin_lane | bishop_checks | pawn_checks;  // Restrict moves to the pin lane
                                    if (parsedMoves[isolatedBit] == 0ULL) {
                                        //If no moves left, remove it
                                        parsedMoves.erase(isolatedBit);  // Remove pinned piece from possible moves
@@ -1374,7 +1399,7 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unorder
                            }
                            else {
                                if (parsedMoves.find(isolatedBit) != parsedMoves.end()) {
-                                   parsedMoves[isolatedBit] &= ((~pin_lane | bishop_checks | queen_checks) & ~enemy_attacks);  // Restrict moves to the pin lane
+                                   parsedMoves[isolatedBit] &= ((~pin_lane | bishop_checks | queen_checks | pawn_checks) & ~enemy_attacks);  // Restrict moves to the pin lane
                                    if (parsedMoves[isolatedBit] == 0ULL) {
                                        //If no moves left, remove it
                                        parsedMoves.erase(isolatedBit);  // Remove pinned piece from possible moves
@@ -1426,7 +1451,10 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     int toRow = '8' - (move[3]);
 
 
-    char promotion = (move.length() == 5 ? move[4] : '0');
+    char promotion = (move.length() == 5 ? static_cast<char>(std::tolower(move[4])) : '0');
+    if (promotion != '0' && std::string("qrbn").find(promotion) == std::string::npos) {
+        return false;
+    }
 	//std::cout << "fromCol: " << fromCol << "\n";
 	//std::cout << "fromRow: " << fromRow << "\n";
 	//std::cout << "toCol: " << toCol << "\n";
@@ -1474,6 +1502,9 @@ bool ChessBoard::movePieceSAN(const std::string& sanMove) {
     size_t eqPos = move.find('=');
     if (eqPos != std::string::npos && eqPos + 1 < move.size()) {
         promotion = static_cast<char>(std::tolower(move[eqPos + 1]));
+        if (std::string("qrbn").find(promotion) == std::string::npos) {
+            return false;
+        }
         move = move.substr(0, eqPos);
     }
 

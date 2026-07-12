@@ -1,6 +1,7 @@
 #include "FenMoveTester.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <cctype>
 #include <fstream>
 #include <iostream>
@@ -80,12 +81,16 @@ bool parseExpectedResult(const std::string& value, bool& result)
 
 bool runFenMoveTest(const FenMoveTestCase& testCase)
 {
+    const auto start = std::chrono::steady_clock::now();
     ChessBoard board(testCase.fen);
     const bool moveAccepted = board.movePieceSAN(testCase.sanMove);
+    const auto end = std::chrono::steady_clock::now();
+    const auto elapsedUs = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
     const bool passed = (moveAccepted == testCase.shouldSucceed);
 
     std::cout << "[FEN] " << (passed ? "PASS" : "FAIL") << " | "
               << (testCase.shouldSucceed ? "expect success" : "expect failure")
+              << " | " << elapsedUs << " us"
               << " | move=" << testCase.sanMove << " | " << testCase.description;
 
     if (!testCase.source.empty()) {
@@ -110,6 +115,7 @@ bool runFenMoveTests(const std::vector<FenMoveTestCase>& testCases)
 
     bool allPassed = true;
     std::size_t passedCount = 0;
+    const auto start = std::chrono::steady_clock::now();
 
     for (const FenMoveTestCase& testCase : testCases) {
         if (runFenMoveTest(testCase)) {
@@ -119,8 +125,14 @@ bool runFenMoveTests(const std::vector<FenMoveTestCase>& testCases)
         }
     }
 
+    const auto end = std::chrono::steady_clock::now();
+    const auto elapsedUs = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    const double averageUs = static_cast<double>(elapsedUs) / static_cast<double>(testCases.size());
+
     std::cout << "[FEN] Summary: " << passedCount << "/" << testCases.size()
               << " passed." << std::endl;
+    std::cout << "[PERF] FEN total: " << elapsedUs << " us"
+              << " | average: " << averageUs << " us/test" << std::endl;
 
     return allPassed;
 }

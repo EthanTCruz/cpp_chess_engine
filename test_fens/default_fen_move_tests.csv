@@ -9,32 +9,71 @@ rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1,e5,False,Pawn cannot mo
 4k3/8/8/8/8/8/4P3/4K3 w - - 0 1,e1,False,Pawn cannot move backward
 4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1,exd6,True,Legal en passant capture
 4k3/8/8/3pP3/8/8/8/4K3 w - - 0 1,exd6,False,En passant illegal without ep target
+4k3/8/8/8/3Pp3/8/8/4K3 b - d3 0 1,exd3,True,Black legal en passant capture
+4k3/8/8/3pP3/8/8/8/4K3 w - e6 0 1,exd6,False,En passant target must match destination
+4k3/8/8/3pP3/8/8/8/4K3 w - d6 7 42,exd6,True,En passant ignores halfmove and fullmove counters
+4r3/8/8/3pP3/8/8/8/4K3 w - d6 0 1,exd6,False,Pinned pawn cannot expose king with en passant
 k7/4P3/8/8/8/8/8/4K3 w - - 0 1,e8=Q,True,Pawn promotion to queen
 k7/4P3/8/8/8/8/8/4K3 w - - 0 1,e8=N,True,Pawn underpromotion to knight
+k7/4P3/8/8/8/8/8/4K3 w - - 0 1,e8=R,True,Pawn underpromotion to rook
+k7/4P3/8/8/8/8/8/4K3 w - - 0 1,e8=B,True,Pawn underpromotion to bishop
+k3r3/3P4/8/8/8/8/8/4K3 w - - 0 1,dxe8=Q,True,Promotion by capture
 k7/8/8/8/8/8/4p1K1/8 b - - 0 1,e1=Q,True,Black pawn promotion
+k7/4P3/8/8/8/8/8/4K3 w - - 0 1,e8=K,False,Promotion to king is illegal
 4k3/8/8/8/8/8/6N1/4K3 w - - 0 1,Nf4,True,Knight L-move
 4k3/8/8/8/8/8/6N1/4K3 w - - 0 1,Ng3,False,Knight cannot move one square straight
 4k3/8/8/8/8/8/6N1/4K3 w - - 0 1,Nxh4,False,Knight cannot capture empty square
+4k3/8/8/8/8/8/4N1N1/4K3 w - - 0 1,Nf4,True,Ambiguous knight SAN accepted when either knight can move
+4k3/8/8/8/8/8/4N1N1/4K3 w - - 0 1,Nef4,True,Knight SAN file disambiguation
+4k3/8/8/8/8/8/4N1N1/4K3 w - - 0 1,Ngf4,True,Knight SAN alternate file disambiguation
 4k3/8/8/8/8/8/3B4/4K3 w - - 0 1,Be3,True,Bishop diagonal move
 4k3/8/8/8/8/8/3B4/4K3 w - - 0 1,Bd3,False,Bishop cannot move straight
 4k3/8/8/8/8/4P3/3B4/4K3 w - - 0 1,Bh6,False,Bishop cannot jump over own piece
+4k3/8/8/6p1/8/8/3B4/4K3 w - - 0 1,Bxg5,True,Bishop diagonal capture
 4k3/8/8/8/8/8/4R3/4K3 w - - 0 1,Re5,True,Rook vertical move
 4k3/8/8/8/8/8/4R3/4K3 w - - 0 1,Rf2,True,Rook horizontal move
 4k3/8/8/8/8/8/4R3/4K3 w - - 0 1,Rf4,False,Rook cannot move diagonally
 4k3/8/8/8/8/8/4R3/4K3 w - - 0 1,Rxe4,False,Rook cannot capture empty square
+4k3/8/8/4p3/8/8/4R3/4K3 w - - 0 1,Rxe5,True,Rook vertical capture
+4k3/8/8/8/8/8/1R2R3/4K3 w - - 0 1,Ree2,False,Rook cannot move to its current square
 4k3/8/8/8/8/8/3Q4/4K3 w - - 0 1,Qd5,True,Queen vertical move
 4k3/8/8/8/8/8/3Q4/4K3 w - - 0 1,Qg5,True,Queen diagonal move
 4k3/8/8/8/8/8/3Q4/4K3 w - - 0 1,Qe3,True,Queen horizontal move
+4k3/8/8/8/3p4/8/3Q4/4K3 w - - 0 1,Qxd4,True,Queen capture
+4k3/8/8/8/8/4P3/3Q4/4K3 w - - 0 1,Qh6,False,Queen cannot jump over own piece
 4k3/8/8/8/8/8/8/4K3 w - - 0 1,Kd2,True,King one-square move
+4k3/8/8/8/8/8/8/4K3 w - - 0 1,Kc1,False,King cannot move two squares
 4r1k1/8/8/8/8/8/8/4K3 w - - 0 1,Ke2,False,King cannot move into check by rook
 4r1k1/8/8/8/8/8/8/4K3 w - - 0 1,Kd1,True,King can step out of rook line
+4k3/8/8/8/8/8/3p4/4K3 w - - 0 1,Kxd2,True,King can capture adjacent enemy piece
+4k3/8/8/8/8/2b5/3p4/4K3 w - - 0 1,Kxd2,False,King cannot capture defended piece
 r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1,O-O,True,White king-side castling legal
 r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1,O-O-O,True,White queen-side castling legal
+r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1,O-O,True,Black king-side castling legal
+r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1,O-O-O,True,Black queen-side castling legal
 r3k2r/8/8/8/8/8/4r3/R3K2R w KQkq - 0 1,O-O,False,Cannot castle through check
+r3k2r/8/8/8/8/8/5r2/R3K2R w KQkq - 0 1,O-O,False,Cannot castle through attacked transit square
+r3k2r/8/8/8/8/8/6r1/R3K2R w KQkq - 0 1,O-O,False,Cannot castle onto attacked destination
+r3k2r/8/8/8/8/8/8/R3KB1R w KQkq - 0 1,O-O,False,Cannot castle through occupied kingside square
+r3k2r/8/8/8/8/8/8/R2QK2R w KQkq - 0 1,O-O-O,False,Cannot castle through occupied queenside square
 r3k2r/8/8/8/8/8/8/R3K2R w - - 0 1,O-O,False,Castling illegal without castling rights
+r3k2r/8/8/8/8/8/4R3/R3K2R b KQkq - 0 1,O-O,False,Black cannot castle while in check
+r3k2r/8/8/8/8/8/5R2/R3K2R b KQkq - 0 1,O-O,False,Black cannot castle through attacked transit square
 4k3/8/8/8/8/8/4r3/4K3 w - - 0 1,Kxe2,True,King may capture checking piece if destination safe
 4k3/8/8/8/8/8/4p3/4R1K1 w - - 0 1,Rxe2,True,Rook capture
 4k3/8/8/8/8/8/4p3/3Q2K1 w - - 0 1,Qxe2,True,Queen capture
 4k3/8/8/8/8/8/4r3/3QK3 w - - 0 1,Qe3,False,Cannot ignore check with unrelated move
+4k3/8/8/8/8/8/4r3/3QK3 w - - 0 1,Qxe2,True,Can answer check by capturing checking piece
+rnbqkb1r/pppppppp/5n2/8/4n3/5P2/PPPPPKPP/RNBQ1BNR w kq - 3 3,a3,False,Cannot ignore knight check with unrelated move
+rnbqkb1r/pppppppp/5n2/8/4n3/5P2/PPPPPKPP/RNBQ1BNR w kq - 3 3,fxe4,True,Can answer knight check by capturing checker
+4k3/8/8/8/8/8/8/r3K3 w - - 0 1,Kd2,True,Can answer rook check by moving king away
+4k3/8/8/8/8/8/r7/4K3 w - - 0 1,Ke2,False,Cannot move king onto a rook-attacked rank
+4k3/8/8/8/8/8/4R3/4K2r w - - 0 1,Re8,False,Pinned rook cannot expose king
+4k3/8/8/8/7b/8/5B2/4K3 w - - 0 1,Bg1,False,Pinned bishop cannot expose king
+4k3/8/8/8/8/8/4N3/4K2r w - - 0 1,Nf4,False,Pinned knight cannot expose king
+4k3/8/8/8/8/8/4P3/4K2r w - - 0 1,e4,False,Pinned pawn cannot expose king
+k7/8/8/8/8/8/4R3/4K3 w - - 0 1,Re8+,True,SAN check suffix is accepted
+6k1/6pp/8/8/8/8/6Q1/6K1 w - - 0 1,Qb7#,True,SAN mate suffix is accepted
+k7/8/8/8/8/8/4R3/4K3 w - - 0 1,Re8+!,True,SAN annotation suffix is stripped
 4k3/8/8/8/8/8/4P3/4K3 b - - 0 1,e4,False,Wrong side to move
 4k3/8/8/8/8/8/4P3/4K3 w - - 0 1,NotAMove,False,Invalid SAN string should fail
