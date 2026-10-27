@@ -41,7 +41,7 @@ TESTS = [
     ("4k3/8/8/8/8/8/6N1/4K3 w - - 0 1", "Nf4", True, "Knight L-move"),
     ("4k3/8/8/8/8/8/6N1/4K3 w - - 0 1", "Ng3", False, "Knight cannot move one square straight"),
     ("4k3/8/8/8/8/8/6N1/4K3 w - - 0 1", "Nxh4", False, "Knight cannot capture empty square"),
-    ("4k3/8/8/8/8/8/4N1N1/4K3 w - - 0 1", "Nf4", True, "Ambiguous knight SAN accepted when either knight can move"),
+    ("4k3/8/8/8/8/8/4N1N1/4K3 w - - 0 1", "Nf4", False, "Ambiguous knight SAN must be rejected"),
     ("4k3/8/8/8/8/8/4N1N1/4K3 w - - 0 1", "Nef4", True, "Knight SAN file disambiguation"),
     ("4k3/8/8/8/8/8/4N1N1/4K3 w - - 0 1", "Ngf4", True, "Knight SAN alternate file disambiguation"),
 
@@ -111,6 +111,21 @@ TESTS = [
     # Side to move / SAN validation
     ("4k3/8/8/8/8/8/4P3/4K3 b - - 0 1", "e4", False, "Wrong side to move"),
     ("4k3/8/8/8/8/8/4P3/4K3 w - - 0 1", "NotAMove", False, "Invalid SAN string should fail"),
+    # Rule audit regressions
+    ("4k3/8/8/3pP3/4K3/8/8/8 w - d6 0 1", "exd6", True, "En passant captures the checking pawn"),
+    ("4k3/8/8/r4pPK/8/8/8/8 w - f6 0 1", "gxf6", False, "En passant must not expose horizontal rook check"),
+    ("4k3/8/8/4P3/8/8/8/4K3 w - d6 0 1", "exd6", False, "En passant requires an enemy pawn behind target"),
+    ("4k3/8/8/8/8/8/8/4K3 w K - 0 1", "O-O", False, "Castling requires a rook"),
+    ("4k3/8/8/8/8/8/8/R3K3 w Q - 0 1", "O-O-O", True, "Queenside castling with rook"),
+    ("1r2k3/8/8/8/8/8/8/R3K3 w Q - 0 1", "O-O-O", True, "Queenside b-file may be attacked"),
+    ("4k3/8/8/8/8/8/8/RN2K3 w Q - 0 1", "O-O-O", False, "Queenside b-file must be empty"),
+    ("k3r3/8/8/8/8/8/4N1N1/4K3 w - - 0 1", "Nf4", True, "Pinned knight excluded from SAN ambiguity"),
+    ("k7/4P3/8/8/8/8/8/4K3 w - - 0 1", "e8", False, "Promotion piece is mandatory"),
+    ("4k3/8/8/8/8/8/4P3/4K3 w - - 0 1", "e4=Q", False, "Cannot promote before final rank"),
+    ("4k3/8/8/8/8/8/6N1/4K3 w - - 0 1", "Nf4=Q", False, "Only pawns promote"),
+    ("k7/4P3/8/8/8/8/8/4K3 w - - 0 1", "e8=Qjunk", False, "Reject promotion trailing garbage"),
+    ("4k3/8/8/8/8/8/4P3/4K3 w - - 0 1", "exe3", False, "Pawn push cannot use capture marker"),
+
 ]
 
 

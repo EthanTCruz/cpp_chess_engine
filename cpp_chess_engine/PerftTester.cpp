@@ -78,6 +78,46 @@ std::string squareName(int index)
     return square;
 }
 
+std::uint64_t perft(ChessBoard board, int depth);
+
+bool isPromotionMove(const ChessBoard& board, int fromIndex, int toIndex)
+{
+    const int fromRow = rowFromIndex(fromIndex);
+    const int fromCol = colFromIndex(fromIndex);
+    const char piece = board.getBoard()[fromRow][fromCol];
+    if (piece != 'P' && piece != 'p') {
+        return false;
+    }
+
+    const int toRow = rowFromIndex(toIndex);
+    return (piece == 'P' && toRow == 0) || (piece == 'p' && toRow == 7);
+}
+
+std::uint64_t perftAfterMove(const ChessBoard& board, int fromIndex, int toIndex, int depth)
+{
+    static const char promotions[] = { 'q', 'r', 'b', 'n' };
+    std::uint64_t nodes = 0;
+
+    if (isPromotionMove(board, fromIndex, toIndex)) {
+        for (char promotion : promotions) {
+            ChessBoard child = board;
+            if (child.movePiece(rowFromIndex(fromIndex), colFromIndex(fromIndex),
+                                rowFromIndex(toIndex), colFromIndex(toIndex), promotion)) {
+                nodes += perft(child, depth - 1);
+            }
+        }
+        return nodes;
+    }
+
+    ChessBoard child = board;
+    if (child.movePiece(rowFromIndex(fromIndex), colFromIndex(fromIndex),
+                        rowFromIndex(toIndex), colFromIndex(toIndex))) {
+        nodes += perft(child, depth - 1);
+    }
+
+    return nodes;
+}
+
 int configValue(const std::string& name, int fallback)
 {
     if (const char* envValue = std::getenv(name.c_str())) {
@@ -131,13 +171,7 @@ std::uint64_t perft(ChessBoard board, int depth)
             const int toIndex = bitScanForward(remainingDestinations);
             remainingDestinations &= remainingDestinations - 1;
 
-            ChessBoard child = board;
-            if (!child.movePiece(rowFromIndex(fromIndex), colFromIndex(fromIndex),
-                                 rowFromIndex(toIndex), colFromIndex(toIndex))) {
-                continue;
-            }
-
-            nodes += perft(child, depth - 1);
+            nodes += perftAfterMove(board, fromIndex, toIndex, depth);
         }
     }
 
@@ -150,7 +184,7 @@ void printPerftDivide(const std::string& fen, int depth)
         return;
     }
 
-    ChessBoard board(fen);
+    ChessBoard board(fen, false);
     const auto moves = board.getAllMoves();
     std::cout << "        Divide:";
 
@@ -165,14 +199,8 @@ void printPerftDivide(const std::string& fen, int depth)
             const int toIndex = bitScanForward(remainingDestinations);
             remainingDestinations &= remainingDestinations - 1;
 
-            ChessBoard child = board;
-            if (!child.movePiece(rowFromIndex(fromIndex), colFromIndex(fromIndex),
-                                 rowFromIndex(toIndex), colFromIndex(toIndex))) {
-                continue;
-            }
-
             std::cout << ' ' << squareName(fromIndex) << squareName(toIndex)
-                      << '=' << perft(child, depth - 1);
+                      << '=' << perftAfterMove(board, fromIndex, toIndex, depth);
         }
     }
 
@@ -187,7 +215,7 @@ std::uint64_t countLegalMoveNodes(const std::string& fen, int depth)
         depth = maxDepth;
     }
 
-    ChessBoard board(fen);
+    ChessBoard board(fen, false);
     return perft(board, depth);
 }
 

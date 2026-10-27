@@ -14,7 +14,8 @@
 // The ChessBoard class manages the board state and delegates move validation.
 class ChessBoard {
 public:
-    ChessBoard(const std::string& fen);
+    // Disable adjudication for perft and analysis of composed positions.
+    ChessBoard(const std::string& fen, bool adjudicate = true);
     ChessBoard();
     std::string getString() const;
     void setString(const std::string& newFen);
@@ -109,6 +110,11 @@ public:
     bool get_is_white_win();
     bool get_is_black_win();
     bool get_is_stalemate();
+    bool get_is_draw();
+    bool canClaimFiftyMoveDraw(const std::string& intendedMove = "");
+    bool claimFiftyMoveDraw(const std::string& intendedMove = "");
+    bool hasInsufficientMaterial() const;
+    bool hasInsufficientMatingMaterial(bool white) const;
 
 private:
     bool movePieceUnchecked(const int& fromRow, const int& fromCol,
@@ -117,7 +123,7 @@ private:
                            const int& newRow, const int& newCol, char promote,
                            bool validateMoveFlag);
 
-    std::string STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
+    std::string STARTING_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     std::string fen;
     bool whiteToMove = true;
     int halfmoveClock = 0;
@@ -129,6 +135,11 @@ private:
     bool blackCanCastleKingside = true;
     bool blackCanCastleQueenside = true;
 
+    bool adjudicate = true;
+    bool is_draw = false;
+    std::unordered_map<std::string, int> positionCounts;
+    void updateGameState();
+    std::string repetitionKey();
     bool is_game_over = false;
     bool is_white_win = false;
     bool is_black_win = false;

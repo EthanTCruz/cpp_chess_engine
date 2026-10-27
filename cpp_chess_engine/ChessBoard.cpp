@@ -9,6 +9,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <stdexcept>
+#include <regex>
 
 
 RookValidator rookValidator;
@@ -86,36 +88,25 @@ std::string ChessBoard::get_game_results(){
 if (!is_game_over) return "*";
 if (is_white_win) return "1-0";
 if (is_black_win) return "0-1";
-if (is_stalemate) return "1/2-1/2";
+if (is_draw) return "1/2-1/2";
 return "Error";
 }
 
 void ChessBoard::resign(const std::string& resultToken) {
-    // Reset existing game result flags before applying the resignation outcome.
-    is_white_win = false;
-    is_black_win = false;
-    is_stalemate = false;
-    is_game_over = false;
-
-    if (resultToken == "1-0") {
-        is_white_win = true;
+    if (is_game_over || (resultToken != "1-0" && resultToken != "0-1" && resultToken != "1/2-1/2")) return;
+    if ((resultToken == "1-0" && hasInsufficientMatingMaterial(true)) ||
+        (resultToken == "0-1" && hasInsufficientMatingMaterial(false))) {
+        is_draw = true;
         is_game_over = true;
+        return;
     }
-    else if (resultToken == "0-1") {
-        is_black_win = true;
-        is_game_over = true;
-    }
-    else if (resultToken == "1/2-1/2") {
-        is_stalemate = true;
-        is_game_over = true;
-    }
-    else {
-        // Unrecognized result tokens should not change the game state.
-        is_game_over = false;
-    }
+    is_white_win = resultToken == "1-0";
+    is_black_win = resultToken == "0-1";
+    is_draw = resultToken == "1/2-1/2";
+    is_game_over = true;
 }
 
-ChessBoard::ChessBoard(const std::string& fen) : fen(fen) {
+ChessBoard::ChessBoard(const std::string& fen, bool adjudicate) : fen(fen), adjudicate(adjudicate) {
     // Map piece characters to their corresponding bitboard index.
 
     initialize();
@@ -155,6 +146,8 @@ void ChessBoard::initialize() {
         for (int c = 0; c < 8; ++c)
             board[r][c] = '.';
 
+    is_draw = false;
+    positionCounts.clear();
     is_game_over = false;
     is_white_win = false;
     is_black_win = false;
@@ -162,7 +155,12 @@ void ChessBoard::initialize() {
     // Reset bitboards.
     bitboards.fill(0ULL);
     
+    enPassant = 0ULL;
     parseFEN();
+    if (adjudicate) {
+        positionCounts[repetitionKey()] = 1;
+        updateGameState();
+    }
 
 
 }
@@ -234,8 +232,8 @@ Bitboard ChessBoard::getKingBitboards() const {
 }
 
 void ChessBoard::setString(const std::string& newFen) {
-    fen = newFen;
-    initialize();
+    ChessBoard replacement(newFen, adjudicate);
+    *this = replacement;
 
 }
 
@@ -283,6 +281,17 @@ void ChessBoard::parseFEN() {
 
     fenStream >> piecePlacement >> activeColor >> castling >> enPassantSquare >> halfmoveClockStr >> fullmoveNumberStr;
 
+    static const std::regex syntax(
+        R"(^([prnbqkPRNBQK1-8]+/){7}[prnbqkPRNBQK1-8]+ [wb] (KQ?k?q?|Qk?q?|kq?|q|-) (-|[a-h][36]) [0-9]+ [0-9]+$)");
+    if (!std::regex_match(fen, syntax)) throw std::invalid_argument("Invalid FEN syntax");
+    std::istringstream ranks(piecePlacement);
+    std::string rank;
+    while (std::getline(ranks, rank, '/')) {
+        int squares = 0;
+        for (char ch : rank) squares += ch >= '1' && ch <= '8' ? ch - '0' : 1;
+        if (squares != 8) throw std::invalid_argument("Invalid FEN rank width");
+    }
+
     int row = 0, col = 0;
     for (char ch : piecePlacement) {
         if (ch == '/') {
@@ -323,7 +332,7 @@ void ChessBoard::parseFEN() {
     if (enPassantSquare != "-") {
         int enPassantIndex = BoardCoordToCellIndex(enPassantSquare);
         if (enPassantIndex != -1) {
-            enPassant |= 1ULL << enPassantIndex;
+            enPassant = 1ULL << enPassantIndex;
         }
     }
     else {
@@ -400,27 +409,31 @@ Bitboard ChessBoard::getAllPieces() const {
 
 
 bool ChessBoard::canWhiteCastleKingside(Bitboard attacks, Bitboard all_pieces) const{
-    Bitboard invalid_conditions = attacks | all_pieces;
-    invalid_conditions &= w_king_castle_conditions;
-    bool can_castle = invalid_conditions ? whiteCanCastleKingside : false;
-    
-	return can_castle;
+    ChessBoard copy = *this;
+    copy.whiteToMove = true;
+    return (copy.getCastlingRights() & w_king_castle) != 0;
 }
 bool ChessBoard::canWhiteCastleQueenside(Bitboard attacks, Bitboard all_pieces) const {
-	return whiteCanCastleQueenside;
+    ChessBoard copy = *this;
+    copy.whiteToMove = true;
+    return (copy.getCastlingRights() & w_queen_castle) != 0;
 }
 bool ChessBoard::canBlackCastleKingside(Bitboard attacks, Bitboard all_pieces) const {
-	return blackCanCastleKingside;
+    ChessBoard copy = *this;
+    copy.whiteToMove = false;
+    return (copy.getCastlingRights() & b_king_castle) != 0;
 }
 bool ChessBoard::canBlackCastleQueenside(Bitboard attacks, Bitboard all_pieces) const {
-	return blackCanCastleQueenside;
+    ChessBoard copy = *this;
+    copy.whiteToMove = false;
+    return (copy.getCastlingRights() & b_queen_castle) != 0;
 }
-
 
 
 
 
 bool ChessBoard::validateMove(const int& from_idx, const int& to_idx) {
+    if (from_idx < 0 || from_idx >= 64 || to_idx < 0 || to_idx >= 64) return false;
     // Convert the bit index back to board coordinates.
     int row = 7 - (from_idx / 8);
     int col = from_idx % 8;
@@ -540,10 +553,13 @@ std::string ChessBoard::getString() const {
     else
         fenString += castlingRights;
 
-    // Append en passant target square.
-    // (Not implemented here so we use '-' as a placeholder.)
+    // Append the en passant target square.
     fenString.push_back(' ');
-    fenString.push_back('-');
+    if (enPassant) {
+        int square = bitScanForward(enPassant);
+        fenString.push_back(static_cast<char>('a' + square % 8));
+        fenString.push_back(static_cast<char>('1' + square / 8));
+    } else fenString.push_back('-');
 
     // Append halfmove clock.
     fenString.push_back(' ');
@@ -602,6 +618,12 @@ bool ChessBoard::movePieceUnchecked(const int& fromRow, const int& fromCol,
 bool ChessBoard::movePieceInternal(const int& fromRow, const int& fromCol,
                                    const int& newRow, const int& newCol,
                                    char promote, bool validateMoveFlag) {
+    if (is_game_over || fromRow < 0 || fromRow > 7 || fromCol < 0 || fromCol > 7 ||
+        newRow < 0 || newRow > 7 || newCol < 0 || newCol > 7) return false;
+    char movingPiece = board[fromRow][fromCol];
+    bool promotes = (movingPiece == 'P' && newRow == 0) || (movingPiece == 'p' && newRow == 7);
+    if (promotes != (promote != '0') ||
+        (promote != '0' && std::string("qrbnQRBN").find(promote) == std::string::npos)) return false;
     int from_idx = get_bitindex(fromRow, fromCol);
     int to_idx = get_bitindex(newRow, newCol);
     Bitboard origin = 1ULL << from_idx;
@@ -701,19 +723,9 @@ bool ChessBoard::movePieceInternal(const int& fromRow, const int& fromCol,
 
     changeTurn();
 
-    std::unordered_map<Bitboard, Bitboard> all_moves = getAllMoves();
-    if (all_moves.empty()) {
-        Bitboard enemy_attacks = getEnemyAttacks();
-        if (enemy_attacks & getFriendlyPieces() & getKingBitboards()) {
-            if (whiteToMove) {
-                is_white_win = true;
-            } else {
-                is_black_win = true;
-            }
-        } else {
-            is_stalemate = true;
-        }
-        is_game_over = true;
+    if (adjudicate) {
+        ++positionCounts[repetitionKey()];
+        updateGameState();
     }
 
     return true;
@@ -728,7 +740,7 @@ int const FileToCol(const char& file) {
 }
 
 int ChessBoard::BoardCoordToCellIndex(const std::string& coord) const {
-    if (coord.length() < 2) {
+    if (coord.length() != 2 || coord[0] < 'a' || coord[0] > 'h' || coord[1] < '1' || coord[1] > '8') {
 		std::cout << "Invalid coordinate format: " << coord << "\n";
         return -1;
     }
@@ -789,7 +801,8 @@ bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
         has_queenside_castle_permissions = whiteCanCastleQueenside;
     }
 
-    Bitboard validStart = from_bb & initial_position;
+    Bitboard king = whiteToMove ? bitboards[w_king_idx] : bitboards[b_king_idx];
+    Bitboard validStart = from_bb & initial_position & king;
     if (!validStart) return false;
 
     bool isKingside = (to_bb & kingside_target) != 0ULL;
@@ -804,31 +817,8 @@ bool ChessBoard::castleCheck(Bitboard from_bb, Bitboard to_bb) const {
 
 // goal is to get ~w_king_castle then & with king moves
 Bitboard ChessBoard::validCastles(Bitboard attacks, Bitboard all_pieces) const {
-    // to start get castle move squares
-    Bitboard valid_castles = b_king_castle | b_queen_castle;
-    Bitboard k_castle = b_king_castle;
-    Bitboard q_castle = b_queen_castle;
-
-    // next get which squares need to be clear of attacks and pieces for castling
-    Bitboard k_castle_condition = b_king_castle_conditions;
-    Bitboard q_castle_condition = b_queen_castle_conditions;
-
-    if (whiteToMove) {
-        k_castle_condition = w_king_castle_conditions;
-        q_castle_condition = w_queen_castle_conditions;
-
-        k_castle = w_king_castle;
-        q_castle = w_queen_castle;
-
-        valid_castles = w_king_castle | w_queen_castle;
-    }
-
-    // if invalid conditions == 0 or false, then valid
-    Bitboard invalid_conditions = attacks | all_pieces;
-    invalid_conditions &= (k_castle_condition | q_castle_condition);
-
-
-    return ~valid_castles;
+    ChessBoard copy = *this;
+    return copy.getCastlingRights();
 }
 
 
@@ -864,11 +854,21 @@ Bitboard ChessBoard::getCastlingRights()  {
         q_castle_attack_condition = w_queen_castle | (w_queen_castle << 1);
     }
 
+    Bitboard rookPosition = whiteToMove ? bitboards[w_rook_idx] : bitboards[b_rook_idx];
+    can_castle_kingside = can_castle_kingside && (rookPosition & (whiteToMove ? InitialPositions::wk_rook : InitialPositions::bk_rook));
+    can_castle_queenside = can_castle_queenside && (rookPosition & (whiteToMove ? InitialPositions::wq_rook : InitialPositions::bq_rook));
+    if (king_position && getAttacks(bitScanForward(king_position))) return 0ULL;
     Bitboard validStart = king_position & initial_position;
 	Bitboard castling_rights = validStart ? target_position : 0ULL;
 
 	Bitboard enemy_pieces = getEnemyPieces();
-    Bitboard attacks = getEnemyAttacks();
+    Bitboard attacks = 0ULL;
+    Bitboard path = k_castle_attack_condition | q_castle_attack_condition;
+    while (path) {
+        int square = bitScanForward(path);
+        if (getAttacks(square)) attacks |= 1ULL << square;
+        path &= path - 1;
+    }
     Bitboard all_pieces = getAllPieces();
 
 	if (((attacks & k_castle_attack_condition) || (all_pieces & k_castle_condition)) || !can_castle_kingside) {
@@ -884,6 +884,7 @@ Bitboard ChessBoard::getCastlingRights()  {
 }
 
 Bitboard ChessBoard::getAttacks(const int& from_idx) {
+    if (from_idx < 0 || from_idx >= 64) return 0ULL;
 	Bitboard enemy_pieces = getEnemyPieces();
     Bitboard king_attacks = kingValidator.getAttacks(from_idx, *this) & (enemy_pieces & (bitboards[w_king_idx] | bitboards[b_king_idx]));
     Bitboard bishop_attacks = bishopValidator.getAttacks(from_idx, *this) & (enemy_pieces & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx] | bitboards[w_queen_idx] | bitboards[b_queen_idx]));
@@ -896,6 +897,7 @@ Bitboard ChessBoard::getAttacks(const int& from_idx) {
 }
 
 Bitboard ChessBoard::getMoves(const int& from_idx) {
+    if (from_idx < 0 || from_idx >= 64) return 0ULL;
     int row = 7 - (from_idx / 8);
     int col = from_idx % 8;
     char piece = board[row][col];
@@ -932,7 +934,7 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::getAllMoves()  {
     while (friendly_pieces) {
         int index = bitScanForward(friendly_pieces);  // Index of least significant '1' bit
         Bitboard isolatedBit = 1ULL << index;
-                Bitboard attacks = getMoves(index);
+        Bitboard attacks = getMoves(index);
         if (isolatedBit & (getKingBitboards() & friendly_pieces)) attacks |= getCastlingRights();
 
 		allMoves[isolatedBit] = attacks;
@@ -954,107 +956,21 @@ bool hasPinnedPiece(Bitboard pin_ray) {
 }
 
 Bitboard ChessBoard::getEnemyAttacksIgnoringKing()  {
-    Bitboard enemy_attacks = 0ULL;
-    Bitboard enemy_pieces = getEnemyPieces();
-    Bitboard friendly_pieces = getFriendlyPieces();
-
-
-	Bitboard w_king = bitboards[w_king_idx];
-	Bitboard b_king = bitboards[b_king_idx];
-
-    Bitboard tmp_king = 0ULL;
-    
-    if (whiteToMove) {
-        tmp_king = bitboards[w_king_idx];
-        bitboards[w_king_idx] = 0ULL;
-    }
-    else {
-
-        tmp_king = bitboards[b_king_idx];
-        bitboards[b_king_idx] = 0ULL;
-    }
-
-    while (enemy_pieces) {
-        int index = bitScanForward(enemy_pieces);
-        Bitboard isolatedBit = 1ULL << index;
-        Bitboard attacks = getMoves(index);
-
-
-
-        if (isolatedBit & (bitboards[w_king_idx] | bitboards[b_king_idx])) {
-            enemy_attacks |= kingValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx])) {
-            enemy_attacks |= bishopValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_rook_idx] | bitboards[b_rook_idx])) {
-            enemy_attacks |= rookValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
-            enemy_attacks |= bishopValidator.getAttacks(index, *this) | rookValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_knight_idx] | bitboards[b_knight_idx])) {
-            enemy_attacks |= knightValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx])) {
-            switchTurn();
-            enemy_attacks |= pawnValidator.getAttacks(isolatedBit, *this);
-            switchTurn();
-        }
-
-
-        enemy_pieces &= enemy_pieces - 1;
-    }
-
-    if (whiteToMove) {
-        bitboards[w_king_idx] = tmp_king;
-    }
-    else {
-        bitboards[b_king_idx] = tmp_king;
-    }
-
-	return enemy_attacks;
+    int kingIndex = whiteToMove ? w_king_idx : b_king_idx;
+    Bitboard king = bitboards[kingIndex];
+    bitboards[kingIndex] = 0ULL;
+    Bitboard attacks = getEnemyAttacks();
+    bitboards[kingIndex] = king;
+    return attacks;
 }
 
-
 Bitboard ChessBoard::getEnemyAttacks() {
-    Bitboard enemy_attacks = 0ULL;
-    Bitboard enemy_pieces = getEnemyPieces();
-
-    switchTurn();
-    while (enemy_pieces) {
-        int index = bitScanForward(enemy_pieces);
-        Bitboard isolatedBit = 1ULL << index;
-        Bitboard attacks = getMoves(index);
-
-
-
-        if (isolatedBit & (bitboards[w_king_idx] | bitboards[b_king_idx])) {
-            enemy_attacks |= kingValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_bishop_idx] | bitboards[b_bishop_idx])) {
-            enemy_attacks |= bishopValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_rook_idx] | bitboards[b_rook_idx])) {
-            enemy_attacks |= rookValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_queen_idx] | bitboards[b_queen_idx])) {
-            enemy_attacks |= bishopValidator.getAttacks(index, *this) | rookValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_knight_idx] | bitboards[b_knight_idx])) {
-            enemy_attacks |= knightValidator.getAttacks(index, *this);
-        }
-        else if (isolatedBit & (bitboards[w_pawn_idx] | bitboards[b_pawn_idx])) {
-            //switchTurn();
-            enemy_attacks |= pawnValidator.getAttacks(isolatedBit, *this);
-            //switchTurn();
-        }
-
-
-        enemy_pieces &= enemy_pieces - 1;
+    Bitboard attacks = 0ULL;
+    // Reverse queries include defended enemy squares and attacks by pinned pieces.
+    for (int square = 0; square < 64; ++square) {
+        if (getAttacks(square)) attacks |= 1ULL << square;
     }
-    switchTurn();
-    return enemy_attacks;
+    return attacks;
 }
 
 
@@ -1269,175 +1185,41 @@ std::unordered_map<Bitboard, Bitboard> ChessBoard::removeRookPins(const std::uno
 }
 
 std::unordered_map<Bitboard, Bitboard> ChessBoard::parseMoves(const std::unordered_map<Bitboard, Bitboard>& allMoves) {
-   std::unordered_map<Bitboard, Bitboard> parsedMoves = allMoves; 
-   //king move error happens before here
-   Bitboard friendly_pieces = getFriendlyPieces();
-   Bitboard friendly_king = friendly_pieces & (bitboards[w_king_idx] | bitboards[b_king_idx]);
-   int friendly_king_idx = bitScanForward(friendly_king);
-
-
-
-   parsedMoves = removeBishopPins(parsedMoves); // Remove bishop pins first
-
-   parsedMoves = removeRookPins(parsedMoves); // Remove rook pins after bishop pins
-
-   Bitboard enemy_attacks = getEnemyAttacksIgnoringKing();
-
-   if (parsedMoves.find(friendly_king) != parsedMoves.end()) {
-       parsedMoves[friendly_king] &= ~enemy_attacks;  // Remove all moves that are attacked by enemy pieces
-       if (parsedMoves[friendly_king] == 0ULL) {  // If no moves left, remove it
-           parsedMoves.erase(friendly_king);  // Remove king move from possible moves
-       }
-   }
-   Bitboard king_checkers = getAttacks(friendly_king_idx);
-   Bitboard enemy_pieces = getEnemyPieces();
-// for move in parsed moves, if 
-
-   if (king_checkers) {
-       parsedMoves[friendly_king] &= ~enemy_attacks;
-
-       const Bitboard whiteCastlingSquares = w_king_castle | w_queen_castle;
-       const Bitboard blackCastlingSquares = b_king_castle | b_queen_castle;
-
-       if (friendly_king & (InitialPositions::b_king & bitboards[b_king_idx] | InitialPositions::w_king & bitboards[w_king_idx])) {
-       parsedMoves[friendly_king] &= ~CastlingTrigger::all;
+    std::unordered_map<Bitboard, Bitboard> legalMoves;
+    const auto saved = bitboards;
+    const int kingIndex = whiteToMove ? w_king_idx : b_king_idx;
+    const int enemyPawnIndex = whiteToMove ? b_pawn_idx : w_pawn_idx;
+    const Bitboard enemyKing = whiteToMove ? bitboards[b_king_idx] : bitboards[w_king_idx];
+    for (const auto& entry : allMoves) {
+        int from = bitScanForward(entry.first);
+        int pieceIndex = piece_to_idx.at(board[7 - from / 8][from % 8]);
+        Bitboard destinations = entry.second & ~getFriendlyPieces() & ~enemyKing;
+        while (destinations) {
+            int to = bitScanForward(destinations);
+            Bitboard destination = 1ULL << to;
+            for (auto& bb : bitboards) bb &= ~destination;
+            bitboards[pieceIndex] = (bitboards[pieceIndex] & ~entry.first) | destination;
+            if ((pieceIndex == w_pawn_idx || pieceIndex == b_pawn_idx) && (destination & enPassant)) {
+                Bitboard captured = whiteToMove ? destination >> 8 : destination << 8;
+                bitboards[enemyPawnIndex] &= ~captured;
+            }
+            if (!bitboards[kingIndex] || !getAttacks(bitScanForward(bitboards[kingIndex]))) legalMoves[entry.first] |= destination;
+            bitboards = saved;
+            destinations &= destinations - 1;
         }
-
-       if (king_checkers & (king_checkers - 1)) {
-            // create a new parsed moves hash map with only the king moves 
-           if (parsedMoves.find(friendly_king) == parsedMoves.end()){
-			   std::cout << "Checkmate \n";
-                is_game_over = true;
-           }
-		   std::unordered_map<Bitboard, Bitboard> king_moves;
-		   king_moves[friendly_king] = parsedMoves[friendly_king] & king_checkers; // Only keep moves that are valid for the king
-		   parsedMoves = king_moves; // Replace parsed moves with king moves
-		   return parsedMoves; // Return early if the king is in check with multiple attackers
-       }
-
-
-        
-
-           Bitboard bishop_checks = king_checkers & enemy_pieces & getBishopBitboards();
-           Bitboard rook_checks = king_checkers & enemy_pieces & getRookBitboards();
-           Bitboard pawn_checks = king_checkers & enemy_pieces & getPawnBitboards();
-           Bitboard knight_checks = king_checkers & enemy_pieces & getKnightBitboards();
-           Bitboard queen_checks = king_checkers & enemy_pieces & getQueenBitboards();
-		   //Bitboard friendly_pieces = getFriendlyPieces();
-           friendly_pieces = getFriendlyPieces();
-
-           if (knight_checks | pawn_checks) {
-               Bitboard checker = knight_checks | pawn_checks;
-               while (friendly_pieces) {
-                   int index = bitScanForward(friendly_pieces);
-                   Bitboard isolatedBit = 1ULL << index;
-                   if (index != friendly_king_idx && parsedMoves.find(isolatedBit) != parsedMoves.end()) {
-                       parsedMoves[isolatedBit] &= checker;
-                       if (parsedMoves[isolatedBit] == 0ULL) {
-                           parsedMoves.erase(isolatedBit);
-                       }
-                   }
-                   friendly_pieces &= friendly_pieces - 1;
-               }
-           }
-           
-           if (rook_checks | queen_checks) {
-               int rook_idx = bitScanForward(rook_checks | queen_checks);
-                //should just return bitboard where pins are possible, is returning 0 which is an issue
-               Bitboard pin_lane = getRookPinLanes(rook_idx, friendly_king_idx, getAllPieces());
-               
-               
-               //pin_lane |= rook_checks; // Include the rook checks in the pin lane unless it is already included ?
-               if (pin_lane != 0ULL) {
-                   while (friendly_pieces) {
-                       int index = bitScanForward(friendly_pieces);  // Index of least significant '1' bit
-                       Bitboard isolatedBit = 1ULL << index;
-                       if (index != friendly_king_idx) {
-                           if (parsedMoves.find(isolatedBit) != parsedMoves.end()) {
-                               parsedMoves[isolatedBit] &= pin_lane | rook_checks;  // Restrict moves to the pin lane
-                               if (parsedMoves[isolatedBit] == 0ULL) {
-                                   //If no moves left, remove it
-                                   parsedMoves.erase(isolatedBit);  // Remove pinned piece from possible moves
-                               }
-                           }
-                       }
-                       else {
-                           if (parsedMoves.find(isolatedBit) != parsedMoves.end()) {
-                               parsedMoves[isolatedBit] &= ((~pin_lane | rook_checks | queen_checks) & ~enemy_attacks);  // Restrict moves to the pin lane
-                               if (parsedMoves[isolatedBit] == 0ULL) {
-                                   //If no moves left, remove it
-                                   parsedMoves.erase(isolatedBit);  // Remove pinned piece from possible moves
-                               }
-                           }
-                       }
-
-                       friendly_pieces &= friendly_pieces - 1;   //Clear the least significant '1' bit
-                   }
-               }
-           }
-
-               friendly_pieces = getFriendlyPieces();
-               if (bishop_checks | queen_checks | pawn_checks) {
-                   int bishop_idx = bitScanForward(bishop_checks | queen_checks | pawn_checks);
-
-                   Bitboard pin_lane = getBishopPinLanes(bishop_idx, friendly_king_idx, getAllPieces());
-
-                   //pin_lane |= bishop_checks; // Include the rook checks in the pin lane unless it is already included ?
-
-                   if (pin_lane != 0ULL) {
-                       while (friendly_pieces) {
-                           int index = bitScanForward(friendly_pieces);  // Index of least significant '1' bit
-                           Bitboard isolatedBit = 1ULL << index;
-                           if (index != friendly_king_idx) {
-                               if (parsedMoves.find(isolatedBit) != parsedMoves.end()) {
-                                   parsedMoves[isolatedBit] &= pin_lane | bishop_checks | pawn_checks;  // Restrict moves to the pin lane
-                                   if (parsedMoves[isolatedBit] == 0ULL) {
-                                       //If no moves left, remove it
-                                       parsedMoves.erase(isolatedBit);  // Remove pinned piece from possible moves
-                                   }
-                               }
-                           }
-                           else {
-                               if (parsedMoves.find(isolatedBit) != parsedMoves.end()) {
-                                   parsedMoves[isolatedBit] &= ((~pin_lane | bishop_checks | queen_checks | pawn_checks) & ~enemy_attacks);  // Restrict moves to the pin lane
-                                   if (parsedMoves[isolatedBit] == 0ULL) {
-                                       //If no moves left, remove it
-                                       parsedMoves.erase(isolatedBit);  // Remove pinned piece from possible moves
-                                   }
-                               }
-                           }
-                           friendly_pieces &= friendly_pieces - 1;   //Clear the least significant '1' bit
-
-                       }
-                   }
-
-               }
-   }
-
-   return parsedMoves;
+    }
+    return legalMoves;
 }
+
 
 
 bool ChessBoard::isAttacked(const int& from_idx) {
-    // Convert the bit index back to board coordinates.
-    int row = 7 - (from_idx / 8);
-    int col = from_idx % 8;
-    char piece = board[row][col];
-    Bitboard origin = 1ULL << from_idx;
-
-    // Change turn
-    
-    Bitboard attacks = getAttacks(from_idx);
-    // Revert turn
-    
-
-    return false;
-    return true;
+    return getAttacks(from_idx) != 0ULL;
 }
 
 bool ChessBoard::movePieceUCI(const std::string& move) {
-    // A valid UCI move must be at least 4 characters (e.g., "e2e4")
-    if (move.length() < 4) {
+    // UCI is four coordinates plus an optional promotion piece.
+    if (move.length() != 4 && move.length() != 5) {
         std::cerr << "Invalid UCI move format: " << move << std::endl;
         return false;
     }
@@ -1451,8 +1233,8 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
     int toRow = '8' - (move[3]);
 
 
-    char promotion = (move.length() == 5 ? static_cast<char>(std::tolower(move[4])) : '0');
-    if (promotion != '0' && std::string("qrbn").find(promotion) == std::string::npos) {
+    char promotion = (move.length() == 5 ? static_cast<char>(std::tolower(static_cast<unsigned char>(move[4]))) : '0');
+    if (move.length() == 5 && std::string("qrbn").find(promotion) == std::string::npos) {
         return false;
     }
 	//std::cout << "fromCol: " << fromCol << "\n";
@@ -1484,7 +1266,7 @@ bool ChessBoard::movePieceUCI(const std::string& move) {
 
 bool ChessBoard::movePieceSAN(const std::string& sanMove) {
     std::string move = sanMove;
-    syncBoardWithBitboards();
+    if (is_game_over) return false;
 
     while (!move.empty() && (move.back() == '+' || move.back() == '#' ||
                              move.back() == '!' || move.back() == '?')) {
@@ -1500,250 +1282,118 @@ bool ChessBoard::movePieceSAN(const std::string& sanMove) {
 
     char promotion = '0';
     size_t eqPos = move.find('=');
-    if (eqPos != std::string::npos && eqPos + 1 < move.size()) {
-        promotion = static_cast<char>(std::tolower(move[eqPos + 1]));
+    if (eqPos != std::string::npos) {
+        if (eqPos + 2 != move.size()) return false;
+        promotion = static_cast<char>(std::tolower(static_cast<unsigned char>(move[eqPos + 1])));
         if (std::string("qrbn").find(promotion) == std::string::npos) {
             return false;
         }
         move = move.substr(0, eqPos);
     }
 
-    size_t capturePos = move.find('x');
-    bool isCapture = capturePos != std::string::npos;
-
-    char pieceChar = 'P';
-    size_t idx = 0;
-    if (!move.empty() && std::isupper(move[0]) && move[0] != 'O') {
-        pieceChar = move[0];
-        idx = 1;
+    static const std::regex san(R"(^([KQRBN])?([a-h]?[1-8]?)(x?)([a-h][1-8])$)");
+    std::smatch match;
+    if (!std::regex_match(move, match, san)) return false;
+    char piece = match[1].matched ? match[1].str()[0] : 'P';
+    std::string disamb = match[2];
+    bool capture = match[3] == "x";
+    if (piece == 'P' && (capture ? disamb.size() != 1 || disamb[0] < 'a' || disamb[0] > 'h' : !disamb.empty())) return false;
+    int to = BoardCoordToCellIndex(match[4]);
+    bool actualCapture = (getEnemyPieces() & (1ULL << to)) || (piece == 'P' && (enPassant & (1ULL << to)));
+    if (capture != actualCapture) return false;
+    int source = -1;
+    for (const auto& entry : getAllMoves()) {
+        int from = bitScanForward(entry.first);
+        if (!(entry.second & (1ULL << to)) || std::toupper(board[7 - from / 8][from % 8]) != piece) continue;
+        bool matches = true;
+        for (char ch : disamb) {
+            if (ch >= 'a' && ch <= 'h') matches &= from % 8 == ch - 'a';
+            else matches &= from / 8 == ch - '1';
+        }
+        if (!matches) continue;
+        if (source != -1) return false;
+        source = from;
     }
-
-    if (move.size() < 2) {
-        return false;
-    }
-
-    std::string dest = move.substr(move.size() - 2, 2);
-    int toCol = dest[0] - 'a';
-    int toRow = '8' - dest[1];
-    if (toCol < 0 || toCol >= 8 || toRow < 0 || toRow >= 8) {
-        return false;
-    }
-
-    int destIndex = get_bitindex(toRow, toCol);
-    Bitboard destMask = 1ULL << destIndex;
-
-    size_t disambEnd = (isCapture ? capturePos : move.size() - 2);
-    std::string disamb = move.substr(idx, disambEnd - idx);
-
-    auto matchesDisambiguation = [&](int row, int col) {
-        if (disamb.empty()) return true;
-        if (disamb.size() == 2) {
-            return col == disamb[0] - 'a' && row == ('8' - disamb[1]);
-        }
-        if (std::isdigit(disamb[0])) {
-            return row == ('8' - disamb[0]);
-        }
-        return col == disamb[0] - 'a';
-    };
-
-    auto canReach = [&](int row, int col) {
-        char boardPiece = board[row][col];
-        bool isWhitePiece = std::isupper(boardPiece);
-        char targetPiece = board[toRow][toCol];
-
-        if (isCapture) {
-            if (targetPiece == '.') {
-                if (pieceChar != 'P') {
-                    if ((enPassant & destMask) == 0ULL) return false;
-                } else if ((enPassant & destMask) == 0ULL) {
-                    return false;
-                }
-            } else if ((std::isupper(targetPiece) && isWhitePiece) ||
-                       (std::islower(targetPiece) && !isWhitePiece)) {
-                return false;
-            }
-        } else {
-            if (targetPiece != '.') {
-                return false;
-            }
-        }
-
-        int fromIdx = get_bitindex(row, col);
-
-        switch (pieceChar) {
-            case 'P':
-                return pawnValidator.validate(1ULL << fromIdx, destMask, *this);
-            case 'N':
-                return knightValidator.validate(fromIdx, destIndex, *this);
-            case 'B':
-                return bishopValidator.validate(fromIdx, destMask, *this);
-            case 'R':
-                return rookValidator.validate(fromIdx, destMask, *this);
-            case 'Q':
-                return bishopValidator.validate(fromIdx, destMask, *this) ||
-                       rookValidator.validate(fromIdx, destMask, *this);
-            case 'K':
-                return kingValidator.validate(fromIdx, destIndex, *this);
-            default:
-                return false;
-        }
-    };
-
-    char requiredPiece = (pieceChar == 'P') ? 'P' : pieceChar;
-    bool movingWhite = whiteToMove;
-
-    for (int row = 0; row < 8; ++row) {
-        for (int col = 0; col < 8; ++col) {
-            char boardPiece = board[row][col];
-            if (boardPiece == '.') continue;
-            bool isWhitePiece = std::isupper(boardPiece);
-            if (isWhitePiece != whiteToMove) continue;
-            if (std::toupper(boardPiece) != requiredPiece) continue;
-
-            if (!matchesDisambiguation(row, col)) continue;
-            if (!canReach(row, col)) continue;
-
-            ChessBoard trial = *this;
-            if (!trial.movePieceInternal(row, col, toRow, toCol, promotion, false)) {
-                continue;
-            }
-
-            trial.switchTurn();
-            Bitboard opponentAttacks = trial.getEnemyAttacks();
-            trial.switchTurn();
-
-            Bitboard kingBB = movingWhite ? trial.bitboards[w_king_idx] : trial.bitboards[b_king_idx];
-            if (opponentAttacks & kingBB) {
-                continue;
-            }
-
-            *this = trial;
-            return true;
-        }
-    }
-
-    return false;
+    return source != -1 && movePieceInternal(7 - source / 8, source % 8, 7 - to / 8, to % 8, promotion, false);
 }
 
 bool ChessBoard::validatePGN(const std::string& pgnPath) {
     std::ifstream file(pgnPath);
-    if (!file.is_open()) {
-        std::cerr << "Unable to open PGN file: " << pgnPath << std::endl;
-        return false;
-    }
+    if (!file) return false;
     bool allCorrect = true;
-    std::string line;
-    std::string expectedResult;
-    std::string currentGameId;
-    std::vector<std::string> moveTokens;
-
+    std::string line, text, expectedResult, startFen, gameId;
     auto processGame = [&]() {
-        if (moveTokens.empty()) return;
-        ChessBoard game; // start from initial position
-        size_t moveIndex = 0;
-
-        auto normalizeToken = [](std::string token) {
-            if (!token.empty() && token.back() == '\r') token.pop_back();
-            return token;
-        };
-
-        auto detectResultToken = [&](size_t idx, std::string& canonical) -> bool {
-            if (idx >= moveTokens.size()) return false;
-            std::string current = normalizeToken(moveTokens[idx]);
-            if (current == "*") {
-                canonical = current;
-                return true;
+        if (text.empty()) return;
+        bool ok = true;
+        try {
+            ChessBoard game(startFen.empty() ? STARTING_FEN : startFen);
+            std::string mainline;
+            int variations = 0;
+            bool brace = false, semicolon = false;
+            for (char ch : text) {
+                if (semicolon) { if (ch == '\n') semicolon = false; continue; }
+                if (brace) { if (ch == '}') brace = false; continue; }
+                if (ch == '{') { brace = true; mainline += ' '; continue; }
+                if (ch == ';') { semicolon = true; mainline += ' '; continue; }
+                if (ch == '(') { ++variations; mainline += ' '; continue; }
+                if (ch == ')') { if (--variations < 0) ok = false; continue; }
+                if (!variations) mainline += ch;
             }
-            if (current == "1-0" || current == "0-1" || current == "1/2-1/2") {
-                canonical = current;
-                return true;
-            }
-
-            auto nextToken = [&](size_t offset) {
-                if (idx + offset < moveTokens.size()) {
-                    return normalizeToken(moveTokens[idx + offset]);
+            if (brace || variations) ok = false;
+            std::istringstream tokens(mainline);
+            std::string token, result;
+            while (tokens >> token) {
+                if (!result.empty()) { ok = false; break; }
+                if (token == "1-0" || token == "0-1" || token == "1/2-1/2" || token == "*") {
+                    result = token;
+                    continue;
                 }
-                return std::string();
-            };
-
-            std::string combined = current;
-            for (size_t offset = 1; offset <= 2; ++offset) {
-                std::string next = nextToken(offset);
-                if (next.empty()) break;
-                combined += next;
-                if (combined == "1-0" || combined == "0-1" || combined == "1/2-1/2") {
-                    canonical = combined;
-                    return true;
+                if (token[0] == '$') continue;
+                if (token == "e.p.") continue;
+                auto nag = token.find('$');
+                if (nag != std::string::npos) token.erase(nag);
+                auto dot = token.find_last_of('.');
+                if (dot != std::string::npos) {
+                    bool number = true;
+                    for (size_t i = 0; i <= dot; ++i) number &= std::isdigit(static_cast<unsigned char>(token[i])) || token[i] == '.';
+                    if (!number) { ok = false; break; }
+                    token.erase(0, dot + 1);
+                }
+                if (token.empty() || token == "e.p.") continue;
+                if (!game.movePieceSAN(token)) {
+                    std::cerr << "Game " << gameId << " illegal move " << token << " at " << game.getString() << '\n';
+                    ok = false;
+                    break;
                 }
             }
-            return false;
-        };
-
-        for (size_t i = 0; i < moveTokens.size(); ++i) {
-            std::string resultToken;
-            if (detectResultToken(i, resultToken)) {
-                if (resultToken != "*") {
-                    game.resign(resultToken);
-                }
-                break;
+            if (!expectedResult.empty() && !result.empty() && expectedResult != result) ok = false;
+            std::string declared = result.empty() ? expectedResult : result;
+            if (!declared.empty()) {
+                if (declared != "*") game.resign(declared);
+                if (game.get_game_results() != declared) ok = false;
             }
-
-            std::string previous_fen = game.getString();
-            std::string tok = normalizeToken(moveTokens[i]);
-            if (tok.find('.') != std::string::npos) continue; // skip move numbers
-            if (tok.size() == 1 && i + 1 < moveTokens.size()) {
-                tok += normalizeToken(moveTokens[++i]);
-            }
-
-            ++moveIndex;
-            if (!game.movePieceSAN(tok)) {
-                std::cerr << "Game " << currentGameId
-                          << " Initial FEN: "
-                          << previous_fen << '\n'
-                          << " failed at move " << moveIndex
-                          << " (" << tok << ")"
-                          << "FEN: "
-                          << game.getString() << std::endl;
-                allCorrect = false;
-                break;
-            }
+        } catch (const std::exception& error) {
+            std::cerr << "PGN error: " << error.what() << '\n';
+            ok = false;
         }
-        std::string actual = game.get_game_results();
-        if (actual != expectedResult) {
-            std::cerr << "Game " << currentGameId
-                      << " result mismatch: expected " << expectedResult
-                      << " but got " << actual << std::endl;
-            allCorrect = false;
-        }
-        moveTokens.clear();
+        allCorrect &= ok;
+        text.clear();
         expectedResult.clear();
-        currentGameId.clear();
-        game.ResetBoard();
+        startFen.clear();
+        gameId.clear();
     };
-
     while (std::getline(file, line)) {
-        if (line.empty()) {
-            processGame();
-            continue;
-        }
-        if (line[0] == '[') {
-            if (line.rfind("[Result", 0) == 0) {
-                size_t first = line.find('"');
-                size_t second = line.find('"', first + 1);
-                if (first != std::string::npos && second != std::string::npos)
-                    expectedResult = line.substr(first + 1, second - first - 1);
-            } else if (line.rfind("[GameId", 0) == 0) {
-                size_t first = line.find('"');
-                size_t second = line.find('"', first + 1);
-                if (first != std::string::npos && second != std::string::npos)
-                    currentGameId = line.substr(first + 1, second - first - 1);
-            }
-            continue;
-        }
-        std::stringstream ss(line);
-        std::string token;
-        while (ss >> token) {
-            moveTokens.push_back(token);
+        if (!line.empty() && line.back() == '\r') line.pop_back();
+        if (!line.empty() && line[0] == '[') {
+            if (!text.empty()) processGame();
+            size_t first = line.find('"'), last = line.rfind('"');
+            if (first == std::string::npos || last <= first) { allCorrect = false; continue; }
+            std::string value = line.substr(first + 1, last - first - 1);
+            if (line.rfind("[Result ", 0) == 0) expectedResult = value;
+            else if (line.rfind("[FEN ", 0) == 0) startFen = value;
+            else if (line.rfind("[GameId ", 0) == 0) gameId = value;
+        } else if (line.find_first_not_of(" \t\r") != std::string::npos || !text.empty()) {
+            text += line + '\n';
         }
     }
     processGame();
@@ -1751,4 +1401,72 @@ bool ChessBoard::validatePGN(const std::string& pgnPath) {
 }
 
 
+bool ChessBoard::get_is_draw() {
+    return is_draw;
+}
 
+bool ChessBoard::hasInsufficientMaterial() const {
+    // shortcut: material-only dead-position detection; add reachability analysis for locked fortresses.
+    return hasInsufficientMatingMaterial(true) && hasInsufficientMatingMaterial(false);
+}
+
+bool ChessBoard::hasInsufficientMatingMaterial(bool white) const {
+    Bitboard own = white ? getWhitePieces() : getBlackPieces();
+    Bitboard opponent = white ? getBlackPieces() : getWhitePieces();
+    if (own & (getPawnBitboards() | getRookBitboards() | getQueenBitboards())) return false;
+    if (own & getKnightBitboards()) {
+        return popcount(own) <= 2 && !(opponent & ~getKingBitboards() & ~getQueenBitboards());
+    }
+    if (own & getBishopBitboards()) {
+        constexpr Bitboard dark = 0xAA55AA55AA55AA55ULL;
+        Bitboard bishops = getBishopBitboards();
+        return (!(bishops & dark) || !(bishops & ~dark)) && !getPawnBitboards() && !getKnightBitboards();
+    }
+    return true;
+}
+
+std::string ChessBoard::repetitionKey() {
+    std::istringstream fields(getString());
+    std::string placement, turn, rights, ep;
+    fields >> placement >> turn >> rights >> ep;
+    if (enPassant) {
+        bool legalEP = false;
+        for (const auto& entry : getAllMoves()) {
+            legalEP |= (entry.first & getPawnBitboards()) && (entry.second & enPassant);
+        }
+        if (!legalEP) ep = "-";
+    }
+    return placement + " " + turn + " " + rights + " " + ep;
+}
+
+void ChessBoard::updateGameState() {
+    if (is_game_over) return;
+    if (getAllMoves().empty()) {
+        is_game_over = true;
+        Bitboard king = whiteToMove ? bitboards[w_king_idx] : bitboards[b_king_idx];
+        if (king && getAttacks(bitScanForward(king))) {
+            is_white_win = !whiteToMove;
+            is_black_win = whiteToMove;
+        } else {
+            is_stalemate = true;
+            is_draw = true;
+        }
+    } else if (halfmoveClock >= 150 || hasInsufficientMaterial() || positionCounts[repetitionKey()] >= 5) {
+        is_game_over = true;
+        is_draw = true;
+    }
+}
+
+bool ChessBoard::canClaimFiftyMoveDraw(const std::string& intendedMove) {
+    if (is_game_over) return false;
+    if (intendedMove.empty()) return halfmoveClock >= 100;
+    ChessBoard trial = *this;
+    return trial.movePieceUCI(intendedMove) && trial.halfmoveClock >= 100 && !trial.is_white_win && !trial.is_black_win;
+}
+
+bool ChessBoard::claimFiftyMoveDraw(const std::string& intendedMove) {
+    if (!canClaimFiftyMoveDraw(intendedMove)) return false;
+    is_game_over = true;
+    is_draw = true;
+    return true;
+}

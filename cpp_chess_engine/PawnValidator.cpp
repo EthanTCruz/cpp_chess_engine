@@ -18,8 +18,8 @@ void PawnValidator::initPawnMoves() {
 }
 
 bool PawnValidator::validate(int from_idx, int to_idx, const ChessBoard& board) const {
-    std::cout << "===============================";
-    return false;
+    if (from_idx < 0 || from_idx >= 64 || to_idx < 0 || to_idx >= 64) return false;
+    return validate(1ULL << from_idx, 1ULL << to_idx, board);
 }
 
 Bitboard PawnValidator::getAttacks(Bitboard origin, const ChessBoard& board) const {
@@ -62,7 +62,10 @@ Bitboard PawnValidator::getMoves(Bitboard origin, const ChessBoard& board) const
     Bitboard attacks = getAttacks(origin, board);
     
 
-    attacks &= board.getEnemyPieces() | board.getEnPassant();
+    Bitboard ep = board.getEnPassant() & ~allPieces;
+    Bitboard enemyPawns = board.getPawnBitboards() & board.getEnemyPieces();
+    ep &= whiteToMove ? (enemyPawns << 8) & Rank::RANK_6 : (enemyPawns >> 8) & Rank::RANK_3;
+    attacks &= board.getEnemyPieces() | ep;
 
     Bitboard legalMoves = 0ULL | attacks;
 

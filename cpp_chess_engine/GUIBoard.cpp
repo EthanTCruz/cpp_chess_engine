@@ -62,6 +62,27 @@ void GUIBoard::createSFMLWindow() {
     std::optional<sf::Vector2i> selectedSquare;
     std::optional<sf::Vector2i> attackSourceSquare;
 
+    std::optional<sf::Vector2i> promotionFrom;
+    std::optional<sf::Vector2i> promotionTo;
+    auto attemptMove = [&](int row, int col) {
+        if (cb.get_is_game_over()) return;
+        const auto from = *selectedSquare;
+        if (!cb.validateMove((7 - from.y) * 8 + from.x, (7 - row) * 8 + col)) return;
+        char piece = getBoard()[from.y][from.x];
+        if ((piece == 'P' && row == 0) || (piece == 'p' && row == 7)) {
+            promotionFrom = from;
+            promotionTo = sf::Vector2i(col, row);
+        } else cb.movePiece(from.y, from.x, row, col);
+    };
+    auto choosePromotion = [&](int row, int col) {
+        if (row == 3 && col >= 2 && col <= 5) {
+            cb.movePiece(promotionFrom->y, promotionFrom->x, promotionTo->y, promotionTo->x,
+                         std::string("qrbn")[col - 2]);
+            promotionFrom.reset();
+            promotionTo.reset();
+        }
+    };
+
     while (window.isOpen()) {
         // --- Event Handling ---
 
@@ -79,6 +100,7 @@ void GUIBoard::createSFMLWindow() {
                 int row = mb->position.y / cellSize;
 
                 if (mb->button == sf::Mouse::Button::Left) {
+                    if (promotionFrom) { choosePromotion(row, col); continue; }
                     // clear any attack highlights on a normal (left) click
                     attackSourceSquare.reset();
 
@@ -91,13 +113,7 @@ void GUIBoard::createSFMLWindow() {
                         }
                         else {
                             // attempt move
-                            int from_idx = (7 - selectedSquare->y) * 8 + selectedSquare->x;
-                            int to_idx = (7 - row) * 8 + col;
-                            if (cb.validateMove(from_idx, to_idx)) {
-                                cb.movePiece(selectedSquare->y, selectedSquare->x, row, col);
-                                cb.syncBoardWithBitboards();
-                                // std::cout << cb.get_game_results() << "\n";
-                            }
+                            attemptMove(row, col);
                             selectedSquare.reset();
                         }
                     }
@@ -127,6 +143,7 @@ void GUIBoard::createSFMLWindow() {
                 int row = event.mouseButton.y / cellSize;
 
                 if (event.mouseButton.button == sf::Mouse::Left) {
+                    if (promotionFrom) { choosePromotion(row, col); continue; }
                     // clear any attack highlights on a normal (left) click
                     attackSourceSquare.reset();
 
@@ -139,13 +156,7 @@ void GUIBoard::createSFMLWindow() {
                         }
                         else {
                             // attempt move
-                            int from_idx = (7 - selectedSquare->y) * 8 + selectedSquare->x;
-                            int to_idx = (7 - row) * 8 + col;
-                            if (cb.validateMove(from_idx, to_idx)) {
-                                cb.movePiece(selectedSquare->y, selectedSquare->x, row, col);
-                                cb.syncBoardWithBitboards();
-                                // std::cout << cb.get_game_results() << "\n";
-                            }
+                            attemptMove(row, col);
                             selectedSquare.reset();
                         }
                     }
@@ -254,6 +265,23 @@ void GUIBoard::createSFMLWindow() {
                 sf::Vector2u texSize = texIt->second.getSize();
                 sprite.setScale(sf::Vector2f(static_cast<float>(cellSize) / texSize.x, static_cast<float>(cellSize) / texSize.y));
                 sprite.setPosition(sf::Vector2f(c * static_cast<float>(cellSize), r * static_cast<float>(cellSize)));
+                window.draw(sprite);
+            }
+        }
+        if (promotionFrom) {
+            // Four piece buttons: queen, rook, bishop, knight.
+            for (int option = 0; option < 4; ++option) {
+                char piece = std::string("QRBN")[option];
+                if (!cb.getTurn()) piece = static_cast<char>(std::tolower(piece));
+                square.setPosition(sf::Vector2f((option + 2) * static_cast<float>(cellSize), 3.f * cellSize));
+                square.setFillColor(lightColor);
+                window.draw(square);
+                auto tex = textures.find(piece);
+                if (tex == textures.end()) continue;
+                sf::Sprite sprite(tex->second);
+                auto size = tex->second.getSize();
+                sprite.setScale(sf::Vector2f(static_cast<float>(cellSize) / size.x, static_cast<float>(cellSize) / size.y));
+                sprite.setPosition(square.getPosition());
                 window.draw(sprite);
             }
         }

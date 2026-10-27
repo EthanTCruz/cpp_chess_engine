@@ -1,0 +1,37 @@
+fen,depth,expected_nodes,description
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1,1,48,Kiwipete castling and pins
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1,2,2039,Kiwipete castling and pins
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1,3,97862,Kiwipete castling and pins
+r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1,4,4085603,Kiwipete castling and pins
+8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1,1,14,Rook endgame and en passant pins
+8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1,2,191,Rook endgame and en passant pins
+8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1,3,2812,Rook endgame and en passant pins
+8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1,4,43238,Rook endgame and en passant pins
+r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1,1,6,Promotion and castling stress
+r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1,2,264,Promotion and castling stress
+r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1,3,9467,Promotion and castling stress
+r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1,4,422333,Promotion and castling stress
+rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8,1,44,Promotion captures and check evasion
+rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8,2,1486,Promotion captures and check evasion
+rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8,3,62379,Promotion captures and check evasion
+rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8,4,2103487,Promotion captures and check evasion
+r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10,1,46,Sliding piece middlegame
+r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10,2,2079,Sliding piece middlegame
+r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10,3,89890,Sliding piece middlegame
+r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10,4,3894594,Sliding piece middlegame
+4k3/8/8/3pP3/4K3/8/8/8 w - d6 0 1,1,8,En passant captures checking pawn
+4k3/8/8/3pP3/4K3/8/8/8 w - d6 0 1,2,44,En passant captures checking pawn
+4k3/8/8/3pP3/4K3/8/8/8 w - d6 0 1,3,316,En passant captures checking pawn
+4k3/8/8/3pP3/4K3/8/8/8 w - d6 0 1,4,1951,En passant captures checking pawn
+4k3/8/8/r4pPK/8/8/8/8 w - f6 0 1,1,4,En passant opens horizontal check
+4k3/8/8/r4pPK/8/8/8/8 w - f6 0 1,2,66,En passant opens horizontal check
+4k3/8/8/r4pPK/8/8/8/8 w - f6 0 1,3,289,En passant opens horizontal check
+4k3/8/8/r4pPK/8/8/8/8 w - f6 0 1,4,5098,En passant opens horizontal check
+k7/4P3/8/8/8/8/8/4K3 w - - 0 1,1,9,All four promotion choices
+k7/4P3/8/8/8/8/8/4K3 w - - 0 1,2,25,All four promotion choices
+k7/4P3/8/8/8/8/8/4K3 w - - 0 1,3,311,All four promotion choices
+k7/4P3/8/8/8/8/8/4K3 w - - 0 1,4,1577,All four promotion choices
+7k/6Q1/5K2/8/8/8/8/7R b - - 0 1,1,0,Double-check mate has zero moves
+7k/6Q1/5K2/8/8/8/8/7R b - - 0 1,2,0,Double-check mate has zero moves
+7k/6Q1/5K2/8/8/8/8/7R b - - 0 1,3,0,Double-check mate has zero moves
+7k/6Q1/5K2/8/8/8/8/7R b - - 0 1,4,0,Double-check mate has zero moves

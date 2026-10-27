@@ -69,9 +69,9 @@ The important hazard is file wraparound. For example, shifting `h4 << 1` would n
 2. Iterate each friendly piece by repeatedly scanning and clearing set bits.
 3. Ask the relevant validator for pseudo-legal destination masks.
 4. Add castling destinations for kings when rights, occupancy, and attack rules allow it.
-5. Convert destination masks into `Move` objects.
-6. Filter moves that leave the king in check.
-7. If currently in check, restrict legal replies to king moves, checker captures, or blocks.
+5. For each candidate, temporarily update piece bitboards, remove captures, and remove the captured pawn for en passant.
+6. Query attacks on the resulting friendly king square; retain the destination only when the king is safe.
+7. Restore the bitboards before testing the next candidate. Do not change clocks, results, or repetition history during generation.
 
 The piece validators deliberately generate attacks quickly and locally. King safety is handled centrally by `ChessBoard`, because pins, discovered checks, castling, and check evasion all depend on the full board.
 
@@ -237,7 +237,7 @@ Castling rights are revoked when:
 
 ## En Passant
 
-FEN parsing stores the en-passant target square as a bitboard. Pawn move generation includes that square as a legal capture target if a pawn attacks it.
+FEN parsing stores the en-passant target square as a bitboard. Pawn move generation includes that square only if a pawn attacks it, the destination is empty, the target is on the correct rank, and an enemy pawn exists behind it.
 
 The destination square is empty during en passant, so `movePieceInternal()` has special capture handling:
 
@@ -258,7 +258,7 @@ Check handling depends on checker count:
 - Single check: king moves, checker captures, and sliding-check blocks are allowed.
 - Double check: only king moves are allowed.
 
-Knight and pawn checks cannot be blocked, so non-king replies must capture the checker. Sliding checks can also be blocked on the lane between checker and king.
+Knight and pawn checks cannot be blocked, so non-king replies must capture the checker (including en passant against a checking pawn). Sliding checks can also be blocked on the lane between checker and king.
 
 ## SAN And UCI Moves
 
@@ -268,7 +268,8 @@ Knight and pawn checks cannot be blocked, so non-king replies must capture the c
 - recognizes castling
 - recognizes promotion
 - uses destination square, piece type, capture marker, and disambiguation to find a legal source
-- validates by trying the move and rejecting candidates that leave the king in check
+- selects exactly one source from `getAllMoves()`; ambiguous SAN is rejected
+- requires a promotion piece on the final rank and rejects promotion anywhere else
 
 `ChessBoard::movePieceUCI()` parses coordinate moves such as `e2e4` and promotion suffixes such as `e7e8q`.
 
@@ -285,7 +286,24 @@ FEN loading initializes:
 - halfmove clock
 - fullmove number
 
-The parser updates both the square array and piece bitboards. If one representation changes without the other, move generation and display will disagree.
+The parser validates field syntax and rank widths, then updates both the square array and piece bitboards. `setString()` replaces state atomically, including the en-passant target, results, and repetition history. FEN output includes all six fields. This validates syntax rather than historical reachability; composed positions remain supported. If one representation changes without the other, move generation and display will disagree.
+
+## Game Results And Draws
+
+Normal boards adjudicate loaded FENs and completed moves. Checkmate awards the win to the opponent of the side with no legal moves; checkmate takes precedence over the 75-move draw. Finished games reject further moves, and invalid resignation tokens leave the result unchanged. `get_is_stalemate()` describes only stalemate; `get_is_draw()` covers every draw.
+
+- Material draws: bare kings, a single minor against a bare king, and bishops confined to one square colour, including promoted bishops. Two knights versus a bare king is not automatically drawn: a cooperative mating sequence exists.
+- `canClaimFiftyMoveDraw()` / `claimFiftyMoveDraw()` use 100 halfmoves without pawn movement or capture. An optional UCI intended move allows a prospective claim without applying that move to the actual board.
+- The 75-move rule automatically draws at 150 halfmoves.
+- Fivefold repetition automatically draws. Position keys include placement, turn, castling rights, and an en-passant target only when an en-passant capture is legal. FEN loading starts a new history because FEN contains no prior positions.
+- Threefold repetition claims are deliberately unimplemented, as requested.
+- `resign("1/2-1/2")` records an agreed draw. A declared win becomes a draw when that side has insufficient mating material.
+
+`ChessBoard(fen, false)` disables adjudication for analysis and perft. It retains legal-move validation but allows analysis of terminal positions and ignores history-based draws. FEN move fixtures use this mode because several composed positions contain insufficient material or omit an irrelevant king.
+
+Material detection is conservative: arbitrary locked/fortress dead positions are not solved by reachability search. There is no game clock or flag-fall controller. The engine is not a complete tournament arbiter. Check/mate suffixes and `!?` annotations are accepted as input annotations rather than independently validated SAN assertions.
+
+The GUI presents queen, rook, bishop, and knight buttons when a pawn reaches the final rank. The board move is applied only after a choice.
 
 ## Perft
 
@@ -296,6 +314,7 @@ Perft counts every legal move sequence to a fixed depth. It is the best broad re
 - loads `test_perft/*.csv`
 - skips rows deeper than `PERFT_MAX_DEPTH`
 - recursively calls legal move generation and move application
+- expands each promotion destination into queen, rook, bishop, and knight moves
 - prints elapsed time for each case
 - prints a root divide on failure so the first incorrect branch can be identified
 
@@ -349,3 +368,17 @@ Bitboards are used because many chess questions are set operations:
 Answering those with `uint64_t` operations is faster and simpler than scanning all 64 squares for every question. Sliding pieces are the expensive case, so magic bitboards precompute blocker-dependent attacks and turn runtime lookup into mask, multiply, shift, and table access.
 
 The current magic numbers are generated during initialization. If startup time becomes a real concern, the next simple optimization is to persist known-good magic numbers as constants.
+
+## Rules Audit Checks
+
+`RulesTests.cpp` adds stateful checks for outcomes, move counters, bounds, promotion, castling rights, repetition identity, FEN reset, and PGN import. These run with the normal headless suites and can also run separately:
+
+```powershell
+.\build-tests\Debug\cpp_chess_engine_tests.exe --rules
+ctest --test-dir build-tests -C Debug --output-on-failure
+python scripts/check_rules_python_chess.py build-tests/Release/cpp_chess_engine_tests.exe
+```
+
+The optional differential script uses the existing `python-chess` test-data dependency. It compares complete legal UCI move sets, one UCI/SAN transition per sampled position, all six FEN fields, material detection, and automatic results. Its random seed is fixed. `test_perft/rules_regressions.csv` supplies independently calculated depth 1?4 reference counts for standard perft positions and special-rule regressions.
+
+PGN validation supports FEN starts, attached move numbers, brace/semicolon comments, NAG annotations, and nested variations (only the mainline is replayed). Declared results must agree with the header and any already adjudicated board result. A nonterminal declared result can represent resignation or draw agreement; it is not independent proof of checkmate.

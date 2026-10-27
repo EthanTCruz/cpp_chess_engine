@@ -82,7 +82,7 @@ bool parseExpectedResult(const std::string& value, bool& result)
 bool runFenMoveTest(const FenMoveTestCase& testCase)
 {
     const auto start = std::chrono::steady_clock::now();
-    ChessBoard board(testCase.fen);
+    ChessBoard board(testCase.fen, false);
     const bool moveAccepted = board.movePieceSAN(testCase.sanMove);
     const auto end = std::chrono::steady_clock::now();
     const auto elapsedUs = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();

@@ -85,8 +85,26 @@ python scripts/generate_fen_tests.py
 - `scripts/generate_fen_tests.py` is the source for the default comprehensive FEN/SAN suite; regenerate `test_fens/default_fen_move_tests.csv` after editing it.
 - `scripts/generate_perft_tests.py` uses `python-chess` to generate `test_perft/perft_tests.csv`; `PERFT_MAX_DEPTH` comes from the environment or `test_config.env`.
 - Promotion handling accepts only queen, rook, bishop, and knight (`q/r/b/n`) in SAN and UCI paths.
+- Perft must count promotion destinations as four moves (`q/r/b/n`), even though `getAllMoves()` stores only destination squares.
 - Castling rules use separate occupancy and attack masks; queenside `b1`/`b8` must be empty but may be attacked.
 - Enemy queen attacks must include both bishop-like and rook-like rays; check-evasion masks must allow capturing pawn checkers.
+- Double-check evasion must keep all safe king moves; do not restrict the king to checker squares.
 - The headless test runner prints `[PERF]` lines for PGN, FEN, PERFT, and overall runtime; use those as before/after performance reports.
 - Do not edit generated build outputs unless the user explicitly asks.
 - Keep changes small and consistent with the existing C++ style; avoid new dependencies unless they are clearly needed.
+
+## Rules Audit Additions
+
+- `docs/RULES_AUDIT.md` records findings, verification, and explicit rule-coverage limits.
+
+- `RulesTests.*` runs stateful rule regressions; use the test executable's `--rules` flag or `ctest --test-dir build-tests -C Debug --output-on-failure`.
+- `scripts/check_rules_python_chess.py` compares legal moves, UCI/SAN transitions, FEN fields, material draws, and outcomes with python-chess using a fixed seed. Pass the built test executable as its optional argument.
+- `test_perft/rules_regressions.csv` adds depth 1?4 reference counts for castling/pins, promotions, en passant check evasion, and double-check mate.
+- Legal generation tests candidate occupancy, including en-passant pawn removal, then restores bitboards. It must not mutate game results or history or retain zero-destination entries.
+- Normal boards adjudicate checkmate, stalemate, material draws, 75 moves, and fivefold repetition; threefold repetition claims remain deliberately disabled.
+- Use `ChessBoard(fen, false)` for perft and composed FEN move fixtures so terminal draws do not truncate analysis trees.
+- Fifty-move draws require an explicit claim; prospective claims accept an intended UCI move without applying it. Keep `get_is_draw()` distinct from `get_is_stalemate()`.
+- Repetition keys include en passant only when a legal capture exists. FEN resets clear history and replace the old en-passant target.
+- Material-based dead-position detection is conservative; arbitrary locked fortresses and game-clock/flag-fall rules are outside the implemented controller.
+- SAN/UCI/direct moves share legality and promotion validation. Promotion requires an explicit q/r/b/n choice; the GUI offers four piece buttons.
+- The Windows test script must stop on configuration/build failure instead of running a stale executable.

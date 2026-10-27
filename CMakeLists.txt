@@ -15,6 +15,7 @@ list(REMOVE_ITEM ENGINE_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/cpp_chess_engine/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cpp_chess_engine/pgn_tester_main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/cpp_chess_engine/testing_main.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cpp_chess_engine/RulesTests.cpp"
 )
 
 if(BUILD_GUI)
@@ -43,6 +44,7 @@ if(BUILD_TESTING_MODULE)
     add_executable(cpp_chess_engine_tests
         ${ENGINE_SOURCES}
         cpp_chess_engine/testing_main.cpp
+        cpp_chess_engine/RulesTests.cpp
     )
 
     target_include_directories(cpp_chess_engine_tests PRIVATE cpp_chess_engine)
@@ -51,3 +53,7 @@ endif()
 enable_testing()
 
 
+
+if(BUILD_TESTING_MODULE)
+    add_test(NAME chess_rules COMMAND cpp_chess_engine_tests --rules)
+endif()

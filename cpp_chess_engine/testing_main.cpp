@@ -5,9 +5,12 @@
 #include "FenMoveTester.hpp"
 #include "PGNTestRunner.hpp"
 #include "PerftTester.hpp"
+#include "RulesTests.hpp"
 
 int main(int argc, char** argv)
 {
+    if (argc > 1 && std::string(argv[1]) == "--rules") return runRulesTests() ? 0 : 1;
+    if (argc > 1 && std::string(argv[1]) == "--probe") return runRulesProbe();
     const auto start = std::chrono::steady_clock::now();
     std::filesystem::path pgnDirectory = "test_pgns";
     std::filesystem::path fenDirectory = "test_fens";
@@ -34,7 +37,8 @@ int main(int argc, char** argv)
     std::cout << "\nRunning PERFT move-count suite..." << std::endl;
     const bool perftPassed = runPerftTestsFromDirectory(perftDirectory);
 
-    const bool allPassed = pgnPassed && fenPassed && perftPassed;
+    const bool rulesPassed = runRulesTests();
+    const bool allPassed = pgnPassed && fenPassed && perftPassed && rulesPassed;
     const auto end = std::chrono::steady_clock::now();
     const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 

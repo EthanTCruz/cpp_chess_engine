@@ -9,9 +9,11 @@ $ErrorActionPreference = 'Stop'
 
 Write-Host 'Configuring headless test build (GUI disabled, SFML not required)...'
 cmake -S . -B $BuildDir -DBUILD_GUI=OFF -DBUILD_TESTING_MODULE=ON
+if ($LASTEXITCODE -ne 0) { throw "CMake configuration failed." }
 
 Write-Host 'Building cpp_chess_engine_tests...'
 cmake --build $BuildDir --target cpp_chess_engine_tests --config Debug
+if ($LASTEXITCODE -ne 0) { throw "Test build failed; refusing to run an older executable." }
 
 $exeCandidates = @(
     (Join-Path $BuildDir 'cpp_chess_engine_tests.exe'),
