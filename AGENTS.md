@@ -27,6 +27,7 @@ Update this file after any changes made by the LLM.
 - `cpp_chess_engine/testing_main.cpp`: headless test executable entrypoint.
 - `cpp_chess_engine/main.cpp` and `GUIBoard.*`: SFML GUI executable path.
 - `docs/ENGINE.md`: engine module and algorithm reference, including bitboard operations by move type.
+- `docs/ARCHITECTURE.md`: general architecture, move lifecycle, and file-by-file repository guide; keep it current when files or responsibilities change.
 
 ## Build And Test
 

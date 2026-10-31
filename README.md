@@ -42,6 +42,8 @@ It is intentionally headless and can be run/debugged independently from `cpp_che
 
 ## Engine documentation
 
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the general architecture and a file-by-file guide to the engine, tests, scripts, configuration, and assets.
+
 See [`docs/ENGINE.md`](docs/ENGINE.md) for the module map, move-generation pipeline, and bitboard algorithms used by each move type.
 
 ### Linux/macOS
